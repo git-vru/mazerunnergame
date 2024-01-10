@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 /**
@@ -18,6 +20,9 @@ public class GameScreen implements Screen {
     private final BitmapFont font;
 
     private float sinusInput = 0f;
+
+    private float playerX;
+    private float playerY;
 
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
@@ -46,28 +51,60 @@ public class GameScreen implements Screen {
         camera.update(); // Update the camera
 
         // Move text in a circular path to have an example of a moving object
-        sinusInput += delta;
+        /*sinusInput += delta;
         float textX = (float) (camera.position.x + Math.sin(sinusInput) * 100);
-        float textY = (float) (camera.position.y + Math.cos(sinusInput) * 100);
+        float textY = (float) (camera.position.y + Math.cos(sinusInput) * 100);*/
+        String direction = new String();
+
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            playerX -= 200 * Gdx.graphics.getDeltaTime();
+            direction = "left";
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            playerX += 200 * Gdx.graphics.getDeltaTime();
+            direction = "right";
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
+            playerY -= 200 * Gdx.graphics.getDeltaTime();
+            direction = "down";
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+            playerY += 200 * Gdx.graphics.getDeltaTime();
+            direction = "up";
+        }
 
         // Set up and begin drawing with the sprite batch
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
-
+        game.createMaze();
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
-        font.draw(game.getSpriteBatch(), "Press ESC to go to menu", textX, textY);
+        font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
 
+        Animation<TextureRegion> currentAnimation;
         // Draw the character next to the text :) / We can reuse sinusInput here
+        if (direction.equals("left")) {
+            currentAnimation = game.getCharacterLeftAnimation();
+        } else if (direction.equals("right")) {
+            currentAnimation = game.getCharacterRightAnimation();
+        } else if (direction.equals("down")) {
+            currentAnimation = game.getCharacterDownAnimation();
+        } else if (direction.equals("up")) {
+            currentAnimation = game.getCharacterUpAnimation();
+        }
+        else {
+            currentAnimation = game.getCharacterStandAnimation();
+        }
+
         game.getSpriteBatch().draw(
-                game.getCharacterDownAnimation().getKeyFrame(sinusInput, true),
-                textX - 96,
-                textY - 64,
+                currentAnimation.getKeyFrame(sinusInput, true),
+                playerX,
+                playerY,
                 64,
                 128
         );
         game.getSpriteBatch().end(); // Important to call this after drawing everything
-        game.createMaze();
     }
+
 
     @Override
     public void resize(int width, int height) {

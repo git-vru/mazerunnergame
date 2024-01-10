@@ -2,6 +2,7 @@ package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -33,6 +34,10 @@ public class MazeRunnerGame extends Game{
 
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
+    private Animation<TextureRegion> characterLeftAnimation;
+    private Animation<TextureRegion> characterRightAnimation;
+    private Animation<TextureRegion> characterUpAnimation;
+    private Animation<TextureRegion> characterStandAnimation;
 
     private List<List<int[]>> allMazes = new ArrayList<>();
     public int currentMazeIndex;
@@ -103,14 +108,26 @@ public class MazeRunnerGame extends Game{
         int animationFrames = 4;
 
         // libGDX internal Array instead of ArrayList because of performance
-        Array<TextureRegion> walkFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkStandFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
 
         // Add all frames to the animation
+        walkStandFrames.add(new TextureRegion(walkSheet, frameWidth, 0, frameWidth, frameHeight));
         for (int col = 0; col < animationFrames; col++) {
-            walkFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
+            walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight ));
+            walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
+            walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight ));
+            walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight ));
         }
 
-        characterDownAnimation = new Animation<>(0.1f, walkFrames);
+        characterStandAnimation = new Animation<>(0.1f, walkStandFrames);
+        characterLeftAnimation = new Animation<>(0.1f, walkLeftFrames);
+        characterRightAnimation = new Animation<>(0.1f, walkRightFrames);
+        characterUpAnimation = new Animation<>(0.1f, walkUpFrames);
+        characterDownAnimation = new Animation<>(0.1f, walkDownFrames);
     }
 
     private void loadMazeData(String fileName, List<int[]> mazeData) {
@@ -161,26 +178,7 @@ public class MazeRunnerGame extends Game{
             int objectType = point[2];
             spriteBatch.begin();
             if (currentMazeIndex == 0) {
-                switch (objectType) {
-                    case 0:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 1:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 2:
-                        spriteBatch.draw(exit1, x, y, 60, 60);
-                        break;
-                    case 3:
-                        spriteBatch.draw(trap1, x, y, 60, 60);
-                        break;
-                    case 4:
-                        spriteBatch.draw(enemy1, x, y, 60, 60);
-                        break;
-                    case 5:
-                        spriteBatch.draw(key1, x, y, 60, 60);
-                        break;
-                }
+
             }
             else if (currentMazeIndex == 1) {
                 switch (objectType) {
@@ -293,6 +291,22 @@ public class MazeRunnerGame extends Game{
 
     public Animation<TextureRegion> getCharacterDownAnimation() {
         return characterDownAnimation;
+    }
+
+    public Animation<TextureRegion> getCharacterLeftAnimation() {
+        return characterLeftAnimation;
+    }
+
+    public Animation<TextureRegion> getCharacterRightAnimation() {
+        return characterRightAnimation;
+    }
+
+    public Animation<TextureRegion> getCharacterUpAnimation() {
+        return characterUpAnimation;
+    }
+
+    public Animation<TextureRegion> getCharacterStandAnimation() {
+        return characterStandAnimation;
     }
 
     public SpriteBatch getSpriteBatch() {
