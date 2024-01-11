@@ -26,6 +26,7 @@ public class MenuScreen implements Screen {
     private final SpriteBatch batch;
 
 
+
     public MenuScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
         //camera.zoom = 1.5f; // Set camera zoom for a closer view

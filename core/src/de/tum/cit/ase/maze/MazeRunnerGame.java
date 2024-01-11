@@ -28,6 +28,7 @@ import java.util.Map;
  * It manages the screens and global resources like SpriteBatch and Skin.
  */
 public class MazeRunnerGame extends Game{
+
     // Screens
     private MenuScreen menuScreen;
     private GameScreen gameScreen;

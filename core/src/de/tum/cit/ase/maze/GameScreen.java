@@ -29,6 +29,7 @@ public class GameScreen implements Screen {
 
     private float sinusInput = 0f;
 
+
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
         // Create and configure the camera for the game view
