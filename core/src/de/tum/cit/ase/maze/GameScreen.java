@@ -4,9 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 /**
@@ -25,6 +23,9 @@ public class GameScreen implements Screen {
     private float upTimer;
     private float downTimer;
     private float standTimer;
+    private float boundingBoxSize;
+    private SpriteBatch batch;
+    private float cameraSpeed;
 
     //private float sinusInput = 0f;
 
@@ -37,7 +38,10 @@ public class GameScreen implements Screen {
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
-
+        boundingBoxSize = 50f;
+        cameraSpeed = 5f;
+        batch = new SpriteBatch();
+        camera.position.set(playerX, playerY, 0);
     }
 
 
@@ -50,8 +54,8 @@ public class GameScreen implements Screen {
         }
 
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
-
-        camera.update(); // Update the camera
+        updateCamera();
+        //camera.update(); // Update the camera
 
         // Move text in a circular path to have an example of a moving object
         /*sinusInput += delta;
@@ -102,8 +106,8 @@ public class GameScreen implements Screen {
         standTimer += Gdx.graphics.getDeltaTime();
 
         // Set up and begin drawing with the sprite batch
-        camera.position.set(playerX, playerY, 0);
-        camera.update();
+        //camera.position.set(playerX, playerY, 0);
+        //camera.update();
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
         game.createMaze();
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
@@ -134,6 +138,26 @@ public class GameScreen implements Screen {
         );
         game.getSpriteBatch().end(); // Important to call this after drawing everything
         game.createMaze();
+    }
+    private void updateCamera() {
+        // Calculate the bounding box around the player
+        float minX = playerX - boundingBoxSize;
+        float minY = playerY - boundingBoxSize;
+        float maxX = playerX + boundingBoxSize;
+        float maxY = playerY + boundingBoxSize;
+
+        // Move the camera towards the player if it's outside the bounding box
+        if (camera.position.x < minX || camera.position.x > maxX) {
+            camera.position.x += (playerX - camera.position.x) * cameraSpeed * Gdx.graphics.getDeltaTime();
+        }
+
+        if (camera.position.y < minY || camera.position.y > maxY) {
+            camera.position.y += (playerY - camera.position.y) * cameraSpeed * Gdx.graphics.getDeltaTime();
+        }
+
+        // Update the camera matrices
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
     }
     private float getAnimationTimer(String direction) {
         switch (direction) {
@@ -173,6 +197,7 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false);
+        camera.position.set(playerX, playerY, 0);
     }
 
     @Override
