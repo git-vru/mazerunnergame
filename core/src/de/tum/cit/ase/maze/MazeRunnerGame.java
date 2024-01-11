@@ -67,6 +67,7 @@ public class MazeRunnerGame extends Game{
                 loadMazeData(file.path());
                 // Optionally, you can now use mazeData to create the maze
                 createMaze();
+                goToGame();
             }
 
             @Override
