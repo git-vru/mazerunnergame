@@ -17,9 +17,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -32,6 +30,7 @@ public class MazeRunnerGame extends Game{
     // Screens
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
+    private SelectMapScreen selectMapScreen;
 
     // Sprite Batch for rendering
     private SpriteBatch spriteBatch;
@@ -46,11 +45,7 @@ public class MazeRunnerGame extends Game{
     private Animation<TextureRegion> characterUpAnimation;
     private Animation<TextureRegion> characterStandAnimation;
     private NativeFileChooser fileChooser;
-    private Map<Point, Integer> currentMazeData; // Change the type to Map<Point, Integer>
-    private List<Map<Point, Integer>> allMazes;
-
-    //private List<List<int[]>> allMazes = new ArrayList<>();
-    public int currentMazeIndex;
+    private Map<Point, Integer> mazeData = new HashMap<>();
 
     /**
      * Constructor for MazeRunnerGame.
@@ -62,20 +57,14 @@ public class MazeRunnerGame extends Game{
         this.fileChooser = fileChooser;
 
     }
-    public void setCurrentMazeIndex(int currentMazeIndex) {
-        this.currentMazeIndex = currentMazeIndex;
-    }
     public void showFileChooser() {
         NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
         conf.directory = Gdx.files.internal("maps");
-
-        Map<Point, Integer> mazeData = new HashMap<>();
-
         fileChooser.chooseFile(conf, new NativeFileChooserCallback() {
             @Override
             public void onFileChosen(FileHandle file) {
                 // Do stuff with the chosen file, e.g., load maze data
-                loadMazeData(file.path(), mazeData);
+                loadMazeData(file.path());
                 // Optionally, you can now use mazeData to create the maze
                 createMaze();
             }
@@ -91,9 +80,6 @@ public class MazeRunnerGame extends Game{
             }
         });
     }
-
-
-
     /**
      * Called when the game is created. Initializes the SpriteBatch and Skin.
      */
@@ -102,8 +88,6 @@ public class MazeRunnerGame extends Game{
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
         this.loadCharacterAnimation(); // Load character animation
-        loadAllMazes();
-        createMaze();
         // Play some background music
         // Background sound
         /* Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
@@ -121,6 +105,13 @@ public class MazeRunnerGame extends Game{
         if (gameScreen != null) {
             gameScreen.dispose(); // Dispose the game screen if it exists
             gameScreen = null;
+        }
+    }
+    public void goToMapScreen() {
+        this.setScreen(new SelectMapScreen(this)); // Set the current screen to MenuScreen
+        if ( selectMapScreen!= null) {
+            selectMapScreen.dispose(); // Dispose the game screen if it exists
+            selectMapScreen = null;
         }
     }
 
@@ -165,7 +156,7 @@ public class MazeRunnerGame extends Game{
         characterUpAnimation = new Animation<>(0.1f, walkUpFrames);
         characterDownAnimation = new Animation<>(0.1f, walkDownFrames);
     }
-    private void loadMazeData(String fileName, Map<Point, Integer> mazeData) {
+    public void loadMazeData(String fileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -176,7 +167,7 @@ public class MazeRunnerGame extends Game{
                         int x = Integer.parseInt(coordinates[0]);
                         int y = Integer.parseInt(coordinates[1]);
                         int objectType = Integer.parseInt(parts[1]);
-                        mazeData.put(new Point(x, y), objectType);
+                        getMazeData().put(new Point(x, y), objectType);
                     }
                 }
             }
@@ -184,29 +175,7 @@ public class MazeRunnerGame extends Game{
             e.printStackTrace();
         }
     }
-
-
-    private void loadAllMazes() {
-        allMazes = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            Map<Point, Integer> mazeData = new HashMap<>();
-            loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + i + ".properties", mazeData);
-            allMazes.add(mazeData);
-        }
-    }
-    public void loadCurrentMaze() {
-        Map<Point, Integer> currentMazeData = allMazes.get(currentMazeIndex);
-        if (currentMazeIndex >= 0 && currentMazeIndex < allMazes.size()) {
-            currentMazeData = new HashMap<>(allMazes.get(currentMazeIndex)); // Clone the map for the current maze
-        } else {
-            currentMazeData = new HashMap<>(); // Default to an empty maze data
-        }
-    }
-
     public void createMaze() {
-        loadAllMazes();
-        Map<Point, Integer> currentMazeData = allMazes.get(currentMazeIndex);
-
 
         Texture wallTexture = new Texture("basictiles.png");
         Texture entryPointTexture = new Texture("things.png");
@@ -221,7 +190,7 @@ public class MazeRunnerGame extends Game{
         TextureRegion enemy = new TextureRegion(enemyTexture, 0,64, 16, 16);
         TextureRegion key = new TextureRegion(keyTexture, 0, 64, 16, 16);
 
-        for (Map.Entry<Point, Integer> entry : currentMazeData.entrySet()) {
+        for (Map.Entry<Point, Integer> entry : getMazeData().entrySet()) {
             Point point = entry.getKey();
             int x = point.x * 60;
             int y = point.y * 60;
@@ -290,5 +259,13 @@ public class MazeRunnerGame extends Game{
 
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
+    }
+
+    public Map<Point, Integer> getMazeData() {
+        return mazeData;
+    }
+
+    public void setMazeData(Map<Point, Integer> mazeData) {
+        this.mazeData = mazeData;
     }
 }
