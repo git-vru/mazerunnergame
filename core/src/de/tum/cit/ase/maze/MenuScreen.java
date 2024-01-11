@@ -29,7 +29,7 @@ public class MenuScreen implements Screen {
     public MenuScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
         //camera.zoom = 1.5f; // Set camera zoom for a closer view
-        backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/df0rdpi-1251e140-562c-46ce-9533-4d0a21ea7392.jpg");
+        backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera); // Create a viewport with the camera
@@ -40,7 +40,7 @@ public class MenuScreen implements Screen {
 
 
         // Add a label as a title
-        table.add(new Label("Hello World from the Menu!", game.getSkin(), "title")).padBottom(80).row();
+        table.add(new Label("Hello World from the Menu!", game.getSkin(), "title")).padBottom(300).row();
         // Create and add a button to go to the game screen
         TextButton startGameButton = new TextButton("Start New Game", game.getSkin());
         table.add(startGameButton).width(300).padBottom(15).row();
@@ -48,22 +48,24 @@ public class MenuScreen implements Screen {
         TextButton continueGameButton = new TextButton("Continue Game", game.getSkin());
         table.add(continueGameButton).width(300).padBottom(15).row();
 
-        TextButton selectMapButton = new TextButton("Select Map", game.getSkin());
-        table.add(selectMapButton).width(300).padBottom(15).row();
-
-        TextButton difficultyButton = new TextButton("Upload Map", game.getSkin());
-        table.add(difficultyButton).width(300).padBottom(15).row();
+//        TextButton selectMapButton = new TextButton("Select Map", game.getSkin());
+//        table.add(selectMapButton).width(300).padBottom(15).row();
+//
+//        TextButton uploadMapButton = new TextButton("Upload Map", game.getSkin());
+//        table.add(uploadMapButton).width(300).padBottom(15).row();
 
         TextButton exitGameButton = new TextButton("Exit Game", game.getSkin());
         table.add(exitGameButton).width(300).row();
 
+
         startGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (game.currentMazeIndex != 0 && game.currentMazeIndex != 1 && game.currentMazeIndex != 2 && game.currentMazeIndex != 3 && game.currentMazeIndex != 4) {
-                    game.setCurrentMazeIndex(0);
-                }
-                game.goToGame(); // Change to the game screen when button is pressed
+//                if (game.currentMazeIndex != 0 && game.currentMazeIndex != 1 && game.currentMazeIndex != 2 && game.currentMazeIndex != 3 && game.currentMazeIndex != 4) {
+//                    game.setCurrentMazeIndex(0);
+//                }
+                //game.goToGame(); // Change to the game screen when button is pressed
+                game.setScreen(new SelectMapScreen(game));
             }
         });
 
@@ -79,6 +81,20 @@ public class MenuScreen implements Screen {
         else {
             continueGameButton.setDisabled(true);
         }
+//        selectMapButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                game.setScreen(new SelectMapScreen(game));
+//            }
+//        });
+
+//        uploadMapButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                game.showFileChooser();
+//                super.clicked(event, x, y);
+//            }
+//        });
 
         exitGameButton.addListener(new ChangeListener() {
             @Override

@@ -2,6 +2,7 @@ package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,12 +10,18 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
+import games.spooky.gdx.nativefilechooser.NativeFileChooserCallback;
+import games.spooky.gdx.nativefilechooser.NativeFileChooserConfiguration;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 /**
  * The MazeRunnerGame class represents the core of the Maze Runner game.
@@ -33,8 +40,15 @@ public class MazeRunnerGame extends Game{
 
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
+    private Animation<TextureRegion> characterLeftAnimation;
+    private Animation<TextureRegion> characterRightAnimation;
+    private Animation<TextureRegion> characterUpAnimation;
+    private Animation<TextureRegion> characterStandAnimation;
+    private NativeFileChooser fileChooser;
+    private Map<Point, Integer> currentMazeData; // Change the type to Map<Point, Integer>
+    private List<Map<Point, Integer>> allMazes;
 
-    private List<List<int[]>> allMazes = new ArrayList<>();
+    //private List<List<int[]>> allMazes = new ArrayList<>();
     public int currentMazeIndex;
 
     /**
@@ -44,10 +58,39 @@ public class MazeRunnerGame extends Game{
      */
     public MazeRunnerGame(NativeFileChooser fileChooser) {
         super();
+        this.fileChooser = fileChooser;
+
     }
     public void setCurrentMazeIndex(int currentMazeIndex) {
         this.currentMazeIndex = currentMazeIndex;
     }
+    public void showFileChooser() {
+        NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
+        conf.directory = Gdx.files.internal("maps");
+
+        Map<Point, Integer> mazeData = new HashMap<>();
+
+        fileChooser.chooseFile(conf, new NativeFileChooserCallback() {
+            @Override
+            public void onFileChosen(FileHandle file) {
+                // Do stuff with the chosen file, e.g., load maze data
+                loadMazeData(file.path(), mazeData);
+                // Optionally, you can now use mazeData to create the maze
+                createMaze();
+            }
+
+            @Override
+            public void onCancellation() {
+                // Handle cancellation if needed
+            }
+
+            @Override
+            public void onError(Exception exception) {
+                // Handle error (use exception type)
+            }
+        });
+    }
+
 
 
     /**
@@ -60,7 +103,6 @@ public class MazeRunnerGame extends Game{
         this.loadCharacterAnimation(); // Load character animation
         loadAllMazes();
         createMaze();
-
         // Play some background music
         // Background sound
         /* Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
@@ -101,19 +143,28 @@ public class MazeRunnerGame extends Game{
         int frameWidth = 16;
         int frameHeight = 32;
         int animationFrames = 4;
-
-        // libGDX internal Array instead of ArrayList because of performance
-        Array<TextureRegion> walkFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkStandFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
 
         // Add all frames to the animation
+        walkStandFrames.add(new TextureRegion(walkSheet, frameWidth, 0, frameWidth, frameHeight));
         for (int col = 0; col < animationFrames; col++) {
-            walkFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
+            walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
+            walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
+            walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight));
+            walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight));
         }
 
-        characterDownAnimation = new Animation<>(0.1f, walkFrames);
+        characterStandAnimation = new Animation<>(0.1f, walkStandFrames);
+        characterLeftAnimation = new Animation<>(0.1f, walkLeftFrames);
+        characterRightAnimation = new Animation<>(0.1f, walkRightFrames);
+        characterUpAnimation = new Animation<>(0.1f, walkUpFrames);
+        characterDownAnimation = new Animation<>(0.1f, walkDownFrames);
     }
-
-    private void loadMazeData(String fileName, List<int[]> mazeData) {
+    /*private void loadMazeData(String fileName, List<int[]> mazeData) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -132,15 +183,58 @@ public class MazeRunnerGame extends Game{
         catch (IOException e) {
             e.printStackTrace();
         }
+    }*/
+    private void loadMazeData(String fileName, Map<Point, Integer> mazeData) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("=");
+                if (parts.length == 2) {
+                    String[] coordinates = parts[0].split(",");
+                    if (coordinates.length == 2) {
+                        int x = Integer.parseInt(coordinates[0]);
+                        int y = Integer.parseInt(coordinates[1]);
+                        int objectType = Integer.parseInt(parts[1]);
+                        mazeData.put(new Point(x, y), objectType);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+
     private void loadAllMazes() {
-        List<int[]> mazeData = new ArrayList<>();
-        for (int i = 1 ; i <= 5 ; i++) {
-            loadMazeData("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + i + ".properties", mazeData);
+        allMazes = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            Map<Point, Integer> mazeData = new HashMap<>();
+            loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + i + ".properties", mazeData);
             allMazes.add(mazeData);
         }
     }
+    public void loadCurrentMaze() {
+        Map<Point, Integer> currentMazeData = allMazes.get(currentMazeIndex);
+        if (currentMazeIndex >= 0 && currentMazeIndex < allMazes.size()) {
+            currentMazeData = new HashMap<>(allMazes.get(currentMazeIndex)); // Clone the map for the current maze
+        } else {
+            currentMazeData = new HashMap<>(); // Default to an empty maze data
+        }
+    }
+
+
+    //    private void loadAllMazes() {
+//        List<int[]> mazeData = new ArrayList<>();
+//        for (int i = 1 ; i <= 5 ; i++) {
+//            loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-"+i+".properties", mazeData);
+//            allMazes.add(mazeData);
+//        }
+//    }
     public void createMaze() {
+        loadAllMazes();
+        Map<Point, Integer> currentMazeData = allMazes.get(currentMazeIndex);
+
+
         Texture wallTexture = new Texture("basictiles.png");
         Texture entryPointTexture = new Texture("things.png");
         Texture exitTexture = new Texture("things.png");
@@ -148,19 +242,20 @@ public class MazeRunnerGame extends Game{
         Texture enemyTexture = new Texture("mobs.png");
         Texture keyTexture = new Texture("objects.png");
         TextureRegion wall1 = new TextureRegion(wallTexture, 0,0 /*wallTexture.getHeight() - 16*/, 16, 16);
-        TextureRegion entryPoint1 = new TextureRegion(entryPointTexture, 0, entryPointTexture.getHeight() - 16, 16, 16);
+        TextureRegion entryPoint1 = new TextureRegion(entryPointTexture, 0, 0, 16, 16);
         TextureRegion exit1 = new TextureRegion(exitTexture, 0, exitTexture.getHeight() - 32, 16, 16);
         TextureRegion trap1 = new TextureRegion(trapTexture, 0, 0, 16, 16);
         TextureRegion enemy1 = new TextureRegion(enemyTexture, 0, (enemyTexture.getHeight() / 2) - 16, 16, 16);
         TextureRegion key1 = new TextureRegion(keyTexture, 0, keyTexture.getHeight() - 8, 8, 8);
 
-        List<int[]> currentMazeData = allMazes.get(currentMazeIndex);
-        for (int[] point : currentMazeData) {
-            int x = point[0] * 60;
-            int y = point[1] * 60;
-            int objectType = point[2];
+        //List<int[]> currentMazeData = allMazes.get(currentMazeIndex);
+        for (Map.Entry<Point, Integer> entry : currentMazeData.entrySet()) {
+            Point point = entry.getKey();
+            int x = point.x * 60;
+            int y = point.y * 60;
+            int objectType = entry.getValue();
             spriteBatch.begin();
-            if (currentMazeIndex == 0) {
+            /*if (currentMazeIndex == 0) {
                 switch (objectType) {
                     case 0:
                         spriteBatch.draw(entryPoint1, x, y, 60, 60);
@@ -248,7 +343,7 @@ public class MazeRunnerGame extends Game{
                         break;
                 }
             }
-            else if (currentMazeIndex == 4) {
+            else if (currentMazeIndex == 4) {*/
                 switch (objectType) {
                     case 0:
                         spriteBatch.draw(entryPoint1, x, y, 60, 60);
@@ -269,7 +364,6 @@ public class MazeRunnerGame extends Game{
                         spriteBatch.draw(key1, x, y, 60, 60);
                         break;
                 }
-            }
             spriteBatch.end();
         }
     }
@@ -293,6 +387,22 @@ public class MazeRunnerGame extends Game{
 
     public Animation<TextureRegion> getCharacterDownAnimation() {
         return characterDownAnimation;
+    }
+
+    public Animation<TextureRegion> getCharacterLeftAnimation() {
+        return characterLeftAnimation;
+    }
+
+    public Animation<TextureRegion> getCharacterRightAnimation() {
+        return characterRightAnimation;
+    }
+
+    public Animation<TextureRegion> getCharacterUpAnimation() {
+        return characterUpAnimation;
+    }
+
+    public Animation<TextureRegion> getCharacterStandAnimation() {
+        return characterStandAnimation;
     }
 
     public SpriteBatch getSpriteBatch() {
