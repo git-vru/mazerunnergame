@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
@@ -30,7 +31,6 @@ public class MazeRunnerGame extends Game{
     // Screens
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
-    private SelectMapScreen selectMapScreen;
 
     // Sprite Batch for rendering
     private SpriteBatch spriteBatch;
@@ -91,10 +91,10 @@ public class MazeRunnerGame extends Game{
         this.loadCharacterAnimation(); // Load character animation
         // Play some background music
         // Background sound
-        /* Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-        backgroundMusic.setLooping(true);
-        backgroundMusic.play();
-        */
+//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+//        backgroundMusic.setLooping(true);
+//        backgroundMusic.play();
+
         goToMenu(); // Navigate to the menu screen
     }
 
@@ -106,13 +106,6 @@ public class MazeRunnerGame extends Game{
         if (gameScreen != null) {
             gameScreen.dispose(); // Dispose the game screen if it exists
             gameScreen = null;
-        }
-    }
-    public void goToMapScreen() {
-        this.setScreen(new SelectMapScreen(this)); // Set the current screen to MenuScreen
-        if ( selectMapScreen!= null) {
-            selectMapScreen.dispose(); // Dispose the game screen if it exists
-            selectMapScreen = null;
         }
     }
 
@@ -136,14 +129,13 @@ public class MazeRunnerGame extends Game{
         int frameWidth = 16;
         int frameHeight = 32;
         int animationFrames = 4;
-        Array<TextureRegion> walkStandFrames = new Array<>(TextureRegion.class);
+        TextureRegion walkStandFrame = new TextureRegion(walkSheet, 0, 0, frameWidth, frameHeight);
         Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
         Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
         Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
         Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
 
         // Add all frames to the animation
-        walkStandFrames.add(new TextureRegion(walkSheet, frameWidth, 0, frameWidth, frameHeight));
         for (int col = 0; col < animationFrames; col++) {
             walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
             walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
@@ -151,7 +143,7 @@ public class MazeRunnerGame extends Game{
             walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight));
         }
 
-        characterStandAnimation = new Animation<>(0.1f, walkStandFrames);
+        characterStandAnimation = new Animation<>(0.1f, walkStandFrame);
         characterLeftAnimation = new Animation<>(0.1f, walkLeftFrames);
         characterRightAnimation = new Animation<>(0.1f, walkRightFrames);
         characterUpAnimation = new Animation<>(0.1f, walkUpFrames);
@@ -191,6 +183,8 @@ public class MazeRunnerGame extends Game{
         TextureRegion enemy = new TextureRegion(enemyTexture, 0,64, 16, 16);
         TextureRegion key = new TextureRegion(keyTexture, 0, 64, 16, 16);
 
+        Array<Rectangle> wallRectangles = new Array<>();
+
         for (Map.Entry<Point, Integer> entry : getMazeData().entrySet()) {
             Point point = entry.getKey();
             int x = point.x * 60;
@@ -200,6 +194,7 @@ public class MazeRunnerGame extends Game{
             switch (objectType) {
                 case 0:
                     spriteBatch.draw(wall, x, y, 60, 60);
+                    wallRectangles.add(new Rectangle(x,y,60,60));
                     break;
                 case 1:
                     spriteBatch.draw(entryPoint, x, y, 60, 60);
@@ -266,7 +261,4 @@ public class MazeRunnerGame extends Game{
         return mazeData;
     }
 
-    public void setMazeData(Map<Point, Integer> mazeData) {
-        this.mazeData = mazeData;
-    }
 }

@@ -16,12 +16,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class SelectMapScreen implements Screen {
-
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
-
     public SelectMapScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
