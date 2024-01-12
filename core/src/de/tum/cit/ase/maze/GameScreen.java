@@ -33,12 +33,7 @@ public class GameScreen implements Screen {
         boundingBoxSize = 80f;
         cameraSpeed = 2f;
         batch = new SpriteBatch();
-        hero = new Hero(0, 0,
-                game.getCharacterLeftAnimation(),
-                game.getCharacterRightAnimation(),
-                game.getCharacterUpAnimation(),
-                game.getCharacterDownAnimation(),
-                game.getCharacterStandAnimation());
+        hero = game.getHero();
     }
 
 

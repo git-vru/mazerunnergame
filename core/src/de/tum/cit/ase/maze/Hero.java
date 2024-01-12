@@ -61,23 +61,23 @@ public class Hero {
    }
 
    private Animation<TextureRegion> getCurrentFrame() {
-       return switch (direction) {
-           case "left" -> leftAnimation;
-           case "right" -> rightAnimation;
-           case "up" -> upAnimation;
-           case "down" -> downAnimation;
-           default -> standAnimation;
-       };
+      return switch (direction) {
+         case "left" -> leftAnimation;
+         case "right" -> rightAnimation;
+         case "up" -> upAnimation;
+         case "down" -> downAnimation;
+         default -> standAnimation;
+      };
    }
 
    private float getAnimationTimer() {
-       return switch (direction) {
-           case "left" -> leftTimer;
-           case "right" -> rightTimer;
-           case "up" -> upTimer;
-           case "down" -> downTimer;
-           default -> standTimer;
-       };
+      return switch (direction) {
+         case "left" -> leftTimer;
+         case "right" -> rightTimer;
+         case "up" -> upTimer;
+         case "down" -> downTimer;
+         default -> standTimer;
+      };
    }
    public void moveLeft(float delta) {
       x -= delta;

@@ -37,6 +37,7 @@ public class MazeRunnerGame extends Game{
 
     // UI Skin
     private Skin skin;
+    private Hero hero;
 
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
@@ -198,6 +199,12 @@ public class MazeRunnerGame extends Game{
                     break;
                 case 1:
                     spriteBatch.draw(entryPoint, x, y, 60, 60);
+                    this.hero = new Hero(x-48, y-12,
+                            getCharacterLeftAnimation(),
+                            getCharacterRightAnimation(),
+                            getCharacterUpAnimation(),
+                            getCharacterDownAnimation(),
+                            getCharacterStandAnimation());
                     break;
                 case 2:
                     spriteBatch.draw(exit, x, y, 60, 60);
@@ -261,4 +268,7 @@ public class MazeRunnerGame extends Game{
         return mazeData;
     }
 
+    public Hero getHero() {
+        return hero;
+    }
 }
