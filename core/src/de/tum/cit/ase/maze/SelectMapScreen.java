@@ -1,4 +1,5 @@
 package de.tum.cit.ase.maze;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -7,7 +8,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -21,7 +24,6 @@ public class SelectMapScreen implements Screen {
 
     public SelectMapScreen(MazeRunnerGame game) {
         this.game = game;
-
         var camera = new OrthographicCamera();
         backgroundTexture = new Texture("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\assets\\foto.jpg");
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -31,8 +33,6 @@ public class SelectMapScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-
-        table.add(new Label("Select a Map", game.getSkin(), "title")).padBottom(50).row();
 
         for (int i = 1; i <= 5; i++) {
             TextButton levelButton = new TextButton("Level " + i, game.getSkin());
@@ -44,8 +44,8 @@ public class SelectMapScreen implements Screen {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-                    game.setCurrentMazeIndex(finalI - 1); // Adjust index since levels start from 1
-                    game.loadCurrentMaze(); // Load the maze data for the selected level
+                    game.loadMazeData("/Users/emirh/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
+                    game.createMaze();
                     game.goToGame(); // Transition to the game screen
                 }
             });
@@ -56,6 +56,7 @@ public class SelectMapScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.showFileChooser();
+
             }
         });
         table.add(uploadMapButton).width(300).padBottom(15).row();

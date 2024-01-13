@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
@@ -17,9 +20,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -27,17 +28,17 @@ import java.util.Map;
  * The MazeRunnerGame class represents the core of the Maze Runner game.
  * It manages the screens and global resources like SpriteBatch and Skin.
  */
-public class MazeRunnerGame extends Game{
+public class MazeRunnerGame extends Game {
 
     // Screens
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
-
     // Sprite Batch for rendering
     private SpriteBatch spriteBatch;
 
     // UI Skin
     private Skin skin;
+    private Hero hero;
 
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
@@ -46,11 +47,7 @@ public class MazeRunnerGame extends Game{
     private Animation<TextureRegion> characterUpAnimation;
     private Animation<TextureRegion> characterStandAnimation;
     private NativeFileChooser fileChooser;
-    private Map<Point, Integer> currentMazeData; // Change the type to Map<Point, Integer>
-    private List<Map<Point, Integer>> allMazes;
-
-    //private List<List<int[]>> allMazes = new ArrayList<>();
-    public int currentMazeIndex;
+    private Map<Point, Integer> mazeData = new HashMap<>();
 
     /**
      * Constructor for MazeRunnerGame.
@@ -62,22 +59,18 @@ public class MazeRunnerGame extends Game{
         this.fileChooser = fileChooser;
 
     }
-    public void setCurrentMazeIndex(int currentMazeIndex) {
-        this.currentMazeIndex = currentMazeIndex;
-    }
+
     public void showFileChooser() {
         NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
         conf.directory = Gdx.files.internal("maps");
-
-        Map<Point, Integer> mazeData = new HashMap<>();
-
         fileChooser.chooseFile(conf, new NativeFileChooserCallback() {
             @Override
             public void onFileChosen(FileHandle file) {
                 // Do stuff with the chosen file, e.g., load maze data
-                loadMazeData(file.path(), mazeData);
+                loadMazeData(file.path());
                 // Optionally, you can now use mazeData to create the maze
                 createMaze();
+                goToGame();
             }
 
             @Override
@@ -92,8 +85,6 @@ public class MazeRunnerGame extends Game{
         });
     }
 
-
-
     /**
      * Called when the game is created. Initializes the SpriteBatch and Skin.
      */
@@ -102,14 +93,12 @@ public class MazeRunnerGame extends Game{
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
         this.loadCharacterAnimation(); // Load character animation
-        loadAllMazes();
-        createMaze();
         // Play some background music
         // Background sound
-        /* Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-        backgroundMusic.setLooping(true);
-        backgroundMusic.play();
-        */
+//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+//        backgroundMusic.setLooping(true);
+//        backgroundMusic.play();
+
         goToMenu(); // Navigate to the menu screen
     }
 
@@ -144,14 +133,13 @@ public class MazeRunnerGame extends Game{
         int frameWidth = 16;
         int frameHeight = 32;
         int animationFrames = 4;
-        Array<TextureRegion> walkStandFrames = new Array<>(TextureRegion.class);
+        TextureRegion walkStandFrame = new TextureRegion(walkSheet, 0, 0, frameWidth, frameHeight);
         Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
         Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
         Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
         Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
 
         // Add all frames to the animation
-        walkStandFrames.add(new TextureRegion(walkSheet, frameWidth, 0, frameWidth, frameHeight));
         for (int col = 0; col < animationFrames; col++) {
             walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
             walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
@@ -159,13 +147,14 @@ public class MazeRunnerGame extends Game{
             walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight));
         }
 
-        characterStandAnimation = new Animation<>(0.1f, walkStandFrames);
+        characterStandAnimation = new Animation<>(0.1f, walkStandFrame);
         characterLeftAnimation = new Animation<>(0.1f, walkLeftFrames);
         characterRightAnimation = new Animation<>(0.1f, walkRightFrames);
         characterUpAnimation = new Animation<>(0.1f, walkUpFrames);
         characterDownAnimation = new Animation<>(0.1f, walkDownFrames);
     }
-    /*private void loadMazeData(String fileName, List<int[]> mazeData) {
+
+    public void loadMazeData(String fileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -176,27 +165,7 @@ public class MazeRunnerGame extends Game{
                         int x = Integer.parseInt(coordinates[0]);
                         int y = Integer.parseInt(coordinates[1]);
                         int objectType = Integer.parseInt(parts[1]);
-                        mazeData.add(new int[] {x, y, objectType});
-                    }
-                }
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-    private void loadMazeData(String fileName, Map<Point, Integer> mazeData) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("=");
-                if (parts.length == 2) {
-                    String[] coordinates = parts[0].split(",");
-                    if (coordinates.length == 2) {
-                        int x = Integer.parseInt(coordinates[0]);
-                        int y = Integer.parseInt(coordinates[1]);
-                        int objectType = Integer.parseInt(parts[1]);
-                        mazeData.put(new Point(x, y), objectType);
+                        getMazeData().put(new Point(x, y), objectType);
                     }
                 }
             }
@@ -205,164 +174,62 @@ public class MazeRunnerGame extends Game{
         }
     }
 
-
-    private void loadAllMazes() {
-        allMazes = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            Map<Point, Integer> mazeData = new HashMap<>();
-            loadMazeData("/Users/emirh/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + i + ".properties", mazeData);
-            allMazes.add(mazeData);
-        }
-    }
-    public void loadCurrentMaze() {
-        Map<Point, Integer> currentMazeData = allMazes.get(currentMazeIndex);
-        if (currentMazeIndex >= 0 && currentMazeIndex < allMazes.size()) {
-            currentMazeData = new HashMap<>(allMazes.get(currentMazeIndex)); // Clone the map for the current maze
-        } else {
-            currentMazeData = new HashMap<>(); // Default to an empty maze data
-        }
-    }
-
-
-    //    private void loadAllMazes() {
-//        List<int[]> mazeData = new ArrayList<>();
-//        for (int i = 1 ; i <= 5 ; i++) {
-//            loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-"+i+".properties", mazeData);
-//            allMazes.add(mazeData);
-//        }
-//    }
     public void createMaze() {
-        loadAllMazes();
-        Map<Point, Integer> currentMazeData = allMazes.get(currentMazeIndex);
-
 
         Texture wallTexture = new Texture("basictiles.png");
         Texture entryPointTexture = new Texture("things.png");
         Texture exitTexture = new Texture("things.png");
-        Texture trapTexture = new Texture("things.png");
+        Texture trapTexture = new Texture("basictiles.png");
         Texture enemyTexture = new Texture("mobs.png");
         Texture keyTexture = new Texture("objects.png");
-        TextureRegion wall1 = new TextureRegion(wallTexture, 0,0 /*wallTexture.getHeight() - 16*/, 16, 16);
-        TextureRegion entryPoint1 = new TextureRegion(entryPointTexture, 0, 0, 16, 16);
-        TextureRegion exit1 = new TextureRegion(exitTexture, 0, exitTexture.getHeight() - 32, 16, 16);
-        TextureRegion trap1 = new TextureRegion(trapTexture, 0, 0, 16, 16);
-        TextureRegion enemy1 = new TextureRegion(enemyTexture, 0, (enemyTexture.getHeight() / 2) - 16, 16, 16);
-        TextureRegion key1 = new TextureRegion(keyTexture, 0, keyTexture.getHeight() - 8, 8, 8);
+        TextureRegion wall = new TextureRegion(wallTexture, 0, 0, 16, 16);
+        TextureRegion entryPoint = new TextureRegion(entryPointTexture, 0, 0, 16, 16);
+        TextureRegion exit = new TextureRegion(exitTexture, 48, 0, 16, 16);
+        TextureRegion trap = new TextureRegion(trapTexture, 16, 32, 16, 16);
+        TextureRegion enemy = new TextureRegion(enemyTexture, 0, 64, 16, 16);
+        TextureRegion key = new TextureRegion(keyTexture, 0, 64, 16, 16);
 
-        //List<int[]> currentMazeData = allMazes.get(currentMazeIndex);
-        for (Map.Entry<Point, Integer> entry : currentMazeData.entrySet()) {
+        Array<Rectangle> wallRectangles = new Array<>();
+
+        for (Map.Entry<Point, Integer> entry : getMazeData().entrySet()) {
             Point point = entry.getKey();
             int x = point.x * 60;
             int y = point.y * 60;
             int objectType = entry.getValue();
             spriteBatch.begin();
-            /*if (currentMazeIndex == 0) {
-                switch (objectType) {
-                    case 0:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 1:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 2:
-                        spriteBatch.draw(exit1, x, y, 60, 60);
-                        break;
-                    case 3:
-                        spriteBatch.draw(trap1, x, y, 60, 60);
-                        break;
-                    case 4:
-                        spriteBatch.draw(enemy1, x, y, 60, 60);
-                        break;
-                    case 5:
-                        spriteBatch.draw(key1, x, y, 60, 60);
-                        break;
-                }
-            }
-            else if (currentMazeIndex == 1) {
-                switch (objectType) {
-                    case 0:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 1:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 2:
-                        spriteBatch.draw(exit1, x, y, 60, 60);
-                        break;
-                    case 3:
-                        spriteBatch.draw(trap1, x, y, 60, 60);
-                        break;
-                    case 4:
-                        spriteBatch.draw(enemy1, x, y, 60, 60);
-                        break;
-                    case 5:
-                        spriteBatch.draw(key1, x, y, 60, 60);
-                        break;
-                }
-            }
-            else if (currentMazeIndex == 2) {
-                switch (objectType) {
-                    case 0:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 1:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 2:
-                        spriteBatch.draw(exit1, x, y, 60, 60);
-                        break;
-                    case 3:
-                        spriteBatch.draw(trap1, x, y, 60, 60);
-                        break;
-                    case 4:
-                        spriteBatch.draw(enemy1, x, y, 60, 60);
-                        break;
-                    case 5:
-                        spriteBatch.draw(key1, x, y, 60, 60);
-                        break;
-                }
-            }
-            else if (currentMazeIndex == 3) {
-                switch (objectType) {
-                    case 0:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 1:
-                        spriteBatch.draw(entryPoint1, x, y, 60, 60);
-                        break;
-                    case 2:
-                        spriteBatch.draw(exit1, x, y, 60, 60);
-                        break;
-                    case 3:
-                        spriteBatch.draw(trap1, x, y, 60, 60);
-                        break;
-                    case 4:
-                        spriteBatch.draw(enemy1, x, y, 60, 60);
-                        break;
-                    case 5:
-                        spriteBatch.draw(key1, x, y, 60, 60);
-                        break;
-                }
-            }
-            else if (currentMazeIndex == 4) {*/
             switch (objectType) {
                 case 0:
-                    spriteBatch.draw(entryPoint1, x, y, 60, 60);
+                    spriteBatch.draw(wall, x, y, 60, 60);
+                    wallRectangles.add(new Rectangle(x, y, 60, 60));
                     break;
                 case 1:
-                    spriteBatch.draw(entryPoint1, x, y, 60, 60);
+                    spriteBatch.draw(entryPoint, x, y, 60, 60);
+                    this.hero = new Hero(x-48, y-12,
+                            getCharacterLeftAnimation(),
+                            getCharacterRightAnimation(),
+                            getCharacterUpAnimation(),
+                            getCharacterDownAnimation(),
+                            getCharacterStandAnimation());
                     break;
                 case 2:
-                    spriteBatch.draw(exit1, x, y, 60, 60);
+                    spriteBatch.draw(exit, x, y, 60, 60);
                     break;
                 case 3:
-                    spriteBatch.draw(trap1, x, y, 60, 60);
+                    spriteBatch.draw(trap, x, y, 60, 60);
                     break;
                 case 4:
-                    spriteBatch.draw(enemy1, x, y, 60, 60);
+                    Enemy enemyInstance = new Enemy(new Vector2(x, y), Enemy.createEnemyAnimation());
+                    enemyInstance.update(Gdx.graphics.getDeltaTime());
+                    spriteBatch.draw(
+                            enemyInstance.getAnimation().getKeyFrame(enemyInstance.getStateTime(), true),
+                            enemyInstance.getPosition().x,
+                            enemyInstance.getPosition().y,
+                            60,
+                            60
+                    );
                     break;
                 case 5:
-                    spriteBatch.draw(key1, x, y, 60, 60);
+                    spriteBatch.draw(key, x + 15, y + 15, 30, 30);
                     break;
             }
             spriteBatch.end();
@@ -409,4 +276,12 @@ public class MazeRunnerGame extends Game{
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
     }
+
+    public Map<Point, Integer> getMazeData() {
+        return mazeData;
+    }
+    public Hero getHero() {
+        return hero;
+    }
 }
+
