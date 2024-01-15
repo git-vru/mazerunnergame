@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.tum.cit.ase.maze.MazeRunnerGame;
 
 /**
  * The MenuScreen class is responsible for displaying the main menu of the game.
@@ -30,7 +31,7 @@ public class MenuScreen implements Screen {
     public MenuScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
         //camera.zoom = 1.5f; // Set camera zoom for a closer view
-        backgroundTexture = new Texture("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\assets\\foto.jpg");
+        backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera); // Create a viewport with the camera

@@ -14,18 +14,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.tum.cit.ase.maze.MazeRunnerGame;
 
 public class SelectMapScreen implements Screen {
-
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
-
     public SelectMapScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
-        backgroundTexture = new Texture("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\assets\\foto.jpg");
+        backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera);
@@ -33,6 +32,8 @@ public class SelectMapScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
+
+        table.add(new Label("Select a Map", game.getSkin(), "title")).padBottom(50).row();
 
         for (int i = 1; i <= 5; i++) {
             TextButton levelButton = new TextButton("Level " + i, game.getSkin());
@@ -44,7 +45,7 @@ public class SelectMapScreen implements Screen {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-                    game.loadMazeData("/Users/emirh/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
+                    game.loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
                     game.createMaze();
                     game.goToGame(); // Transition to the game screen
                 }
