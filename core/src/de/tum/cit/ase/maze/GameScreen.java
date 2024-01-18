@@ -18,6 +18,7 @@ import de.tum.cit.ase.maze.MazeRunnerGame;
 public class GameScreen implements Screen {
 
     private final MazeRunnerGame game;
+    private MazeLoader mazeLoader;
     private final OrthographicCamera camera;
     private final BitmapFont font;
     private final Hero hero;
@@ -25,8 +26,10 @@ public class GameScreen implements Screen {
     private final SpriteBatch batch;
     private float cameraSpeed;
 
+
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
+        this.mazeLoader = game.getMazeLoader();
         // Create and configure the camera for the game view
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
@@ -41,8 +44,6 @@ public class GameScreen implements Screen {
 
     }
 
-
-    // Screen interface methods with necessary functionality
     @Override
     public void render(float delta) {
         // Check for escape key press to go back to the menu
@@ -54,7 +55,7 @@ public class GameScreen implements Screen {
         updateCamera();
         hero.update(delta,determineDirection());
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
-        game.createMaze();
+        game.renderMaze();
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
@@ -66,8 +67,9 @@ public class GameScreen implements Screen {
         String direction = "";
 
         float speed = 200;
-        for (Rectangle rectangle: game.getWallRectangles()) {
+        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
             if (rectangle.overlaps(hero.getHeroRect())){
+                //System.out.println(hero.getPrevX());
                 hero.setX(hero.getPrevX());
                 hero.setY(hero.getPrevY());
             }
@@ -148,6 +150,10 @@ public class GameScreen implements Screen {
 
     public OrthographicCamera getCamera() {
         return camera;
+    }
+
+    public void setMazeLoader(MazeLoader mazeLoader) {
+        this.mazeLoader = mazeLoader;
     }
     // Additional methods and logic can be added as needed for the game screen
 }

@@ -2,8 +2,6 @@ package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
-
 public class Hero {
    private float x;
    private float y;
@@ -13,21 +11,22 @@ public class Hero {
    private float downTimer;
    private float standTimer;
    private String direction;
-   private final Animation<TextureRegion> leftAnimation;
-   private final Animation<TextureRegion> rightAnimation;
-   private final Animation<TextureRegion> upAnimation;
-   private final Animation<TextureRegion> downAnimation;
-   private final Animation<TextureRegion> standAnimation;
+   private Animation<TextureRegion> downAnimation;
+   private Animation<TextureRegion> leftAnimation;
+   private Animation<TextureRegion> rightAnimation;
+   private Animation<TextureRegion> upAnimation;
+   private Animation<TextureRegion> standAnimation;
    private Rectangle heroRect;
    private int heroHeight;
    private int heroWidth;
    float prevX,prevY;
-
    public Hero(float x, float y, Animation<TextureRegion> leftAnimation,
                Animation<TextureRegion> rightAnimation, Animation<TextureRegion> upAnimation,
                Animation<TextureRegion> downAnimation, Animation<TextureRegion> standAnimation) {
       this.x = x;
       this.y = y;
+      this.prevX = x;
+      this.prevY = y;
       this.leftAnimation = leftAnimation;
       this.rightAnimation = rightAnimation;
       this.upAnimation = upAnimation;
@@ -39,8 +38,8 @@ public class Hero {
    }
 
    public void update(float delta, String direction) {
-      this.direction=direction;
-      switch (direction) {
+      setDirection(direction);
+      switch (getDirection()) {
          case "left":
             leftTimer += delta;
             break;
@@ -60,15 +59,15 @@ public class Hero {
    }
 
    public void draw(SpriteBatch spriteBatch) {
-      spriteBatch.draw(
-              getCurrentFrame().getKeyFrame(getAnimationTimer(), true),
+      //              getCurrentFrame().getKeyFrame(getAnimationTimer(), true),
+      spriteBatch.draw(getCurrentFrame().getKeyFrame(getAnimationTimer(), true),
               x,
               y,getHeroWidth(),getHeroHeight()
       );
    }
 
    private Animation<TextureRegion> getCurrentFrame() {
-      return switch (direction) {
+      return switch (getDirection()) {
          case "left" -> leftAnimation;
          case "right" -> rightAnimation;
          case "up" -> upAnimation;
@@ -78,7 +77,7 @@ public class Hero {
    }
 
    private float getAnimationTimer() {
-      return switch (direction) {
+      return switch (getDirection()) {
          case "left" -> leftTimer;
          case "right" -> rightTimer;
          case "up" -> upTimer;
@@ -154,5 +153,13 @@ public class Hero {
 
    public int getHeroWidth() {
       return heroWidth;
+   }
+
+   public String getDirection() {
+      return direction;
+   }
+
+   public void setDirection(String direction) {
+      this.direction = direction;
    }
 }
