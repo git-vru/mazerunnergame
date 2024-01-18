@@ -1,27 +1,28 @@
-package de.tum.cit.ase.maze;
+/*package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import de.tum.cit.ase.maze.MazeRunnerGame;
 
-public class SelectMapScreen implements Screen {
+public class OptionScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
-    public SelectMapScreen(MazeRunnerGame game) {
+    private int clickedTimes;
+    public OptionScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
         backgroundTexture = new Texture("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\assets\\foto.jpg");
@@ -32,45 +33,20 @@ public class SelectMapScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
+        clickedTimes = 2;
 
-        table.add(new Label("Select a Map", game.getSkin(), "title")).padBottom(50).row();
-
-        for (int i = 1; i <= 5; i++) {
-            TextButton levelButton = new TextButton("Level " + i, game.getSkin());
-            table.add(levelButton).width(300).padBottom(15).row();
-
-            // Add a listener to handle the button click for each level
-            int finalI = i; // Need a final variable for the lambda expression
-            levelButton.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-                    game.loadMazeData("/Users/emirh/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
-                    game.createMaze();
-                    game.goToGame(); // Transition to the game screen
-                }
-            });
-        }
-
-        TextButton uploadMapButton = new TextButton("Upload Map", game.getSkin());
-        uploadMapButton.addListener(new ChangeListener() {
+        table.add(new Label("Options", game.getSkin(), "title")).padBottom(50).row();
+        TextButton gameMusicButton = new TextButton("Game Music", game.getSkin());
+        table.add(gameMusicButton).width(300).padBottom(15).row();
+        gameMusicButton.addListener(new ClickListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.showFileChooser();
-
+            public void clicked(InputEvent event, float x, float y) {
+                setClickedTimes(getClickedTimes() + 1);
+                super.clicked(event, x, y);
             }
         });
-        table.add(uploadMapButton).width(300).padBottom(15).row();
-
-        TextButton backButton = new TextButton("Back", game.getSkin());
-        backButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.goToMenu();
-            }
-        });
-        table.add(backButton).width(300).padBottom(15).row();
     }
+
 
     @Override
     public void render(float delta) {
@@ -78,7 +54,7 @@ public class SelectMapScreen implements Screen {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         batch.setProjectionMatrix(stage.getCamera().combined);
         batch.begin();
-        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        //batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
         stage.draw();
     }
@@ -112,4 +88,13 @@ public class SelectMapScreen implements Screen {
         //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
         //Gdx.input.setInputProcessor(null);
     }
+
+    public int getClickedTimes() {
+        return clickedTimes;
+    }
+
+    public void setClickedTimes(int clickedTimes) {
+        this.clickedTimes = clickedTimes;
+    }
 }
+ */

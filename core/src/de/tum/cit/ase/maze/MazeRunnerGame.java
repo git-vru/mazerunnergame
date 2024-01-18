@@ -2,6 +2,7 @@ package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -39,6 +40,7 @@ public class MazeRunnerGame extends Game{
     // UI Skin
     private Skin skin;
     private Hero hero;
+    private Enemy enemy;
 
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
@@ -57,9 +59,10 @@ public class MazeRunnerGame extends Game{
     private TextureRegion entryPoint;
     private TextureRegion exit;
     private TextureRegion trap;
-    private TextureRegion enemy;
+    private TextureRegion enemyTexture;
     private TextureRegion key;
     private TextureRegion grass;
+    //private final OptionScreen optionScreen;
 
     /**
      * Constructor for MazeRunnerGame.
@@ -72,7 +75,7 @@ public class MazeRunnerGame extends Game{
         //this.gameScreen=gameScreen;
         this.maxX=0;
         this.maxY=0;
-
+        //this.optionScreen = new OptionScreen(this);
     }
     public void showFileChooser() {
         NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
@@ -101,17 +104,25 @@ public class MazeRunnerGame extends Game{
     /**
      * Called when the game is created. Initializes the SpriteBatch and Skin.
      */
+
     @Override
     public void create() {
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
         this.loadCharacterAnimation(); // Load character animation
         this.loadWall();
+        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic.setLooping(true);
+        /*
+        if (optionScreen.getClickedTimes() % 2 == 0) {
+            backgroundMusic.play();
+        }
+        else {
+            backgroundMusic.dispose();
+        }
+         */
         // Play some background music
         // Background sound
-//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-//        backgroundMusic.setLooping(true);
-//        backgroundMusic.play();
         goToMenu();// Navigate to the menu screen
     }
 
@@ -212,7 +223,7 @@ public class MazeRunnerGame extends Game{
         this.entryPoint = new TextureRegion(things, 0, 0, 16, 16);
         this.exit = new TextureRegion(things, 48, 0, 16, 16);
         this.trap = new TextureRegion(basictiles, 16, 32, 16, 16);
-        this.enemy = new TextureRegion(mobs, 0,64, 16, 16);
+        this.enemyTexture = new TextureRegion(mobs, 0,64, 16, 16);
         this.key = new TextureRegion(objects, 0, 64, 16, 16);
         this.grass = new TextureRegion(basictiles,16,128,16,16);
         calculateMaxCoordinates();
@@ -245,7 +256,7 @@ public class MazeRunnerGame extends Game{
                     spriteBatch.draw(trap, x, y, 60, 60);
                     break;
                 case 4:
-                    spriteBatch.draw(enemy, x, y, 60, 60);
+                    spriteBatch.draw(enemyTexture, x, y, 60, 60);
                     break;
                 case 5:
                     spriteBatch.draw(key, x+15, y+15, 30, 30);
@@ -328,5 +339,13 @@ public class MazeRunnerGame extends Game{
     {
         this.basictiles = new Texture(Gdx.files.internal("basictiles.png"));
         this.wall = new TextureRegion(basictiles, 0,0 , 16, 16);
+    }
+
+    public Enemy getEnemy() {
+        return enemy;
+    }
+
+    public void setEnemy(Enemy enemy) {
+        this.enemy = enemy;
     }
 }

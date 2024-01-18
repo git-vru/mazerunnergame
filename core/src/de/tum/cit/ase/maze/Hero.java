@@ -1,5 +1,7 @@
 package de.tum.cit.ase.maze;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
@@ -22,6 +24,33 @@ public class Hero {
    private int heroHeight;
    private int heroWidth;
    float prevX,prevY;
+   private int lives = 4;
+   private boolean keyCollected;
+   private int enemiesKilled;
+
+   public int getLives() {
+      return lives;
+   }
+
+   public void setLives(int lives) {
+      this.lives = lives;
+   }
+
+   public boolean isKeyCollected() {
+      return keyCollected;
+   }
+
+   public void setKeyCollected(boolean keyCollected) {
+      this.keyCollected = keyCollected;
+   }
+
+   public int getEnemiesKilled() {
+      return enemiesKilled;
+   }
+
+   public void setEnemiesKilled(int enemiesKilled) {
+      this.enemiesKilled = enemiesKilled;
+   }
 
    public Hero(float x, float y, Animation<TextureRegion> leftAnimation,
                Animation<TextureRegion> rightAnimation, Animation<TextureRegion> upAnimation,
@@ -104,6 +133,29 @@ public class Hero {
    public void moveDown(float delta) {
       setPrevY(y);
       y -= delta;
+   }
+
+   public void updateKeyCollected() {
+      if(Gdx.input.isKeyPressed(Input.Keys.Z)) {
+         keyCollected = true;
+      }
+   }
+
+   public void updateLives() {
+      if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+         if (lives > 0) {
+            lives -= 1;
+         }
+         else {
+            lives = 0;
+         }
+      }
+   }
+
+   public void updateEnemiesKilled() {
+      if(Gdx.input.isKeyPressed(Input.Keys.C)) {
+         enemiesKilled += 1;
+      }
    }
 
 

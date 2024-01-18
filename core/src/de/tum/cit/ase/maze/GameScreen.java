@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.maze.Hero;
 import de.tum.cit.ase.maze.MazeRunnerGame;
@@ -24,13 +25,16 @@ public class GameScreen implements Screen {
     private final float boundingBoxSize;
     private final SpriteBatch batch;
     private float cameraSpeed;
-
+    private HUD hud;
+    private Stage stage;
+    private Enemy enemy;
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
         // Create and configure the camera for the game view
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
         camera.zoom = 0.75f;
+        stage = new Stage();
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
@@ -38,7 +42,8 @@ public class GameScreen implements Screen {
         cameraSpeed = 2f;
         batch = new SpriteBatch();
         hero = game.getHero();
-
+        enemy = game.getEnemy();
+        hud = new HUD(stage.getViewport(), hero, game);
     }
 
 
@@ -53,14 +58,22 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
         updateCamera();
         hero.update(delta,determineDirection());
+        enemy.update(delta, getEnemy().determineEnemyDirection());
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
         game.createMaze();
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
         hero.draw(game.getSpriteBatch());
+        enemy.draw(game.getSpriteBatch());
+        hud.setKeyStatus();
+        hero.updateKeyCollected();
+        hud.setLives();
+        hero.updateLives();
+        hud.setNumberOfEnemiesKilled();
+        hero.updateEnemiesKilled();
+        hud.draw();
         game.getSpriteBatch().end(); // Important to call this after drawing everything
-
     }
     private String determineDirection() {
         String direction = "";
@@ -150,4 +163,12 @@ public class GameScreen implements Screen {
         return camera;
     }
     // Additional methods and logic can be added as needed for the game screen
+
+    public Enemy getEnemy() {
+        return enemy;
+    }
+
+    public void setEnemy(Enemy enemy) {
+        this.enemy = enemy;
+    }
 }
