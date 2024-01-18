@@ -1,6 +1,8 @@
 package de.tum.cit.ase.maze;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -11,9 +13,11 @@ import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserCallback;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserConfiguration;
+
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * The MazeRunnerGame class represents the core of the Maze Runner game.
@@ -50,6 +54,7 @@ public class MazeRunnerGame extends Game{
         this.fileChooser = fileChooser;
         this.maxX=0;
         this.maxY=0;
+        //this.optionScreen = new OptionScreen(this);
         this.mazeLoader = new MazeLoader(this);
     }
     public void showFileChooser() {
@@ -88,6 +93,18 @@ public class MazeRunnerGame extends Game{
 //        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
 //        backgroundMusic.setLooping(true);
 //        backgroundMusic.play();
+        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic.setLooping(true);
+        /*
+        if (optionScreen.getClickedTimes() % 2 == 0) {
+            backgroundMusic.play();
+        }
+        else {
+            backgroundMusic.dispose();
+        }
+         */
+        // Play some background music
+        // Background sound
         goToMenu();// Navigate to the menu screen
     }
 

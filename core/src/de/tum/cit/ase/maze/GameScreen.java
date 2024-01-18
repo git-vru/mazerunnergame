@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.maze.Hero;
 import de.tum.cit.ase.maze.MazeRunnerGame;
@@ -25,8 +26,9 @@ public class GameScreen implements Screen {
     private final float boundingBoxSize;
     private final SpriteBatch batch;
     private float cameraSpeed;
-
-
+    private HUD hud;
+    private Stage stage;
+    private Enemy enemy;
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
         this.mazeLoader = game.getMazeLoader();
@@ -34,6 +36,7 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
         camera.zoom = 0.75f;
+        stage = new Stage();
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
@@ -41,9 +44,11 @@ public class GameScreen implements Screen {
         cameraSpeed = 2f;
         batch = new SpriteBatch();
         hero = game.getHero();
-
+        hud = new HUD(stage.getViewport(), hero, game);
     }
 
+
+    // Screen interface methods with necessary functionality
     @Override
     public void render(float delta) {
         // Check for escape key press to go back to the menu
@@ -60,6 +65,13 @@ public class GameScreen implements Screen {
         // Render the text
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
         hero.draw(game.getSpriteBatch());
+        hud.setKeyStatus();
+        hero.updateKeyCollected();
+        hud.setLives();
+        hero.updateLives();
+        hud.setNumberOfEnemiesKilled();
+        hero.updateEnemiesKilled();
+        hud.draw();
         game.getSpriteBatch().end(); // Important to call this after drawing everything
 
     }
@@ -69,7 +81,6 @@ public class GameScreen implements Screen {
         float speed = 200;
         for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
             if (rectangle.overlaps(hero.getHeroRect())){
-                //System.out.println(hero.getPrevX());
                 hero.setX(hero.getPrevX());
                 hero.setY(hero.getPrevY());
             }

@@ -31,7 +31,7 @@ public class MenuScreen implements Screen {
     public MenuScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
         //camera.zoom = 1.5f; // Set camera zoom for a closer view
-        backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
+        backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera); // Create a viewport with the camera
@@ -49,6 +49,9 @@ public class MenuScreen implements Screen {
 
         TextButton continueGameButton = new TextButton("Continue Game", game.getSkin());
         table.add(continueGameButton).width(300).padBottom(15).row();
+
+        TextButton optionsButton = new TextButton("Options", game.getSkin());
+        table.add(optionsButton).width(300).padBottom(15).row();
 
 //        TextButton selectMapButton = new TextButton("Select Map", game.getSkin());
 //        table.add(selectMapButton).width(300).padBottom(15).row();
@@ -70,6 +73,14 @@ public class MenuScreen implements Screen {
                 game.setScreen(new SelectMapScreen(game));
             }
         });
+        /*
+        optionsButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new OptionScreen(game));
+            }
+        });
+
+         */
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             continueGameButton.addListener(new ClickListener() {

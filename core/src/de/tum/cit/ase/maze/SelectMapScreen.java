@@ -132,5 +132,7 @@ public class SelectMapScreen implements Screen {
 
     @Override
     public void hide() {
+        //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
+        //Gdx.input.setInputProcessor(null);
     }
 }
