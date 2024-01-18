@@ -4,8 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
+import de.tum.cit.ase.maze.Hero;
+import de.tum.cit.ase.maze.MazeRunnerGame;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -14,6 +18,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class GameScreen implements Screen {
 
     private final MazeRunnerGame game;
+    private MazeLoader mazeLoader;
     private final OrthographicCamera camera;
     private final BitmapFont font;
     private final Hero hero;
@@ -21,8 +26,10 @@ public class GameScreen implements Screen {
     private final SpriteBatch batch;
     private float cameraSpeed;
 
+
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
+        this.mazeLoader = game.getMazeLoader();
         // Create and configure the camera for the game view
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
@@ -30,14 +37,13 @@ public class GameScreen implements Screen {
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
-        boundingBoxSize = 80f;
+        boundingBoxSize = 50f;
         cameraSpeed = 2f;
         batch = new SpriteBatch();
         hero = game.getHero();
+
     }
 
-
-    // Screen interface methods with necessary functionality
     @Override
     public void render(float delta) {
         // Check for escape key press to go back to the menu
@@ -47,22 +53,27 @@ public class GameScreen implements Screen {
 
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
         updateCamera();
-        String direction = determineDirection();
-        hero.update(delta,direction);
+        hero.update(delta,determineDirection());
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
-        game.createMaze();
+        game.renderMaze();
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
         hero.draw(game.getSpriteBatch());
         game.getSpriteBatch().end(); // Important to call this after drawing everything
-        game.createMaze();
 
     }
     private String determineDirection() {
         String direction = "";
 
         float speed = 200;
+        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
+            if (rectangle.overlaps(hero.getHeroRect())){
+                //System.out.println(hero.getPrevX());
+                hero.setX(hero.getPrevX());
+                hero.setY(hero.getPrevY());
+            }
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             speed = 400;
             setCameraSpeed(4f);
@@ -81,6 +92,7 @@ public class GameScreen implements Screen {
             hero.moveUp(speed * Gdx.graphics.getDeltaTime());
             direction = "up";
         }
+        hero.setHeroRect(new Rectangle(hero.getX(),hero.getY(), hero.getHeroWidth()+5, hero.getHeroHeight()));
 
         return direction;
     }
@@ -121,7 +133,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-
+        //game.createMaze();
     }
 
     @Override
@@ -134,6 +146,14 @@ public class GameScreen implements Screen {
 
     public void setCameraSpeed(float cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
+
+    public void setMazeLoader(MazeLoader mazeLoader) {
+        this.mazeLoader = mazeLoader;
     }
     // Additional methods and logic can be added as needed for the game screen
 }

@@ -1,5 +1,4 @@
 package de.tum.cit.ase.maze;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -7,47 +6,40 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserCallback;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserConfiguration;
-
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * The MazeRunnerGame class represents the core of the Maze Runner game.
  * It manages the screens and global resources like SpriteBatch and Skin.
  */
 public class MazeRunnerGame extends Game{
-
     // Screens
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
-
     // Sprite Batch for rendering
     private SpriteBatch spriteBatch;
-
+    private double maxX;
+    private double maxY;
     // UI Skin
     private Skin skin;
     private Hero hero;
-
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
     private Animation<TextureRegion> characterLeftAnimation;
     private Animation<TextureRegion> characterRightAnimation;
     private Animation<TextureRegion> characterUpAnimation;
     private Animation<TextureRegion> characterStandAnimation;
-    private NativeFileChooser fileChooser;
-    private Map<Point, Integer> mazeData = new HashMap<>();
-
+    private final NativeFileChooser fileChooser;
+    private final Map<Point, Integer> mazeData = new HashMap<>();
+    private Tiles allTiles;
+    private MazeLoader mazeLoader;
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -56,7 +48,9 @@ public class MazeRunnerGame extends Game{
     public MazeRunnerGame(NativeFileChooser fileChooser) {
         super();
         this.fileChooser = fileChooser;
-
+        this.maxX=0;
+        this.maxY=0;
+        this.mazeLoader = new MazeLoader(this);
     }
     public void showFileChooser() {
         NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
@@ -64,10 +58,9 @@ public class MazeRunnerGame extends Game{
         fileChooser.chooseFile(conf, new NativeFileChooserCallback() {
             @Override
             public void onFileChosen(FileHandle file) {
-                // Do stuff with the chosen file, e.g., load maze data
-                loadMazeData(file.path());
-                // Optionally, you can now use mazeData to create the maze
+                mazeLoader.loadMazeData(file.path());
                 createMaze();
+                renderMaze();
                 goToGame();
             }
 
@@ -89,14 +82,13 @@ public class MazeRunnerGame extends Game{
     public void create() {
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
-        this.loadCharacterAnimation(); // Load character animation
-        // Play some background music
-        // Background sound
+        this.loadCharacterAnimation();// Load character animation
+        this.allTiles = new Tiles();
+        createMaze();
 //        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
 //        backgroundMusic.setLooping(true);
 //        backgroundMusic.play();
-
-        goToMenu(); // Navigate to the menu screen
+        goToMenu();// Navigate to the menu screen
     }
 
     /**
@@ -109,7 +101,6 @@ public class MazeRunnerGame extends Game{
             gameScreen = null;
         }
     }
-
     /**
      * Switches to the game screen.
      */
@@ -119,8 +110,10 @@ public class MazeRunnerGame extends Game{
             menuScreen.dispose(); // Dispose the menu screen if it exists
             menuScreen = null;
         }
+        if (gameScreen != null) {
+            gameScreen.setMazeLoader(mazeLoader);
+        }
     }
-
     /**
      * Loads the character animation from the character.png file.
      */
@@ -150,77 +143,12 @@ public class MazeRunnerGame extends Game{
         characterUpAnimation = new Animation<>(0.1f, walkUpFrames);
         characterDownAnimation = new Animation<>(0.1f, walkDownFrames);
     }
-    public void loadMazeData(String fileName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("=");
-                if (parts.length == 2) {
-                    String[] coordinates = parts[0].split(",");
-                    if (coordinates.length == 2) {
-                        int x = Integer.parseInt(coordinates[0]);
-                        int y = Integer.parseInt(coordinates[1]);
-                        int objectType = Integer.parseInt(parts[1]);
-                        getMazeData().put(new Point(x, y), objectType);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     public void createMaze() {
-
-        Texture wallTexture = new Texture("basictiles.png");
-        Texture entryPointTexture = new Texture("things.png");
-        Texture exitTexture = new Texture("things.png");
-        Texture trapTexture = new Texture("basictiles.png");
-        Texture enemyTexture = new Texture("mobs.png");
-        Texture keyTexture = new Texture("objects.png");
-        TextureRegion wall = new TextureRegion(wallTexture, 0,0 , 16, 16);
-        TextureRegion entryPoint = new TextureRegion(entryPointTexture, 0, 0, 16, 16);
-        TextureRegion exit = new TextureRegion(exitTexture, 48, 0, 16, 16);
-        TextureRegion trap = new TextureRegion(trapTexture, 16, 32, 16, 16);
-        TextureRegion enemy = new TextureRegion(enemyTexture, 0,64, 16, 16);
-        TextureRegion key = new TextureRegion(keyTexture, 0, 64, 16, 16);
-
-        Array<Rectangle> wallRectangles = new Array<>();
-
-        for (Map.Entry<Point, Integer> entry : getMazeData().entrySet()) {
-            Point point = entry.getKey();
-            int x = point.x * 60;
-            int y = point.y * 60;
-            int objectType = entry.getValue();
-            spriteBatch.begin();
-            switch (objectType) {
-                case 0:
-                    spriteBatch.draw(wall, x, y, 60, 60);
-                    wallRectangles.add(new Rectangle(x,y,60,60));
-                    break;
-                case 1:
-                    spriteBatch.draw(entryPoint, x, y, 60, 60);
-                    this.hero = new Hero(x-48, y-12,
-                            getCharacterLeftAnimation(),
-                            getCharacterRightAnimation(),
-                            getCharacterUpAnimation(),
-                            getCharacterDownAnimation(),
-                            getCharacterStandAnimation());
-                    break;
-                case 2:
-                    spriteBatch.draw(exit, x, y, 60, 60);
-                    break;
-                case 3:
-                    spriteBatch.draw(trap, x, y, 60, 60);
-                    break;
-                case 4:
-                    spriteBatch.draw(enemy, x, y, 60, 60);
-                    break;
-                case 5:
-                    spriteBatch.draw(key, x+15, y+15, 30, 30);
-                    break;
-            }
-            spriteBatch.end();
-        }
+        mazeLoader.calculateMaxCoordinates();
+        mazeLoader.addGround();
+    }
+    public void renderMaze() {
+        mazeLoader.renderMaze();
     }
 
 
@@ -270,5 +198,34 @@ public class MazeRunnerGame extends Game{
 
     public Hero getHero() {
         return hero;
+    }
+
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public void setMaxX(double maxX) {
+        this.maxX = maxX;
+    }
+
+    public double getMaxY() {
+        return maxY;
+    }
+
+    public void setMaxY(double maxY) {
+        this.maxY = maxY;
+    }
+
+    public void setHero(Hero hero) {
+        this.hero = hero;
+    }
+
+    public Tiles getAllTiles() {
+        return allTiles;
+    }
+
+    public MazeLoader getMazeLoader() {
+        return mazeLoader;
     }
 }
