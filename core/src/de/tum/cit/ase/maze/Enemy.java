@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import java.security.AllPermission;
+
 public class Enemy {
     private int direction;
     private float stateTime;
@@ -24,22 +26,20 @@ public class Enemy {
     private float upTimer;
     private float downTimer;
     private float standTimer;
-    private Animation<TextureRegion> leftAnimation;
-    private Animation<TextureRegion> rightAnimation;
-    private Animation<TextureRegion> upAnimation;
-    private Animation<TextureRegion> downAnimation;
-    private Animation<TextureRegion> standAnimation;
     float prevX,prevY;
-    private MazeRunnerGame game;
+    private Array<Enemy> enemyArray;
+    private Tiles allTiles;
+    private Animation<TextureRegion> enemyLeftAnimation;
+    private Animation<TextureRegion> enemyRightAnimation;
+    private Animation<TextureRegion> enemyUpAnimation;
+    private Animation<TextureRegion> enemyDownAnimation;
+    private Animation<TextureRegion> enemyStandAnimation;
 
-    public Enemy(MazeRunnerGame game, Animation<TextureRegion> leftAnimation, Animation<TextureRegion> rightAnimation, Animation<TextureRegion> upAnimation, Animation<TextureRegion> downAnimation, Animation<TextureRegion> standAnimation) {
-        this.game = game;
-        this.leftAnimation = leftAnimation;
-        this.rightAnimation = rightAnimation;
-        this.upAnimation = upAnimation;
-        this.downAnimation = downAnimation;
-        this.standAnimation = standAnimation;
-        this.direction = MathUtils.random(0, 3);
+    public Enemy(float x, float y) {
+        this.x = x;
+        this.y = y;
+        this.prevX = x;
+        this.prevY = y;
         this.stateTime = 0;
         this.enemyHeight = 16;
         this.enemyWidth = 16;
@@ -47,7 +47,7 @@ public class Enemy {
     }
 
     public void update(float delta, int direction) {
-        this.direction=direction;
+        setDirection(direction);
         switch (direction) {
             case 0:
                 leftTimer += delta;
@@ -67,43 +67,34 @@ public class Enemy {
         }
     }
 
-
-    public int getDirection() {
-        return direction;
-    }
-
-    public void setDirection(int direction) {
-        this.direction = direction;
-    }
-
-
-
-
-
-    public float getStateTime() {
-        return stateTime;
-    }
-
-    public void setStateTime(float stateTime) {
-        this.stateTime = stateTime;
-    }
-
-
-    public static Animation<TextureRegion> createEnemyAnimation() {
-        Texture enemySheet = new Texture(Gdx.files.internal("mobs.png"));
-
-        int frameWidth = 16;
-        int frameHeight = 64;
-        int animationFrames = 3;
-        Array<TextureRegion> enemyFrames = new Array<>(TextureRegion.class);
-
-        // Add all frames to the animation
-        for (int col = 0; col < animationFrames; col++) {
-            enemyFrames.add(new TextureRegion(enemySheet, col * frameWidth, frameHeight, frameWidth, frameHeight));
+    public void draw(SpriteBatch spriteBatch) {
+        for (Enemy enemy : getEnemyArray()) {
+            spriteBatch.draw(
+                    getCurrentFrame().getKeyFrame(getAnimationTimer(), true), enemy.getEnemyWidth(), enemy.getEnemyHeight()
+            );
         }
-        return new Animation<>(0.1f, enemyFrames);
     }
-    private void loadCharacterAnimation() {
+
+    private Animation<TextureRegion> getCurrentFrame() {
+        return switch (getDirection()) {
+            case 0 -> getEnemyLeftAnimation();
+            case 1 -> getEnemyRightAnimation();
+            case 2 -> getEnemyUpAnimation();
+            case 3 -> getEnemyDownAnimation();
+            default -> getEnemyStandAnimation();
+        };
+    }
+
+    private float getAnimationTimer() {
+        return switch (getDirection()) {
+            case 0 -> leftTimer;
+            case 1 -> rightTimer;
+            case 2 -> upTimer;
+            case 3 -> downTimer;
+            default -> standTimer;
+        };
+    }
+    public void loadEnemyAnimation() {
         Texture walkSheet = new Texture(Gdx.files.internal("mobs.png"));
 
         int frameWidth = 16;
@@ -122,40 +113,13 @@ public class Enemy {
             walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight));
             walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 48, frameWidth, frameHeight));
         }
-
-        standAnimation = new Animation<>(0.1f, walkStandFrame);
-        leftAnimation = new Animation<>(0.1f, walkLeftFrames);
-        rightAnimation = new Animation<>(0.1f, walkRightFrames);
-        upAnimation = new Animation<>(0.1f, walkUpFrames);
-        downAnimation = new Animation<>(0.1f, walkDownFrames);
+        enemyStandAnimation = new Animation<>(0.1f, walkStandFrame);
+        enemyLeftAnimation = new Animation<>(0.1f, walkLeftFrames);
+        enemyRightAnimation = new Animation<>(0.1f, walkRightFrames);
+        enemyUpAnimation = new Animation<>(0.1f, walkUpFrames);
+        enemyDownAnimation = new Animation<>(0.1f, walkDownFrames);
     }
 
-    public void draw(SpriteBatch spriteBatch) {
-        spriteBatch.draw(
-                getCurrentFrame().getKeyFrame(getAnimationTimer(), true),
-                x,
-                y,getEnemyWidth(),getEnemyHeight()
-        );
-    }
-
-    private Animation<TextureRegion> getCurrentFrame() {
-        return switch (direction) {
-            case 0 -> leftAnimation;
-            case 1 -> rightAnimation;
-            case 2 -> upAnimation;
-            case 3 -> downAnimation;
-            default -> standAnimation;
-        };
-    }
-    private float getAnimationTimer() {
-        return switch (direction) {
-            case 0 -> leftTimer;
-            case 1 -> rightTimer;
-            case 2 -> upTimer;
-            case 3 -> downTimer;
-            default -> standTimer;
-        };
-    }
     public void moveLeft(float delta) {
         setPrevX(x);
         x -= delta;
@@ -175,34 +139,29 @@ public class Enemy {
         setPrevY(y);
         y -= delta;
     }
-    public int determineEnemyDirection() {
-        int direction = -1;
 
+
+
+    public int determineEnemyDirection() {
         float speed = 100;
-        for (Rectangle rectangle: game.getWallRectangles()) {
+        int randomDirection = MathUtils.random(0,3);
+        for (Rectangle rectangle: allTiles.getWallRectangles()) {
             if (rectangle.overlaps(this.getEnemyRect())){
                 this.setX(this.getPrevX());
                 this.setY(this.getPrevY());
             }
         }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.P)) {
-            this.moveLeft(speed * Gdx.graphics.getDeltaTime());
-            direction = 0;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.O)) {
-            this.moveRight(speed * Gdx.graphics.getDeltaTime());
-            direction = 1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.I)) {
-            this.moveDown(speed * Gdx.graphics.getDeltaTime());
-            direction = 2;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.U)) {
-            this.moveUp(speed * Gdx.graphics.getDeltaTime());
-            direction = 3;
+        switch (randomDirection) {
+            case 0 : this.moveLeft(speed * Gdx.graphics.getDeltaTime());
+            case 1 : this.moveRight(speed * Gdx.graphics.getDeltaTime());
+            case 2 : this.moveDown(speed * Gdx.graphics.getDeltaTime());
+            case 3 : this.moveUp(speed * Gdx.graphics.getDeltaTime());
         }
         this.setEnemyRect(new Rectangle(this.getX(),this.getY(), this.getEnemyWidth(), this.getEnemyHeight()));
 
         return direction;
     }
+
 
     public int getEnemyWidth() {
         return enemyWidth;
@@ -284,26 +243,6 @@ public class Enemy {
         this.standTimer = standTimer;
     }
 
-    public Animation<TextureRegion> getLeftAnimation() {
-        return leftAnimation;
-    }
-
-    public Animation<TextureRegion> getRightAnimation() {
-        return rightAnimation;
-    }
-
-    public Animation<TextureRegion> getUpAnimation() {
-        return upAnimation;
-    }
-
-    public Animation<TextureRegion> getDownAnimation() {
-        return downAnimation;
-    }
-
-    public Animation<TextureRegion> getStandAnimation() {
-        return standAnimation;
-    }
-
     public float getPrevX() {
         return prevX;
     }
@@ -318,5 +257,67 @@ public class Enemy {
 
     public void setPrevY(float prevY) {
         this.prevY = prevY;
+    }
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
+    }
+
+    public float getStateTime() {
+        return stateTime;
+    }
+
+    public void setStateTime(float stateTime) {
+        this.stateTime = stateTime;
+    }
+    public Animation<TextureRegion> getEnemyLeftAnimation() {
+        return enemyLeftAnimation;
+    }
+
+    public void setEnemyLeftAnimation(Animation<TextureRegion> enemyLeftAnimation) {
+        this.enemyLeftAnimation = enemyLeftAnimation;
+    }
+
+    public Animation<TextureRegion> getEnemyRightAnimation() {
+        return enemyRightAnimation;
+    }
+
+    public void setEnemyRightAnimation(Animation<TextureRegion> enemyRightAnimation) {
+        this.enemyRightAnimation = enemyRightAnimation;
+    }
+
+    public Animation<TextureRegion> getEnemyUpAnimation() {
+        return enemyUpAnimation;
+    }
+
+    public void setEnemyUpAnimation(Animation<TextureRegion> enemyUpAnimation) {
+        this.enemyUpAnimation = enemyUpAnimation;
+    }
+
+    public Animation<TextureRegion> getEnemyDownAnimation() {
+        return enemyDownAnimation;
+    }
+
+    public void setEnemyDownAnimation(Animation<TextureRegion> enemyDownAnimation) {
+        this.enemyDownAnimation = enemyDownAnimation;
+    }
+
+    public Animation<TextureRegion> getEnemyStandAnimation() {
+        return enemyStandAnimation;
+    }
+
+    public void setEnemyStandAnimation(Animation<TextureRegion> enemyStandAnimation) {
+        this.enemyStandAnimation = enemyStandAnimation;
+    }
+
+    public Array<Enemy> getEnemyArray() {
+        return enemyArray;
+    }
+
+    public void setEnemyArray(Array<Enemy> enemyArray) {
+        this.enemyArray = enemyArray;
     }
 }

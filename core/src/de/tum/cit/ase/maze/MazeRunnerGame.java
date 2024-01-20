@@ -34,6 +34,7 @@ public class MazeRunnerGame extends Game{
     // UI Skin
     private Skin skin;
     private Hero hero;
+    private Enemy enemy;
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
     private Animation<TextureRegion> characterLeftAnimation;
@@ -44,6 +45,8 @@ public class MazeRunnerGame extends Game{
     private final Map<Point, Integer> mazeData = new HashMap<>();
     private Tiles allTiles;
     private MazeLoader mazeLoader;
+    private boolean clicked;
+
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -56,6 +59,17 @@ public class MazeRunnerGame extends Game{
         this.maxY=0;
         //this.optionScreen = new OptionScreen(this);
         this.mazeLoader = new MazeLoader(this);
+        this.clicked = true;
+    }
+    public void playMusic() {
+        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic.setLooping(true);
+        if (clicked) {
+            backgroundMusic.play();
+        }
+        else {
+            backgroundMusic.stop();
+        }
     }
     public void showFileChooser() {
         NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
@@ -90,23 +104,13 @@ public class MazeRunnerGame extends Game{
         this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
         createMaze();
-//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-//        backgroundMusic.setLooping(true);
-//        backgroundMusic.play();
-        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-        backgroundMusic.setLooping(true);
-        /*
-        if (optionScreen.getClickedTimes() % 2 == 0) {
-            backgroundMusic.play();
-        }
-        else {
-            backgroundMusic.dispose();
-        }
-         */
+        playMusic();
         // Play some background music
         // Background sound
+        //playMusic();
         goToMenu();// Navigate to the menu screen
     }
+
 
     /**
      * Switches to the menu screen.
@@ -244,5 +248,13 @@ public class MazeRunnerGame extends Game{
 
     public MazeLoader getMazeLoader() {
         return mazeLoader;
+    }
+
+    public boolean isClicked() {
+        return clicked;
+    }
+
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
     }
 }

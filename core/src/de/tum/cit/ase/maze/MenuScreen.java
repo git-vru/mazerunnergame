@@ -2,6 +2,7 @@ package de.tum.cit.ase.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import de.tum.cit.ase.maze.MazeRunnerGame;
 
 /**
  * The MenuScreen class is responsible for displaying the main menu of the game.
@@ -41,6 +41,7 @@ public class MenuScreen implements Screen {
         stage.addActor(table); // Add the table to the stage
 
 
+
         // Add a label as a title
         table.add(new Label("Hello World from the Menu!", game.getSkin(), "title")).padBottom(300).row();
         // Create and add a button to go to the game screen
@@ -50,8 +51,8 @@ public class MenuScreen implements Screen {
         TextButton continueGameButton = new TextButton("Continue Game", game.getSkin());
         table.add(continueGameButton).width(300).padBottom(15).row();
 
-        TextButton optionsButton = new TextButton("Options", game.getSkin());
-        table.add(optionsButton).width(300).padBottom(15).row();
+        TextButton settingsButton = new TextButton("Settings", game.getSkin());
+        table.add(settingsButton).width(300).padBottom(15).row();
 
 //        TextButton selectMapButton = new TextButton("Select Map", game.getSkin());
 //        table.add(selectMapButton).width(300).padBottom(15).row();
@@ -73,14 +74,12 @@ public class MenuScreen implements Screen {
                 game.setScreen(new SelectMapScreen(game));
             }
         });
-        /*
-        optionsButton.addListener(new ChangeListener() {
+
+        settingsButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new OptionScreen(game));
+                game.setScreen(new SettingsScreen(game));
             }
         });
-
-         */
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             continueGameButton.addListener(new ClickListener() {
@@ -236,6 +235,7 @@ public class MenuScreen implements Screen {
 
     }
 
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear the screen
@@ -277,4 +277,5 @@ public class MenuScreen implements Screen {
     @Override
     public void hide() {
     }
+
 }

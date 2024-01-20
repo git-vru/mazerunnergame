@@ -12,6 +12,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.maze.Hero;
 import de.tum.cit.ase.maze.MazeRunnerGame;
 
+import java.awt.geom.GeneralPath;
+
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
  * It handles the game logic and rendering of the game elements.
@@ -61,10 +63,12 @@ public class GameScreen implements Screen {
         hero.update(delta,determineDirection());
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
         game.renderMaze();
+        enemy.update(delta, enemy.determineEnemyDirection());
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
         hero.draw(game.getSpriteBatch());
+        enemy.draw(game.getSpriteBatch());
         hud.setKeyStatus();
         hero.updateKeyCollected();
         hud.setLives();

@@ -22,7 +22,7 @@ public class SelectMapScreen implements Screen {
 
     public SelectMapScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
-        backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
+        backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera);
@@ -43,7 +43,7 @@ public class SelectMapScreen implements Screen {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-                    game.getMazeLoader().loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
+                    game.getMazeLoader().loadMazeData("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties");
                     game.createMaze();
                     game.renderMaze();
                     game.goToGame(); // Transition to the game screen

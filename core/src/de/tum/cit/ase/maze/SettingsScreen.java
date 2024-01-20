@@ -1,31 +1,32 @@
-/*package de.tum.cit.ase.maze;
+package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class OptionScreen implements Screen {
+public class SettingsScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
-    private int clickedTimes;
-    public OptionScreen(MazeRunnerGame game) {
+    public SettingsScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
-        backgroundTexture = new Texture("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\assets\\foto.jpg");
+        backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera);
@@ -33,18 +34,27 @@ public class OptionScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-        clickedTimes = 2;
 
         table.add(new Label("Options", game.getSkin(), "title")).padBottom(50).row();
-        TextButton gameMusicButton = new TextButton("Game Music", game.getSkin());
-        table.add(gameMusicButton).width(300).padBottom(15).row();
-        gameMusicButton.addListener(new ClickListener() {
+        TextButton menuMusicButton = new TextButton("Menu Music", game.getSkin());
+        table.add(menuMusicButton).width(300).padBottom(15).row();
+        menuMusicButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                setClickedTimes(getClickedTimes() + 1);
+                game.setClicked(!game.isClicked());
+                System.out.println(game.isClicked());
                 super.clicked(event, x, y);
             }
         });
+
+        TextButton backButton = new TextButton("Back", game.getSkin());
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.goToMenu();
+            }
+        });
+        table.add(backButton).width(300).padBottom(15).row();
     }
 
 
@@ -88,13 +98,4 @@ public class OptionScreen implements Screen {
         //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
         //Gdx.input.setInputProcessor(null);
     }
-
-    public int getClickedTimes() {
-        return clickedTimes;
-    }
-
-    public void setClickedTimes(int clickedTimes) {
-        this.clickedTimes = clickedTimes;
-    }
 }
- */

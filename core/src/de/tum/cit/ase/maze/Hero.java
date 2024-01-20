@@ -28,29 +28,6 @@ public class Hero {
    private boolean keyCollected;
    private int enemiesKilled;
 
-   public int getLives() {
-      return lives;
-   }
-
-   public void setLives(int lives) {
-      this.lives = lives;
-   }
-
-   public boolean isKeyCollected() {
-      return keyCollected;
-   }
-
-   public void setKeyCollected(boolean keyCollected) {
-      this.keyCollected = keyCollected;
-   }
-
-   public int getEnemiesKilled() {
-      return enemiesKilled;
-   }
-
-   public void setEnemiesKilled(int enemiesKilled) {
-      this.enemiesKilled = enemiesKilled;
-   }
 
    public Hero(float x, float y, Animation<TextureRegion> leftAnimation,
                Animation<TextureRegion> rightAnimation, Animation<TextureRegion> upAnimation,
@@ -216,5 +193,29 @@ public class Hero {
 
    public void setDirection(String direction) {
       this.direction = direction;
+   }
+
+   public int getLives() {
+      return lives;
+   }
+
+   public void setLives(int lives) {
+      this.lives = lives;
+   }
+
+   public boolean isKeyCollected() {
+      return keyCollected;
+   }
+
+   public void setKeyCollected(boolean keyCollected) {
+      this.keyCollected = keyCollected;
+   }
+
+   public int getEnemiesKilled() {
+      return enemiesKilled;
+   }
+
+   public void setEnemiesKilled(int enemiesKilled) {
+      this.enemiesKilled = enemiesKilled;
    }
 }
