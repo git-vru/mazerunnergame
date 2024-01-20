@@ -1,18 +1,21 @@
 package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Enemy {
-    private int direction;
+    private String direction;
+    private int prevIndex;
     private float stateTime;
     private int enemyWidth;
     private int enemyHeight;
@@ -30,35 +33,31 @@ public class Enemy {
     private Animation<TextureRegion> downAnimation;
     private Animation<TextureRegion> standAnimation;
     float prevX,prevY;
-    private MazeRunnerGame game;
+    private static List<Enemy> enemyList;
+    private final List<String> directionList;
 
-    public Enemy(MazeRunnerGame game, Animation<TextureRegion> leftAnimation, Animation<TextureRegion> rightAnimation, Animation<TextureRegion> upAnimation, Animation<TextureRegion> downAnimation, Animation<TextureRegion> standAnimation) {
-        this.game = game;
-        this.leftAnimation = leftAnimation;
-        this.rightAnimation = rightAnimation;
-        this.upAnimation = upAnimation;
-        this.downAnimation = downAnimation;
-        this.standAnimation = standAnimation;
-        this.direction = MathUtils.random(0, 3);
+    public Enemy(float x, float y) {
+        this.directionList = new ArrayList<>(Arrays.asList("up","right","down","left","stand"));
         this.stateTime = 0;
         this.enemyHeight = 16;
         this.enemyWidth = 16;
         this.enemyRect = new Rectangle(x, y, enemyWidth, enemyHeight);
+        prevIndex = 0;
     }
 
-    public void update(float delta, int direction) {
-        this.direction=direction;
+    public void update(float delta) {
+        this.direction=getDirection();
         switch (direction) {
-            case 0:
+            case "left":
                 leftTimer += delta;
                 break;
-            case 1:
+            case "right":
                 rightTimer += delta;
                 break;
-            case 2:
+            case "up":
                 upTimer += delta;
                 break;
-            case 3:
+            case "down":
                 downTimer += delta;
                 break;
             default:
@@ -67,19 +66,33 @@ public class Enemy {
         }
     }
 
-
-    public int getDirection() {
-        return direction;
+    public String getDirection() {
+        int index = MathUtils.random(0,5);
+        while(index == prevIndex){
+            index = MathUtils.random(0,5);
+        }
+        return directionList.get(index);
+//        switch(index){
+//            case 0:
+//                setDirection(directionList.get(MathUtils.random(0)));
+//                break;
+//            case 1:
+//                setDirection("up");
+//                break;
+//            case 2:
+//                setDirection("up");
+//                break;
+//            case 3:
+//                setDirection("up");
+//                break;
+//            default:
+//                break;
+//        }
     }
 
-    public void setDirection(int direction) {
+    public void setDirection(String direction) {
         this.direction = direction;
     }
-
-
-
-
-
     public float getStateTime() {
         return stateTime;
     }
@@ -103,7 +116,7 @@ public class Enemy {
         }
         return new Animation<>(0.1f, enemyFrames);
     }
-    private void loadCharacterAnimation() {
+    private void loadEnemyAnimation() {
         Texture walkSheet = new Texture(Gdx.files.internal("mobs.png"));
 
         int frameWidth = 16;
@@ -140,19 +153,19 @@ public class Enemy {
 
     private Animation<TextureRegion> getCurrentFrame() {
         return switch (direction) {
-            case 0 -> leftAnimation;
-            case 1 -> rightAnimation;
-            case 2 -> upAnimation;
-            case 3 -> downAnimation;
+            case "left" -> leftAnimation;
+            case "right" -> rightAnimation;
+            case "up" -> upAnimation;
+            case "down" -> downAnimation;
             default -> standAnimation;
         };
     }
     private float getAnimationTimer() {
         return switch (direction) {
-            case 0 -> leftTimer;
-            case 1 -> rightTimer;
-            case 2 -> upTimer;
-            case 3 -> downTimer;
+            case "left" -> leftTimer;
+            case "right" -> rightTimer;
+            case "up" -> upTimer;
+            case "down" -> downTimer;
             default -> standTimer;
         };
     }
@@ -175,34 +188,34 @@ public class Enemy {
         setPrevY(y);
         y -= delta;
     }
-    public int determineEnemyDirection() {
-        int direction = -1;
-
-        float speed = 100;
-        for (Rectangle rectangle: game.getWallRectangles()) {
-            if (rectangle.overlaps(this.getEnemyRect())){
-                this.setX(this.getPrevX());
-                this.setY(this.getPrevY());
-            }
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.P)) {
-            this.moveLeft(speed * Gdx.graphics.getDeltaTime());
-            direction = 0;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.O)) {
-            this.moveRight(speed * Gdx.graphics.getDeltaTime());
-            direction = 1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.I)) {
-            this.moveDown(speed * Gdx.graphics.getDeltaTime());
-            direction = 2;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.U)) {
-            this.moveUp(speed * Gdx.graphics.getDeltaTime());
-            direction = 3;
-        }
-        this.setEnemyRect(new Rectangle(this.getX(),this.getY(), this.getEnemyWidth(), this.getEnemyHeight()));
-
-        return direction;
-    }
+//    public int determineEnemyDirection() {
+//        int direction = -1;
+//
+//        float speed = 100;
+//        for (Rectangle rectangle: game.getWallRectangles()) {
+//            if (rectangle.overlaps(this.getEnemyRect())){
+//                this.setX(this.getPrevX());
+//                this.setY(this.getPrevY());
+//            }
+//        }
+//
+//        if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+//            this.moveLeft(speed * Gdx.graphics.getDeltaTime());
+//            direction = 0;
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.O)) {
+//            this.moveRight(speed * Gdx.graphics.getDeltaTime());
+//            direction = 1;
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.I)) {
+//            this.moveDown(speed * Gdx.graphics.getDeltaTime());
+//            direction = 2;
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.U)) {
+//            this.moveUp(speed * Gdx.graphics.getDeltaTime());
+//            direction = 3;
+//        }
+//        this.setEnemyRect(new Rectangle(this.getX(),this.getY(), this.getEnemyWidth(), this.getEnemyHeight()));
+//
+//        return direction;
+//    }
 
     public int getEnemyWidth() {
         return enemyWidth;

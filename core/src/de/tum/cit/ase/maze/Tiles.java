@@ -12,7 +12,7 @@ public class Tiles {
     private TextureRegion exit;
     private TextureRegion trap;
     private TextureRegion enemy;
-    private TextureRegion key;
+    private TextureRegion keyTile;
     private TextureRegion grass;
     private Array<Rectangle> wallRectangles = new Array<>();
 
@@ -21,7 +21,7 @@ public class Tiles {
         loadEntry();
         loadEnemy();
         loadExit();
-        loadKey();
+        loadKeyTile();
         loadTrap();
         loadGrass();
     }
@@ -43,15 +43,15 @@ public class Tiles {
     }
     public void loadEnemy(){
         Texture mobs = new Texture("mobs.png");
-        this.enemy = new TextureRegion(mobs, 0,64, 16, 16);
+        this.enemy = new TextureRegion(mobs, 48,64, 16, 16);
     }
-    public void loadKey(){
+    public void loadKeyTile(){
         Texture objects = new Texture("objects.png");
-        this.key = new TextureRegion(objects, 0, 64, 16, 16);
+        this.keyTile = new TextureRegion(objects, objects.getWidth()-112,0 , 32, 32);
     }
     public void loadGrass(){
         Texture basictiles = new Texture(Gdx.files.internal("basictiles.png"));
-        this.grass = new TextureRegion(basictiles,16,128,16,16);
+        this.grass = new TextureRegion(basictiles,0,16*8,16,16);
     }
 
     public TextureRegion getWall() {
@@ -74,8 +74,8 @@ public class Tiles {
         return enemy;
     }
 
-    public TextureRegion getKey() {
-        return key;
+    public TextureRegion getKeyTile() {
+        return keyTile;
     }
 
     public TextureRegion getGrass() {

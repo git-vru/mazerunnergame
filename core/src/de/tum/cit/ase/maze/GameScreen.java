@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.maze.Hero;
 import de.tum.cit.ase.maze.MazeRunnerGame;
+import com.badlogic.gdx.graphics.GL20;
+
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -59,12 +61,17 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
         updateCamera();
         hero.update(delta,determineDirection());
+        checkCollisions();
+        game.getKey().update(delta);
+        game.getEntry().update(delta);
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
         game.renderMaze();
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
         hero.draw(game.getSpriteBatch());
+        game.getKey().draw(game.getSpriteBatch(),hero.isKeyCollected());
+        game.getEntry().draw(game.getSpriteBatch());
         hud.setKeyStatus();
         hero.updateKeyCollected();
         hud.setLives();
@@ -79,12 +86,6 @@ public class GameScreen implements Screen {
         String direction = "";
 
         float speed = 200;
-        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
-            if (rectangle.overlaps(hero.getHeroRect())){
-                hero.setX(hero.getPrevX());
-                hero.setY(hero.getPrevY());
-            }
-        }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             speed = 400;
             setCameraSpeed(4f);
@@ -103,7 +104,7 @@ public class GameScreen implements Screen {
             hero.moveUp(speed * Gdx.graphics.getDeltaTime());
             direction = "up";
         }
-        hero.setHeroRect(new Rectangle(hero.getX(),hero.getY(), hero.getHeroWidth()+5, hero.getHeroHeight()));
+        hero.setHeroRect(new Rectangle(hero.getX(),hero.getY()+5, hero.getHeroWidth(), hero.getHeroHeight()/2));
 
         return direction;
     }
@@ -126,6 +127,21 @@ public class GameScreen implements Screen {
         // Update the camera matrices
         camera.update();
         batch.setProjectionMatrix(camera.combined);
+    }
+    private void checkCollisions(){
+        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
+            if (rectangle.overlaps(hero.getHeroRect())){
+                hero.setX(hero.getPrevX());
+                hero.setY(hero.getPrevY());
+            }
+        }
+        if (game.getKey().getKeyRect().overlaps(hero.getHeroRect())){
+            hero.setKeyCollected(true);
+            game.getKey().dispose();
+        }
+        if (game.getEntry().getEntryRect().overlaps(hero.getHeroRect())){
+            game.getEntry().setOpen(true);
+        }
     }
 
     @Override

@@ -43,6 +43,8 @@ public class MazeRunnerGame extends Game{
     private final NativeFileChooser fileChooser;
     private final Map<Point, Integer> mazeData = new HashMap<>();
     private Tiles allTiles;
+    private Key key;
+    private Entry entry;
     private MazeLoader mazeLoader;
     /**
      * Constructor for MazeRunnerGame.
@@ -87,8 +89,10 @@ public class MazeRunnerGame extends Game{
     public void create() {
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
-        this.loadCharacterAnimation();// Load character animation
+        //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
+        this.key = new Key();
+        this.entry = new Entry();
         createMaze();
 //        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
 //        backgroundMusic.setLooping(true);
@@ -134,32 +138,6 @@ public class MazeRunnerGame extends Game{
     /**
      * Loads the character animation from the character.png file.
      */
-    private void loadCharacterAnimation() {
-        Texture walkSheet = new Texture(Gdx.files.internal("character.png"));
-
-        int frameWidth = 16;
-        int frameHeight = 32;
-        int animationFrames = 4;
-        TextureRegion walkStandFrame = new TextureRegion(walkSheet, 0, 0, frameWidth, frameHeight);
-        Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
-
-        // Add all frames to the animation
-        for (int col = 0; col < animationFrames; col++) {
-            walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
-            walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
-            walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight));
-            walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight));
-        }
-
-        characterStandAnimation = new Animation<>(0.1f, walkStandFrame);
-        characterLeftAnimation = new Animation<>(0.1f, walkLeftFrames);
-        characterRightAnimation = new Animation<>(0.1f, walkRightFrames);
-        characterUpAnimation = new Animation<>(0.1f, walkUpFrames);
-        characterDownAnimation = new Animation<>(0.1f, walkDownFrames);
-    }
     public void createMaze() {
         mazeLoader.calculateMaxCoordinates();
         mazeLoader.addGround();
@@ -167,8 +145,6 @@ public class MazeRunnerGame extends Game{
     public void renderMaze() {
         mazeLoader.renderMaze();
     }
-
-
     /**
      * Cleans up resources when the game is disposed.
      */
@@ -244,5 +220,17 @@ public class MazeRunnerGame extends Game{
 
     public MazeLoader getMazeLoader() {
         return mazeLoader;
+    }
+
+    public Key getKey() {
+        return key;
+    }
+
+    public Entry getEntry() {
+        return entry;
+    }
+
+    public void setKey(Key key) {
+        this.key = key;
     }
 }
