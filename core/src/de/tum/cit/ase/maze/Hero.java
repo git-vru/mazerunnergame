@@ -27,34 +27,53 @@ public class Hero {
    private int heroHeight;
    private int heroWidth;
    float prevX,prevY;
-   private int lives = 4;
+   private int lives = 5;
    private boolean keyCollected;
    private int enemiesKilled;
-   private boolean winner;
-   private boolean dead;
-   private Animation<TextureRegion> danceAnimation;
-   private Animation<TextureRegion> cryAnimation;
+    private boolean winner;
+    private boolean dead;
+    private Animation<TextureRegion> danceAnimation;
+    private Animation<TextureRegion> cryAnimation;
 
 
-   public Hero(float x, float y, Animation<TextureRegion> leftAnimation,
-               Animation<TextureRegion> rightAnimation, Animation<TextureRegion> upAnimation,
-               Animation<TextureRegion> downAnimation, Animation<TextureRegion> standAnimation) {
+    public Hero(float x, float y) {
+      this.keyCollected = false;
       this.x = x;
       this.y = y;
       this.prevX = x;
       this.prevY = y;
-      this.leftAnimation = leftAnimation;
-      this.rightAnimation = rightAnimation;
-      this.upAnimation = upAnimation;
-      this.downAnimation = downAnimation;
-      this.standAnimation = standAnimation;
-      this.heroWidth = 25;
-      this.heroHeight=40;
-      this.heroRect = new Rectangle(x,y,heroWidth+5,heroHeight);
       this.dead = false;
       this.winner = false;
+      this.heroWidth = 40;
+      this.heroHeight=80;
+      this.heroRect = new Rectangle(x,y+5,heroWidth,heroHeight/2);
+      loadCharacterAnimation();
    }
 
+   private void loadCharacterAnimation() {
+      Texture walkSheet = new Texture(Gdx.files.internal("character.png"));
+      int frameWidth = 16;
+      int frameHeight = 32;
+      int animationFrames = 4;
+      TextureRegion walkStandFrame = new TextureRegion(walkSheet, 0, 0, frameWidth, frameHeight);
+      Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
+      Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
+      Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
+      Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
+      // Add all frames to the animation
+      for (int col = 0; col < animationFrames; col++) {
+         walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
+         walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
+         walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight));
+         walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight));
+      }
+
+      leftAnimation = new Animation<>(0.1f, walkLeftFrames);
+      rightAnimation = new Animation<>(0.1f, walkRightFrames);
+      upAnimation = new Animation<>(0.1f, walkUpFrames);
+      downAnimation = new Animation<>(0.1f, walkDownFrames);
+      standAnimation = new Animation<>(0.1f, walkStandFrame);
+   }
    public void update(float delta, String direction) {
       setDirection(direction);
       switch (getDirection()) {
@@ -149,21 +168,13 @@ public class Hero {
       y -= delta;
    }
 
-   public void updateKeyCollected() {
-      if(Gdx.input.isKeyPressed(Input.Keys.Z)) {
-         keyCollected = true;
-      }
-   }
-
    public void updateLives() {
-      if (Gdx.input.isKeyPressed(Input.Keys.X)) {
          if (lives > 0) {
             lives -= 1;
          }
          else {
             lives = 0;
          }
-      }
    }
 
    public void updateEnemiesKilled() {
@@ -241,7 +252,6 @@ public class Hero {
    public void setDirection(String direction) {
       this.direction = direction;
    }
-
    public int getLives() {
       return lives;
    }
@@ -265,52 +275,50 @@ public class Hero {
    public void setEnemiesKilled(int enemiesKilled) {
       this.enemiesKilled = enemiesKilled;
    }
-   public boolean isWinner() {
-      return winner;
-   }
+    public boolean isWinner() {
+        return winner;
+    }
 
-   public void setWinner(boolean winner) {
-      this.winner = winner;
-   }
+    public void setWinner(boolean winner) {
+        this.winner = winner;
+    }
 
-   public boolean isDead() {
-      return dead;
-   }
+    public boolean isDead() {
+        return dead;
+    }
 
-   public void setDead(boolean dead) {
-      this.dead = dead;
-   }
+    public void setDead(boolean dead) {
+        this.dead = dead;
+    }
+    public float getDanceTimer() {
+        return danceTimer;
+    }
 
+    public void setDanceTimer(float danceTimer) {
+        this.danceTimer = danceTimer;
+    }
 
-   public float getDanceTimer() {
-      return danceTimer;
-   }
+    public Animation<TextureRegion> getDanceAnimation() {
+        return danceAnimation;
+    }
 
-   public void setDanceTimer(float danceTimer) {
-      this.danceTimer = danceTimer;
-   }
+    public void setDanceAnimation(Animation<TextureRegion> danceAnimation) {
+        this.danceAnimation = danceAnimation;
+    }
 
-   public Animation<TextureRegion> getDanceAnimation() {
-      return danceAnimation;
-   }
+    public Animation<TextureRegion> getCryAnimation() {
+        return cryAnimation;
+    }
 
-   public void setDanceAnimation(Animation<TextureRegion> danceAnimation) {
-      this.danceAnimation = danceAnimation;
-   }
+    public void setCryAnimation(Animation<TextureRegion> cryAnimation) {
+        this.cryAnimation = cryAnimation;
+    }
 
-   public Animation<TextureRegion> getCryAnimation() {
-      return cryAnimation;
-   }
+    public float getCryTimer() {
+        return cryTimer;
+    }
 
-   public void setCryAnimation(Animation<TextureRegion> cryAnimation) {
-      this.cryAnimation = cryAnimation;
-   }
-
-   public float getCryTimer() {
-      return cryTimer;
-   }
-
-   public void setCryTimer(float cryTimer) {
-      this.cryTimer = cryTimer;
-   }
+    public void setCryTimer(float cryTimer) {
+        this.cryTimer = cryTimer;
+    }
 }

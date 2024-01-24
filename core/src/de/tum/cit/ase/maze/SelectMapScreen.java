@@ -22,6 +22,7 @@ public class SelectMapScreen implements Screen {
 
     public SelectMapScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
+        //backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
         backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
@@ -43,37 +44,13 @@ public class SelectMapScreen implements Screen {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-                    game.getMazeLoader().loadMazeData("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties");
+                    //"C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties"
+                    game.getMazeLoader().loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
                     game.createMaze();
-                    game.renderMaze();
                     game.goToGame(); // Transition to the game screen
                 }
             });
         }
-//        TextButton levelButton1 = new TextButton("Level 1", game.getSkin());
-//        table.add(levelButton1).width(300).padBottom(15).row();
-//        levelButton1.addListener(new ChangeListener() {
-//                @Override
-//                public void changed(ChangeEvent event, Actor actor) {
-//                    Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-//                    game.getMazeLoader().loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-1.properties");
-//                    game.createMaze();
-//                    game.renderMaze();
-//                    game.goToGame(); // Transition to the game screen
-//                }
-//            });
-//        TextButton levelButton2 = new TextButton("Level 2", game.getSkin());
-//        table.add(levelButton2).width(300).padBottom(15).row();
-//        levelButton2.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-//                game.getMazeLoader().loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-2.properties");
-//                game.createMaze();
-//                game.renderMaze();
-//                game.goToGame(); // Transition to the game screen
-//            }
-//        });
 
         TextButton uploadMapButton = new TextButton("Upload Map", game.getSkin());
         uploadMapButton.addListener(new ChangeListener() {

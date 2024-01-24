@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,7 +15,6 @@ import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserCallback;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserConfiguration;
-
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,19 +32,16 @@ public class MazeRunnerGame extends Game{
     private SpriteBatch spriteBatch;
     private double maxX;
     private double maxY;
+    private double minX;
+    private double minY;
     // UI Skin
     private Skin skin;
     private Hero hero;
-    //private Enemy enemy;
-    // Character animation downwards
-    private Animation<TextureRegion> characterDownAnimation;
-    private Animation<TextureRegion> characterLeftAnimation;
-    private Animation<TextureRegion> characterRightAnimation;
-    private Animation<TextureRegion> characterUpAnimation;
-    private Animation<TextureRegion> characterStandAnimation;
     private final NativeFileChooser fileChooser;
     private final Map<Point, Integer> mazeData = new HashMap<>();
     private Tiles allTiles;
+    private Key key;
+    private Entry entry;
     private MazeLoader mazeLoader;
     private boolean clicked;
     private Languages languages;
@@ -104,6 +99,25 @@ public class MazeRunnerGame extends Game{
     public void create() {
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
+        //this.loadCharacterAnimation();// Load character animation
+        this.allTiles = new Tiles();
+        this.key = new Key();
+        this.entry = new Entry();
+        createMaze();
+//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+//        backgroundMusic.setLooping(true);
+//        backgroundMusic.play();
+
+//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+//        backgroundMusic.setLooping(true);
+        /*
+        if (optionScreen.getClickedTimes() % 2 == 0) {
+            backgroundMusic.play();
+        }
+        else {
+            backgroundMusic.dispose();
+        }
+         */
         this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
         createMaze();
@@ -143,32 +157,6 @@ public class MazeRunnerGame extends Game{
     /**
      * Loads the character animation from the character.png file.
      */
-    private void loadCharacterAnimation() {
-        Texture walkSheet = new Texture(Gdx.files.internal("character.png"));
-
-        int frameWidth = 16;
-        int frameHeight = 32;
-        int animationFrames = 4;
-        TextureRegion walkStandFrame = new TextureRegion(walkSheet, 0, 0, frameWidth, frameHeight);
-        Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
-
-        // Add all frames to the animation
-        for (int col = 0; col < animationFrames; col++) {
-            walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
-            walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
-            walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight));
-            walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight));
-        }
-
-        characterStandAnimation = new Animation<>(0.1f, walkStandFrame);
-        characterLeftAnimation = new Animation<>(0.1f, walkLeftFrames);
-        characterRightAnimation = new Animation<>(0.1f, walkRightFrames);
-        characterUpAnimation = new Animation<>(0.1f, walkUpFrames);
-        characterDownAnimation = new Animation<>(0.1f, walkDownFrames);
-    }
     public void createMaze() {
         mazeLoader.calculateMaxCoordinates();
         mazeLoader.addGround();
@@ -176,8 +164,12 @@ public class MazeRunnerGame extends Game{
     public void renderMaze() {
         mazeLoader.renderMaze();
     }
-
-
+    /*public void saveGameState(float heroX, float heroY, boolean keyCollected, int lives) {
+        savedHeroX = heroX;
+        savedHeroY = heroY;
+        savedKeyCollected = keyCollected;
+        savedLives = lives;
+    }*/
     /**
      * Cleans up resources when the game is disposed.
      */
@@ -255,6 +247,24 @@ public class MazeRunnerGame extends Game{
         return mazeLoader;
     }
 
+    public Key getKey() {
+        return key;
+    }
+
+    public Entry getEntry() {
+        return entry;
+    public void setHero(Hero hero) {
+        this.hero = hero;
+    }
+
+    public Tiles getAllTiles() {
+        return allTiles;
+    }
+
+    public MazeLoader getMazeLoader() {
+        return mazeLoader;
+    }
+
     public boolean isClicked() {
         return clicked;
     }
@@ -270,4 +280,17 @@ public class MazeRunnerGame extends Game{
     public void setLanguages(Languages languages) {
         this.languages = languages;
     }
+
+    public void setMinY(double minY) {
+        this.minY = minY;
+    }
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public double getMinY() {
+        return minY;
+    }
+
 }
