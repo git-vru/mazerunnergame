@@ -42,8 +42,7 @@ public class LanguageScreen implements Screen {
         turkish.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getLanguages().setLanguageCode("tr");
-                game.getLanguages().setLanguage();
+                game.getLanguages().setLanguage("tr");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
@@ -54,8 +53,7 @@ public class LanguageScreen implements Screen {
         english.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getLanguages().setLanguageCode("en");
-                game.getLanguages().setLanguage();
+                game.getLanguages().setLanguage("en");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
@@ -66,8 +64,7 @@ public class LanguageScreen implements Screen {
         hindi.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getLanguages().setLanguageCode("hn");
-                game.getLanguages().setLanguage();
+                game.getLanguages().setLanguage("hn");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
@@ -78,8 +75,7 @@ public class LanguageScreen implements Screen {
         Spanish.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getLanguages().setLanguageCode("sp");
-                game.getLanguages().setLanguage();
+                game.getLanguages().setLanguage("sp");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
@@ -90,8 +86,7 @@ public class LanguageScreen implements Screen {
         german.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //game.getLanguages().setLanguageCode("gm");
-                game.getLanguages().setLanguage();
+                game.getLanguages().setLanguage("gm");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
@@ -102,8 +97,7 @@ public class LanguageScreen implements Screen {
         french.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getLanguages().setLanguageCode("fr");
-                game.getLanguages().setLanguage();
+                game.getLanguages().setLanguage("fr");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
@@ -114,7 +108,7 @@ public class LanguageScreen implements Screen {
         arabic.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getLanguages().setLanguageCode("ar");
+                game.getLanguages().setLanguage("ar");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
@@ -125,8 +119,7 @@ public class LanguageScreen implements Screen {
         russian.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getLanguages().setLanguageCode("ru");
-                game.getLanguages().setLanguage();
+                game.getLanguages().setLanguage("ru");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
@@ -137,8 +130,7 @@ public class LanguageScreen implements Screen {
         chinese.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getLanguages().setLanguageCode("cn");
-                game.getLanguages().setLanguage();
+                game.getLanguages().setLanguage("cn");
                 game.setScreen(new SettingsScreen(game));
                 super.clicked(event, x, y);
             }
