@@ -11,12 +11,13 @@ import com.badlogic.gdx.utils.Array;
 public class Entry {
     private Rectangle entryRect;
     private float entryAnimationTime;
+    private Rectangle mazeLeaver;
     private Animation<TextureRegion> entryAnimation;
     private Texture entryPicture;
     private boolean open;
 
     public Entry() {
-        this.open=false;
+        this.open=true;
         loadEntryAnimation();
     }
     public void loadEntryAnimation() {
@@ -29,7 +30,8 @@ public class Entry {
         for (int col = 0; col < animationFrames; col++) {
             entryFrames.add(new TextureRegion(entryPicture,frameWidth, col*frameHeight, frameWidth, frameHeight));
         }
-        this.entryAnimation = new Animation<>(0.5f, entryFrames);
+        this.entryAnimation = new Animation<>(0.25f, entryFrames);
+        this.entryAnimationTime=1f;
     }
     public void update(float delta) {
         entryAnimationTime += delta;
@@ -45,7 +47,7 @@ public class Entry {
                    entryRect.height
            );
            setOpen(false);
-       }
+       }else spriteBatch.draw(entryAnimation.getKeyFrames()[0],entryRect.x,entryRect.y,entryRect.width,entryRect.height);
     }
 
     public Rectangle getEntryRect() {
@@ -62,5 +64,13 @@ public class Entry {
 
     public void setOpen(boolean open) {
         this.open = open;
+    }
+
+    public void setMazeLeaver(Rectangle mazeLeaver) {
+        this.mazeLeaver = mazeLeaver;
+    }
+
+    public Rectangle getMazeLeaver() {
+        return mazeLeaver;
     }
 }

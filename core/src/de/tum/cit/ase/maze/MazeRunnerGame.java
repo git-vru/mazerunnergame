@@ -104,6 +104,7 @@ public class MazeRunnerGame extends Game{
         this.key = new Key();
         this.entry = new Entry();
         createMaze();
+        mazeLoader.createEnemies();
 //        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
 //        backgroundMusic.setLooping(true);
 //        backgroundMusic.play();
@@ -118,10 +119,9 @@ public class MazeRunnerGame extends Game{
             backgroundMusic.dispose();
         }
          */
-        this.loadCharacterAnimation();// Load character animation
+        //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
-        createMaze();
-        playMusic();
+        //playMusic();
         this.languages = new Languages();
         //languages.setDefaultLanguage();
         // Play some background music
@@ -186,25 +186,6 @@ public class MazeRunnerGame extends Game{
         return skin;
     }
 
-    public Animation<TextureRegion> getCharacterDownAnimation() {
-        return characterDownAnimation;
-    }
-
-    public Animation<TextureRegion> getCharacterLeftAnimation() {
-        return characterLeftAnimation;
-    }
-
-    public Animation<TextureRegion> getCharacterRightAnimation() {
-        return characterRightAnimation;
-    }
-
-    public Animation<TextureRegion> getCharacterUpAnimation() {
-        return characterUpAnimation;
-    }
-
-    public Animation<TextureRegion> getCharacterStandAnimation() {
-        return characterStandAnimation;
-    }
 
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
@@ -253,16 +234,6 @@ public class MazeRunnerGame extends Game{
 
     public Entry getEntry() {
         return entry;
-    public void setHero(Hero hero) {
-        this.hero = hero;
-    }
-
-    public Tiles getAllTiles() {
-        return allTiles;
-    }
-
-    public MazeLoader getMazeLoader() {
-        return mazeLoader;
     }
 
     public boolean isClicked() {
@@ -293,4 +264,7 @@ public class MazeRunnerGame extends Game{
         return minY;
     }
 
+    public void setMinX(double minX) {
+        this.minX = minX;
+    }
 }
