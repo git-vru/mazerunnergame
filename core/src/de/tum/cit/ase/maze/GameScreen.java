@@ -21,8 +21,6 @@ public class GameScreen implements Screen {
     private MazeLoader mazeLoader;
     private final OrthographicCamera camera;
     private final BitmapFont font;
-    private BitmapFont font2;
-    private FreeTypeFontGenerator freeTypeFontGenerator;
     private final Hero hero;
     private final float boundingBoxSize;
     private final SpriteBatch batch;
@@ -41,10 +39,6 @@ public class GameScreen implements Screen {
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
-        this.freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Fontsfile.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 120;
-        font2=freeTypeFontGenerator.generateFont(parameter);
         boundingBoxSize = 50f;
         cameraSpeed = 2f;
         batch = new SpriteBatch();

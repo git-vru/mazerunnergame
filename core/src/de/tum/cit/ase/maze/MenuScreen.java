@@ -38,20 +38,19 @@ public class MenuScreen implements Screen {
         Table table = new Table(); // Create a table for layout
         table.setFillParent(true); // Make the table fill the stage
         stage.addActor(table); // Add the table to the stage
-        game.getLanguages().loadLanguageBundles();
 
 
         // Add a label as a title
-        table.add(new Label(game.getLanguages().getString("greeting"), game.getSkin(), "title")).padBottom(300).row();
+        table.add(new Label(game.getLanguages().get("greeting"), game.getSkin(), "title")).padBottom(300).row();
         //table.add(new Label(language.get("greeting"), game.getSkin(), "title")).padBottom(300).row();
         // Create and add a button to go to the game screen
-        TextButton startGameButton = new TextButton(game.getLanguages().getString("newgame"), game.getSkin());
+        TextButton startGameButton = new TextButton(game.getLanguages().get("newgame"), game.getSkin());
         table.add(startGameButton).width(300).padBottom(15).row();
 
-        TextButton continueGameButton = new TextButton(game.getLanguages().getString("continuegame"), game.getSkin());
+        TextButton continueGameButton = new TextButton(game.getLanguages().get("continuegame"), game.getSkin());
         table.add(continueGameButton).width(300).padBottom(15).row();
 
-        TextButton settingsButton = new TextButton(game.getLanguages().getString("settings"), game.getSkin());
+        TextButton settingsButton = new TextButton(game.getLanguages().get("settings"), game.getSkin());
         table.add(settingsButton).width(300).padBottom(15).row();
 
 //        TextButton selectMapButton = new TextButton("Select Map", game.getSkin());
@@ -60,7 +59,7 @@ public class MenuScreen implements Screen {
 //        TextButton uploadMapButton = new TextButton("Upload Map", game.getSkin());
 //        table.add(uploadMapButton).width(300).padBottom(15).row();
 
-        TextButton exitGameButton = new TextButton(game.getLanguages().getString("exitgame"), game.getSkin());
+        TextButton exitGameButton = new TextButton(game.getLanguages().get("exitgame"), game.getSkin());
         table.add(exitGameButton).width(300).row();
 
 
@@ -78,7 +77,6 @@ public class MenuScreen implements Screen {
         settingsButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new SettingsScreen(game));
-                System.out.println("你好");
             }
         });
 
