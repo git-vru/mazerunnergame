@@ -6,13 +6,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
-import de.tum.cit.ase.maze.Hero;
-import de.tum.cit.ase.maze.MazeRunnerGame;
-
-import java.awt.geom.GeneralPath;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -24,13 +21,15 @@ public class GameScreen implements Screen {
     private MazeLoader mazeLoader;
     private final OrthographicCamera camera;
     private final BitmapFont font;
+    private BitmapFont font2;
+    private FreeTypeFontGenerator freeTypeFontGenerator;
     private final Hero hero;
     private final float boundingBoxSize;
     private final SpriteBatch batch;
     private float cameraSpeed;
     private HUD hud;
     private Stage stage;
-    private Enemy enemy;
+    //private Enemy enemy;
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
         this.mazeLoader = game.getMazeLoader();
@@ -42,6 +41,10 @@ public class GameScreen implements Screen {
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
+        this.freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Fontsfile.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 120;
+        font2=freeTypeFontGenerator.generateFont(parameter);
         boundingBoxSize = 50f;
         cameraSpeed = 2f;
         batch = new SpriteBatch();
@@ -57,27 +60,33 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.goToMenu();
         }
-
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
         updateCamera();
         hero.update(delta,determineDirection());
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
         game.renderMaze();
-        enemy.update(delta, enemy.determineEnemyDirection());
+        //enemy.update(delta, enemy.determineEnemyDirection());
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
         hero.draw(game.getSpriteBatch());
-        enemy.draw(game.getSpriteBatch());
+        //enemy.draw(game.getSpriteBatch());
         hud.setKeyStatus();
         hero.updateKeyCollected();
         hud.setLives();
         hero.updateLives();
         hud.setNumberOfEnemiesKilled();
         hero.updateEnemiesKilled();
+        hero.updateWinning();
+        hero.updateDead();
         hud.draw();
+        if (hero.isWinner()) {
+            game.setScreen(new GoodEndScreen(game));
+        }
+        if (hero.isDead()) {
+            game.setScreen((new BadEndScreen(game)));
+        }
         game.getSpriteBatch().end(); // Important to call this after drawing everything
-
     }
     private String determineDirection() {
         String direction = "";

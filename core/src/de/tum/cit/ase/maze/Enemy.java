@@ -1,4 +1,4 @@
-package de.tum.cit.ase.maze;
+/*package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -321,3 +321,4 @@ public class Enemy {
         this.enemyArray = enemyArray;
     }
 }
+*/

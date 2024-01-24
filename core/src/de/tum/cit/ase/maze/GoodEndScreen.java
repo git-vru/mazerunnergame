@@ -15,13 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class FinishScreen implements Screen {
+public class GoodEndScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
     private Hero hero;
-    public FinishScreen(MazeRunnerGame game) {
+    public GoodEndScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
         backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
@@ -32,7 +32,10 @@ public class FinishScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-        table.add(new Label("YOU WON", game.getSkin(), "title")).padBottom(300).row();
+        hero = game.getHero();
+        table.add(new Label("YOU WON!", game.getSkin(), "title")).padBottom(300).row();
+        hero.loadDanceAnimation();
+        hero.loadCryAnimation();
 
         TextButton goToMenu = new TextButton("Go To Menu", game.getSkin());
         table.add(goToMenu).width(300).padBottom(15).row();
@@ -50,11 +53,13 @@ public class FinishScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         batch.setProjectionMatrix(stage.getCamera().combined);
-        //hero.loadDanceAnimation();
         batch.begin();
         batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        //hero.winDraw(game.getSpriteBatch());
         batch.end();
+        game.getSpriteBatch().begin();
+        hero.setDanceTimer(hero.getDanceTimer() + delta);
+        game.getSpriteBatch().draw(hero.getDanceAnimation().getKeyFrame(hero.getDanceTimer(), true), (stage.getWidth()/2) - 70, (stage.getHeight()/2) - 130, 150,300);
+        game.getSpriteBatch().end();
         stage.draw();
     }
 

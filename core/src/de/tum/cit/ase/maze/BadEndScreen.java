@@ -1,30 +1,27 @@
 package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import org.w3c.dom.Text;
 
-public class SettingsScreen implements Screen {
+public class BadEndScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
-    public SettingsScreen(MazeRunnerGame game) {
+    private Hero hero;
+    public BadEndScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
         backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
@@ -35,35 +32,19 @@ public class SettingsScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
+        hero = game.getHero();
+        table.add(new Label("YOU Lost!", game.getSkin(), "title")).padBottom(300).row();
+        hero.loadDanceAnimation();
+        hero.loadCryAnimation();
 
-        table.add(new Label("Settings", game.getSkin(), "title")).padBottom(50).row();
-        TextButton menuMusicButton = new TextButton("Menu Music", game.getSkin());
-        table.add(menuMusicButton).width(300).padBottom(15).row();
-        menuMusicButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setClicked(!game.isClicked());
-                super.clicked(event, x, y);
-            }
-        });
-
-        TextButton backButton = new TextButton("Back", game.getSkin());
-        backButton.addListener(new ChangeListener() {
+        TextButton goToMenu = new TextButton("Go To Menu", game.getSkin());
+        table.add(goToMenu).width(300).padBottom(15).row();
+        goToMenu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.goToMenu();
+                game.setScreen(new MenuScreen(game));
             }
         });
-        table.add(backButton).width(300).padBottom(15).row();
-
-        TextButton languageButton = new TextButton("Select Language", game.getSkin());
-        languageButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new LanguageScreen(game));
-            }
-        });
-        table.add(languageButton).width(300).padBottom(15).row();
     }
 
 
@@ -73,8 +54,12 @@ public class SettingsScreen implements Screen {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         batch.setProjectionMatrix(stage.getCamera().combined);
         batch.begin();
-        //batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
+        game.getSpriteBatch().begin();
+        hero.setDanceTimer(hero.getDanceTimer() + delta);
+        game.getSpriteBatch().draw(hero.getCryAnimation().getKeyFrame(hero.getDanceTimer(), true), (stage.getWidth()/2) - 70, (stage.getHeight()/2) - 130, 150,300);
+        game.getSpriteBatch().end();
         stage.draw();
     }
 

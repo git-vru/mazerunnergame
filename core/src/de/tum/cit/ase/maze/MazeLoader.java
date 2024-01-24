@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class MazeLoader {
     private final MazeRunnerGame game;
-    private Enemy enemy;
+    //private Enemy enemy;
     public MazeLoader(MazeRunnerGame game) {
         this.game = game;
     }
@@ -106,7 +106,7 @@ public class MazeLoader {
 
                      */
                     game.getSpriteBatch().draw(game.getAllTiles().getEnemy(), x, y, 60, 60);
-                    enemy.getEnemyArray().add(new Enemy(x, y));
+                    //enemy.getEnemyArray().add(new Enemy(x, y));
                     break;
                 case 5:
                     game.getSpriteBatch().draw(game.getAllTiles().getKey(), x + 15, y + 15, 30, 30);

@@ -6,8 +6,11 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
@@ -34,7 +37,7 @@ public class MazeRunnerGame extends Game{
     // UI Skin
     private Skin skin;
     private Hero hero;
-    private Enemy enemy;
+    //private Enemy enemy;
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
     private Animation<TextureRegion> characterLeftAnimation;
@@ -46,7 +49,7 @@ public class MazeRunnerGame extends Game{
     private Tiles allTiles;
     private MazeLoader mazeLoader;
     private boolean clicked;
-
+    private Languages languages;
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -105,6 +108,8 @@ public class MazeRunnerGame extends Game{
         this.allTiles = new Tiles();
         createMaze();
         playMusic();
+        this.languages = new Languages();
+        //languages.setDefaultLanguage();
         // Play some background music
         // Background sound
         //playMusic();
@@ -256,5 +261,13 @@ public class MazeRunnerGame extends Game{
 
     public void setClicked(boolean clicked) {
         this.clicked = clicked;
+    }
+
+    public Languages getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(Languages languages) {
+        this.languages = languages;
     }
 }
