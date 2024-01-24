@@ -15,14 +15,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class SelectMapScreen implements Screen {
+public class BadEndScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
-
-    public SelectMapScreen(MazeRunnerGame game) {
+    private final MazeRunnerGame game;
+    private Hero hero;
+    public BadEndScreen(MazeRunnerGame game) {
+        this.game = game;
         var camera = new OrthographicCamera();
-        //backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
         backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
@@ -31,46 +32,21 @@ public class SelectMapScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
+        hero = game.getHero();
+        table.add(new Label("YOU Lost!", game.getSkin(), "title")).padBottom(300).row();
+        hero.loadDanceAnimation();
+        hero.loadCryAnimation();
 
-        table.add(new Label("Select a Map", game.getSkin(), "title")).padBottom(50).row();
-
-        for (int i = 1; i <= 5; i++) {
-            TextButton levelButton = new TextButton("Level " + i, game.getSkin());
-            table.add(levelButton).width(300).padBottom(15).row();
-
-            // Add a listener to handle the button click for each level
-            int finalI = i; // Need a final variable for the lambda expression
-            levelButton.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-                    //"C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties"
-                    game.getMazeLoader().loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
-                    game.createMaze();
-                    game.goToGame(); // Transition to the game screen
-                }
-            });
-        }
-
-        TextButton uploadMapButton = new TextButton("Upload Map", game.getSkin());
-        uploadMapButton.addListener(new ChangeListener() {
+        TextButton goToMenu = new TextButton("Go To Menu", game.getSkin());
+        table.add(goToMenu).width(300).padBottom(15).row();
+        goToMenu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.showFileChooser();
-
+                game.setScreen(new MenuScreen(game));
             }
         });
-        table.add(uploadMapButton).width(300).padBottom(15).row();
-
-        TextButton backButton = new TextButton("Back", game.getSkin());
-        backButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.goToMenu();
-            }
-        });
-        table.add(backButton).width(300).padBottom(15).row();
     }
+
 
     @Override
     public void render(float delta) {
@@ -80,6 +56,10 @@ public class SelectMapScreen implements Screen {
         batch.begin();
         batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
+        game.getSpriteBatch().begin();
+        hero.setDanceTimer(hero.getDanceTimer() + delta);
+        game.getSpriteBatch().draw(hero.getCryAnimation().getKeyFrame(hero.getDanceTimer(), true), (stage.getWidth()/2) - 70, (stage.getHeight()/2) - 130, 150,300);
+        game.getSpriteBatch().end();
         stage.draw();
     }
 

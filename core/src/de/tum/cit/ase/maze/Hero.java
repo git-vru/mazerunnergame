@@ -15,47 +15,43 @@ public class Hero {
    private float upTimer;
    private float downTimer;
    private float standTimer;
+   private float danceTimer;
+   private float cryTimer;
    private String direction;
    private Animation<TextureRegion> downAnimation;
    private Animation<TextureRegion> leftAnimation;
    private Animation<TextureRegion> rightAnimation;
    private Animation<TextureRegion> upAnimation;
    private Animation<TextureRegion> standAnimation;
-   private Animation<TextureRegion> celebrationAnimation;
    private Rectangle heroRect;
    private int heroHeight;
    private int heroWidth;
    float prevX,prevY;
-   private int lives = 4;
+   private int lives = 5;
    private boolean keyCollected;
    private int enemiesKilled;
+    private boolean winner;
+    private boolean dead;
+    private Animation<TextureRegion> danceAnimation;
+    private Animation<TextureRegion> cryAnimation;
 
-   public Hero(float x, float y) {
+
+    public Hero(float x, float y) {
       this.keyCollected = false;
       this.x = x;
       this.y = y;
       this.prevX = x;
       this.prevY = y;
+      this.dead = false;
+      this.winner = false;
       this.heroWidth = 40;
       this.heroHeight=80;
       this.heroRect = new Rectangle(x,y+5,heroWidth,heroHeight/2);
       loadCharacterAnimation();
    }
-   public void loadCelebration(){
-      Texture walkSheet = new Texture(Gdx.files.internal("character.png"));
 
-      int frameWidth = 16;
-      int frameHeight = 32;
-      int animationFrames = 3;
-      Array<TextureRegion> celebrationFrames = new Array<>(TextureRegion.class);
-      for (int col = 0; col < animationFrames; col++) {
-         celebrationFrames.add(new TextureRegion(walkSheet, 80+(col * frameWidth), 0, frameWidth, frameHeight));
-      }
-      celebrationAnimation = new Animation<>(0.1f, celebrationFrames);
-   }
    private void loadCharacterAnimation() {
       Texture walkSheet = new Texture(Gdx.files.internal("character.png"));
-
       int frameWidth = 16;
       int frameHeight = 32;
       int animationFrames = 4;
@@ -64,7 +60,6 @@ public class Hero {
       Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
       Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
       Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
-
       // Add all frames to the animation
       for (int col = 0; col < animationFrames; col++) {
          walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
@@ -79,7 +74,6 @@ public class Hero {
       downAnimation = new Animation<>(0.1f, walkDownFrames);
       standAnimation = new Animation<>(0.1f, walkStandFrame);
    }
-
    public void update(float delta, String direction) {
       setDirection(direction);
       switch (getDirection()) {
@@ -107,6 +101,32 @@ public class Hero {
               x,
               y,getHeroWidth(),getHeroHeight()
       );
+   }
+
+   public void loadDanceAnimation() {
+      Texture danceSheet = new Texture(Gdx.files.internal("character.png"));
+
+      int frameWidth = 16;
+      int frameHeight = 32;
+      Array<TextureRegion> danceAnimationFrame = new Array<>(TextureRegion.class);
+
+      // Add all frames to the animation
+      for (int col = 0; col < 2; col++) {
+         danceAnimationFrame.add(new TextureRegion(danceSheet, (col * frameWidth) + 96, 0, frameWidth, frameHeight));
+      }
+      danceAnimation = new Animation<>(0.25f, danceAnimationFrame);
+   }
+
+   public void loadCryAnimation() {
+      Texture danceSheet = new Texture(Gdx.files.internal("character.png"));
+
+      int frameWidth = 16;
+      int frameHeight = 32;
+      Array<TextureRegion> danceAnimationFrame = new Array<>(TextureRegion.class);
+
+      // Add all frames to the animation
+      danceAnimationFrame.add(new TextureRegion(danceSheet, frameWidth + 80, 0, frameWidth, frameHeight));
+      cryAnimation = new Animation<>(0.25f, danceAnimationFrame);
    }
 
    private Animation<TextureRegion> getCurrentFrame() {
@@ -148,26 +168,30 @@ public class Hero {
       y -= delta;
    }
 
-   public void updateKeyCollected() {
-      if(Gdx.input.isKeyPressed(Input.Keys.Z)) {
-         keyCollected = true;
-      }
-   }
-
    public void updateLives() {
-      if (Gdx.input.isKeyPressed(Input.Keys.X)) {
          if (lives > 0) {
             lives -= 1;
          }
          else {
             lives = 0;
          }
-      }
    }
 
    public void updateEnemiesKilled() {
       if(Gdx.input.isKeyPressed(Input.Keys.C)) {
          enemiesKilled += 1;
+      }
+   }
+
+   public void updateWinning() {
+      if(Gdx.input.isKeyPressed(Input.Keys.B)) {
+         setWinner(true);
+      }
+   }
+
+   public void updateDead() {
+      if(Gdx.input.isKeyPressed(Input.Keys.M)) {
+         setDead(!isDead());
       }
    }
 
@@ -251,4 +275,50 @@ public class Hero {
    public void setEnemiesKilled(int enemiesKilled) {
       this.enemiesKilled = enemiesKilled;
    }
+    public boolean isWinner() {
+        return winner;
+    }
+
+    public void setWinner(boolean winner) {
+        this.winner = winner;
+    }
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    public void setDead(boolean dead) {
+        this.dead = dead;
+    }
+    public float getDanceTimer() {
+        return danceTimer;
+    }
+
+    public void setDanceTimer(float danceTimer) {
+        this.danceTimer = danceTimer;
+    }
+
+    public Animation<TextureRegion> getDanceAnimation() {
+        return danceAnimation;
+    }
+
+    public void setDanceAnimation(Animation<TextureRegion> danceAnimation) {
+        this.danceAnimation = danceAnimation;
+    }
+
+    public Animation<TextureRegion> getCryAnimation() {
+        return cryAnimation;
+    }
+
+    public void setCryAnimation(Animation<TextureRegion> cryAnimation) {
+        this.cryAnimation = cryAnimation;
+    }
+
+    public float getCryTimer() {
+        return cryTimer;
+    }
+
+    public void setCryTimer(float cryTimer) {
+        this.cryTimer = cryTimer;
+    }
 }

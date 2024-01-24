@@ -15,15 +15,22 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class SelectMapScreen implements Screen {
+public class PauseScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
+    private TextButton resumeButton;
+    private TextButton menuButton;
+    private final MazeRunnerGame game;
+    private final float heroX;
+    private final float heroY;
+    private final boolean keyCollected;
+    private final int lives;
 
-    public SelectMapScreen(MazeRunnerGame game) {
+
+    public PauseScreen(MazeRunnerGame game, float heroX, float heroY, boolean keyCollected, int lives) {
         var camera = new OrthographicCamera();
-        //backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
-        backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
+        backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera);
@@ -31,45 +38,28 @@ public class SelectMapScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-
-        table.add(new Label("Select a Map", game.getSkin(), "title")).padBottom(50).row();
-
-        for (int i = 1; i <= 5; i++) {
-            TextButton levelButton = new TextButton("Level " + i, game.getSkin());
-            table.add(levelButton).width(300).padBottom(15).row();
-
-            // Add a listener to handle the button click for each level
-            int finalI = i; // Need a final variable for the lambda expression
-            levelButton.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-                    //"C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties"
-                    game.getMazeLoader().loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
-                    game.createMaze();
-                    game.goToGame(); // Transition to the game screen
-                }
-            });
-        }
-
-        TextButton uploadMapButton = new TextButton("Upload Map", game.getSkin());
-        uploadMapButton.addListener(new ChangeListener() {
+        resumeButton = new TextButton("Resume", game.getSkin());
+        table.add(resumeButton).width(300).padBottom(15).row();
+        menuButton = new TextButton("Main Menu", game.getSkin());
+        table.add(menuButton).width(300).padBottom(15).row();
+        this.game = game;
+        this.heroX = heroX;
+        this.heroY = heroY;
+        this.keyCollected = keyCollected;
+        this.lives = lives;
+        resumeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.showFileChooser();
-
+                GameScreen.setResumed(false);
+                //game.setScreen(new GameScreen(game, heroX, heroY, keyCollected, lives));
             }
         });
-        table.add(uploadMapButton).width(300).padBottom(15).row();
-
-        TextButton backButton = new TextButton("Back", game.getSkin());
-        backButton.addListener(new ChangeListener() {
+        menuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.goToMenu();
             }
         });
-        table.add(backButton).width(300).padBottom(15).row();
     }
 
     @Override

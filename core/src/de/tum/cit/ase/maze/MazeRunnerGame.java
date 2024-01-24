@@ -4,16 +4,17 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserCallback;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserConfiguration;
-
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,21 +32,19 @@ public class MazeRunnerGame extends Game{
     private SpriteBatch spriteBatch;
     private double maxX;
     private double maxY;
+    private double minX;
+    private double minY;
     // UI Skin
     private Skin skin;
     private Hero hero;
-    // Character animation downwards
-    private Animation<TextureRegion> characterDownAnimation;
-    private Animation<TextureRegion> characterLeftAnimation;
-    private Animation<TextureRegion> characterRightAnimation;
-    private Animation<TextureRegion> characterUpAnimation;
-    private Animation<TextureRegion> characterStandAnimation;
     private final NativeFileChooser fileChooser;
     private final Map<Point, Integer> mazeData = new HashMap<>();
     private Tiles allTiles;
     private Key key;
     private Entry entry;
     private MazeLoader mazeLoader;
+    private boolean clicked;
+    private Languages languages;
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -58,6 +57,17 @@ public class MazeRunnerGame extends Game{
         this.maxY=0;
         //this.optionScreen = new OptionScreen(this);
         this.mazeLoader = new MazeLoader(this);
+        this.clicked = true;
+    }
+    public void playMusic() {
+        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic.setLooping(true);
+        if (clicked) {
+            backgroundMusic.play();
+        }
+        else {
+            backgroundMusic.stop();
+        }
     }
     public void showFileChooser() {
         NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
@@ -97,8 +107,9 @@ public class MazeRunnerGame extends Game{
 //        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
 //        backgroundMusic.setLooping(true);
 //        backgroundMusic.play();
-        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-        backgroundMusic.setLooping(true);
+
+//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+//        backgroundMusic.setLooping(true);
         /*
         if (optionScreen.getClickedTimes() % 2 == 0) {
             backgroundMusic.play();
@@ -107,10 +118,18 @@ public class MazeRunnerGame extends Game{
             backgroundMusic.dispose();
         }
          */
+        this.loadCharacterAnimation();// Load character animation
+        this.allTiles = new Tiles();
+        createMaze();
+        playMusic();
+        this.languages = new Languages();
+        //languages.setDefaultLanguage();
         // Play some background music
         // Background sound
+        //playMusic();
         goToMenu();// Navigate to the menu screen
     }
+
 
     /**
      * Switches to the menu screen.
@@ -145,6 +164,12 @@ public class MazeRunnerGame extends Game{
     public void renderMaze() {
         mazeLoader.renderMaze();
     }
+    /*public void saveGameState(float heroX, float heroY, boolean keyCollected, int lives) {
+        savedHeroX = heroX;
+        savedHeroY = heroY;
+        savedKeyCollected = keyCollected;
+        savedLives = lives;
+    }*/
     /**
      * Cleans up resources when the game is disposed.
      */
@@ -228,9 +253,44 @@ public class MazeRunnerGame extends Game{
 
     public Entry getEntry() {
         return entry;
+    public void setHero(Hero hero) {
+        this.hero = hero;
     }
 
-    public void setKey(Key key) {
-        this.key = key;
+    public Tiles getAllTiles() {
+        return allTiles;
     }
+
+    public MazeLoader getMazeLoader() {
+        return mazeLoader;
+    }
+
+    public boolean isClicked() {
+        return clicked;
+    }
+
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
+    }
+
+    public Languages getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(Languages languages) {
+        this.languages = languages;
+    }
+
+    public void setMinY(double minY) {
+        this.minY = minY;
+    }
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public double getMinY() {
+        return minY;
+    }
+
 }

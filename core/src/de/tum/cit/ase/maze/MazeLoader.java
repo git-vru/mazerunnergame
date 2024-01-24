@@ -3,6 +3,7 @@ package de.tum.cit.ase.maze;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class MazeLoader {
     private final MazeRunnerGame game;
-
+    //private Enemy enemy;
     public MazeLoader(MazeRunnerGame game) {
         this.game = game;
     }
@@ -93,7 +94,17 @@ public class MazeLoader {
                     game.getSpriteBatch().draw(game.getAllTiles().getTrap(), x, y, 60, 60);
                     break;
                 case 4:
+                    /*
+                    game.setEnemy(new Enemy(x, y,
+                            game.getEnemy().getLeftAnimation(),
+                            game.getEnemy().getRightAnimation(),
+                            game.getEnemy().getUpAnimation(),
+                            game.getEnemy().getDownAnimation(),
+                            game.getEnemy().getStandAnimation()));
+
+                     */
                     game.getSpriteBatch().draw(game.getAllTiles().getEnemy(), x, y, 60, 60);
+                    //enemy.getEnemyArray().add(new Enemy(x, y));
                     break;
                 case 5:
                     //game.getSpriteBatch().draw(game.getAllTiles().getKeyTile(), x, y+5, 60, 60);
