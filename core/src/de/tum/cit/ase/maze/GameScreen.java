@@ -14,6 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import de.tum.cit.ase.maze.Hero;
+import de.tum.cit.ase.maze.MazeRunnerGame;
+
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
  * It handles the game logic and rendering of the game elements.
@@ -141,7 +144,15 @@ public class GameScreen implements Screen {
         //hero.updateLives();
         hud.setShield(!isVulnerable);
         hero.updateEnemiesKilled();
+        hero.updateWinning();
+        hero.updateDead();
         hud.draw();
+        if (hero.isWinner()) {
+            game.setScreen(new GoodEndScreen(game));
+        }
+        if (hero.isDead()) {
+            game.setScreen((new BadEndScreen(game)));
+        }
         game.getSpriteBatch().end(); // Important to call this after drawing everything
         if (isResumed()){
             pauseScreen();
@@ -279,7 +290,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        mazeLoader.createEnemies();
+        //game.createMaze();
     }
 
     @Override

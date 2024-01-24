@@ -2,6 +2,7 @@ package de.tum.cit.ase.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import de.tum.cit.ase.maze.MazeRunnerGame;
 
 /**
  * The MenuScreen class is responsible for displaying the main menu of the game.
@@ -40,16 +40,21 @@ public class MenuScreen implements Screen {
         Table table = new Table(); // Create a table for layout
         table.setFillParent(true); // Make the table fill the stage
         stage.addActor(table); // Add the table to the stage
+        game.getLanguages().loadLanguageBundles();
 
 
         // Add a label as a title
-        table.add(new Label("Hello World from the Menu!", game.getSkin(), "title")).padBottom(300).row();
+        table.add(new Label(game.getLanguages().getString("greeting"), game.getSkin(), "title")).padBottom(300).row();
+        //table.add(new Label(language.get("greeting"), game.getSkin(), "title")).padBottom(300).row();
         // Create and add a button to go to the game screen
-        TextButton startGameButton = new TextButton("Start New Game", game.getSkin());
+        TextButton startGameButton = new TextButton(game.getLanguages().getString("newgame"), game.getSkin());
         table.add(startGameButton).width(300).padBottom(15).row();
 
-        TextButton optionsButton = new TextButton("Options", game.getSkin());
-        table.add(optionsButton).width(300).padBottom(15).row();
+        TextButton continueGameButton = new TextButton(game.getLanguages().getString("continuegame"), game.getSkin());
+        table.add(continueGameButton).width(300).padBottom(15).row();
+
+        TextButton settingsButton = new TextButton(game.getLanguages().getString("settings"), game.getSkin());
+        table.add(settingsButton).width(300).padBottom(15).row();
 
 //        TextButton selectMapButton = new TextButton("Select Map", game.getSkin());
 //        table.add(selectMapButton).width(300).padBottom(15).row();
@@ -57,7 +62,7 @@ public class MenuScreen implements Screen {
 //        TextButton uploadMapButton = new TextButton("Upload Map", game.getSkin());
 //        table.add(uploadMapButton).width(300).padBottom(15).row();
 
-        TextButton exitGameButton = new TextButton("Exit Game", game.getSkin());
+        TextButton exitGameButton = new TextButton(game.getLanguages().getString("exitgame"), game.getSkin());
         table.add(exitGameButton).width(300).row();
 
 
@@ -71,14 +76,13 @@ public class MenuScreen implements Screen {
                 game.setScreen(new SelectMapScreen(game));
             }
         });
-        /*
-        optionsButton.addListener(new ChangeListener() {
+
+        settingsButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new OptionScreen(game));
+                game.setScreen(new SettingsScreen(game));
+                System.out.println("你好");
             }
         });
-
-         */
 
 //        selectMapButton.addListener(new ClickListener() {
 //            @Override
