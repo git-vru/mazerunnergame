@@ -117,7 +117,8 @@ public class MazeLoader {
                     //game.getSpriteBatch().draw(game.getAllTiles().getTrap(), x, y, 60, 60);
                     break;
                 case 5:
-                    //game.getKey().setKeyRect(new Rectangle(x+10,y+10,40,40));
+                    //game.getSpriteBatch().draw(game.getAllTiles().getKeyTile(), x, y+5, 60, 60);
+                    game.getKey().setKeyRect(new Rectangle(x+10,y+10,40,40));
                     break;
             }
             game.getSpriteBatch().end();

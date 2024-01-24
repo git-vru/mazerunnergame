@@ -7,6 +7,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,17 +15,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import de.tum.cit.ase.maze.Hero;
+import de.tum.cit.ase.maze.MazeRunnerGame;
+
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
  * It handles the game logic and rendering of the game elements.
  */
 public class GameScreen implements Screen {
+
     private final MazeRunnerGame game;
     private boolean isVulnerable;
     private float vulnerabilityTimer;
     private MazeLoader mazeLoader;
     private final OrthographicCamera camera;
     private final BitmapFont font;
+    private BitmapFont font2;
+    private FreeTypeFontGenerator freeTypeFontGenerator;
     private final Hero hero;
     private final float boundingBoxSize;
     private final SpriteBatch batch;
@@ -72,6 +79,10 @@ public class GameScreen implements Screen {
         coinCollected.setLooping(false);
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
+        this.freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Fontsfile.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 120;
+        font2=freeTypeFontGenerator.generateFont(parameter);
         boundingBoxSize = 50f;
         cameraSpeed = 2f;
         batch = new SpriteBatch();
@@ -141,7 +152,15 @@ public class GameScreen implements Screen {
         //hero.updateLives();
         hud.setShield(!isVulnerable);
         hero.updateEnemiesKilled();
+        hero.updateWinning();
+        hero.updateDead();
         hud.draw();
+        if (hero.isWinner()) {
+            game.setScreen(new GoodEndScreen(game));
+        }
+        if (hero.isDead()) {
+            game.setScreen((new BadEndScreen(game)));
+        }
         game.getSpriteBatch().end(); // Important to call this after drawing everything
         if (isResumed()){
             pauseScreen();
@@ -155,7 +174,14 @@ public class GameScreen implements Screen {
     }
     private String determineDirection() {
         String direction = "";
+
         float speed = 200;
+        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
+            if (rectangle.overlaps(hero.getHeroRect())){
+                hero.setX(hero.getPrevX());
+                hero.setY(hero.getPrevY());
+            }
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             speed = 400;
             setCameraSpeed(4f);
