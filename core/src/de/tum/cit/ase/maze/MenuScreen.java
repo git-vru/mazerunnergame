@@ -27,11 +27,13 @@ public class MenuScreen implements Screen {
     private final SpriteBatch batch;
 
 
+
     public MenuScreen(MazeRunnerGame game) {
-        var camera = new OrthographicCamera();
+        OrthographicCamera camera = new OrthographicCamera();
         //camera.zoom = 1.5f; // Set camera zoom for a closer view
+        camera.setToOrtho(false,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
-        backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        //backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera); // Create a viewport with the camera
         stage = new Stage(viewport, game.getSpriteBatch()); // Create a stage for UI elements
@@ -80,18 +82,6 @@ public class MenuScreen implements Screen {
             }
         });
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            continueGameButton.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    game.goToGame();
-                    super.clicked(event, x, y);
-                }
-            });
-        }
-        else {
-            continueGameButton.setDisabled(true);
-        }
 //        selectMapButton.addListener(new ClickListener() {
 //            @Override
 //            public void clicked(InputEvent event, float x, float y) {
@@ -114,126 +104,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-/*        ButtonGroup<Button> buttonGroupDifficulty = new ButtonGroup<>();
-        TextButton easy = new TextButton("Easy", game.getSkin());
-        TextButton normal = new TextButton("Normal", game.getSkin());
-        TextButton hard = new TextButton("Hard", game.getSkin());
-        buttonGroupDifficulty.add(easy, normal, hard);
-        buttonGroupDifficulty.setMinCheckCount(1);
-        buttonGroupDifficulty.setMaxCheckCount(1);
-        difficultyButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                difficultyButton.add(easy, normal, hard);
-                difficultyButton.setText("");
-                super.clicked(event, x, y);
-            }
-        });
-        easy.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.goToMenu();
-                super.clicked(event, x, y);
-            }
-        });
-        normal.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.goToMenu();
-                super.clicked(event, x, y);
-            }
-        });
-        hard.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.goToMenu();
-                super.clicked(event, x, y);
-            }
-        });
-
-        ButtonGroup<Button> buttonGroupLevel = new ButtonGroup<>();
-        TextButton level_1 = new TextButton("Level-1", game.getSkin());
-        TextButton level_2 = new TextButton("Level-2", game.getSkin());
-        TextButton level_3 = new TextButton("Level-3", game.getSkin());
-        TextButton level_4 = new TextButton("Level-4", game.getSkin());
-        TextButton level_5 = new TextButton("Level-5", game.getSkin());
-        buttonGroupLevel.add(level_1, level_2, level_3, level_4, level_5);
-        buttonGroupLevel.setMaxCheckCount(1);
-        buttonGroupLevel.setMinCheckCount(1);
-        selectMapButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                    selectMapButton.add(level_1, level_2, level_3, level_4, level_5);
-                    selectMapButton.setText("");
-                    super.clicked(event, x, y);
-            }
-        });
-        level_1.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setCurrentMazeIndex(0);
-                game.goToMenu();
-                System.out.println(game.currentMazeIndex);
-                super.clicked(event, x, y);
-            }
-        });
-        level_2.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setCurrentMazeIndex(1);
-                game.goToMenu();
-                System.out.println(game.currentMazeIndex);
-                super.clicked(event, x, y);
-            }
-        });
-        level_3.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setCurrentMazeIndex(2);
-                game.goToMenu();
-                System.out.println(game.currentMazeIndex);
-                super.clicked(event, x, y);
-            }
-        });
-        level_4.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setCurrentMazeIndex(3);
-                game.goToMenu();
-                System.out.println(game.currentMazeIndex);
-                super.clicked(event, x, y);
-            }
-        });
-        level_5.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setCurrentMazeIndex(4);
-                game.goToMenu();
-                System.out.println(game.currentMazeIndex);
-                super.clicked(event, x, y);
-            }
-        });
-*/
-        /*
-        FileHandle mapsDirectory = Gdx.files.internal("maps");
-        FileHandle[] mapFiles = mapsDirectory.list();
-        */
-
-        /*
-        selectMapButton.addListener(new ClickListener() {
-            int currentIndex = 0;
-
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                String selectedMap = mapFiles[currentIndex].nameWithoutExtension();
-                currentIndex = (currentIndex + 1) % mapFiles.length;
-                selectMapButton.setText(selectedMap);
-            }
-        });
-        */
-
     }
-
 
     @Override
     public void render(float delta) {
@@ -276,5 +147,4 @@ public class MenuScreen implements Screen {
     @Override
     public void hide() {
     }
-
 }

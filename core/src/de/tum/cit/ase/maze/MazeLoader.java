@@ -81,13 +81,11 @@ public class MazeLoader {
                     game.getAllTiles().getWallRectangles().add(new Rectangle(x, y, 60, 60));
                     break;
                 case 1:
-                    game.setHero(new Hero(x + 10, y + 10,
-                            game.getCharacterLeftAnimation(),
-                            game.getCharacterRightAnimation(),
-                            game.getCharacterUpAnimation(),
-                            game.getCharacterDownAnimation(),
-                            game.getCharacterStandAnimation()));
-                    game.getSpriteBatch().draw(game.getAllTiles().getEntryPoint(), x, y, 60, 60);
+                    game.getEntry().setEntryRect(new Rectangle(x,y,60,60));
+                    game.setHero(new Hero(x-100, y ));
+                    if (!game.getEntry().isOpen()){
+                        game.getSpriteBatch().draw(game.getAllTiles().getEntryPoint(), x, y, 60, 60);
+                    }
                     break;
                 case 2:
                     game.getSpriteBatch().draw(game.getAllTiles().getExit(), x, y, 60, 60);
@@ -109,7 +107,8 @@ public class MazeLoader {
                     //enemy.getEnemyArray().add(new Enemy(x, y));
                     break;
                 case 5:
-                    game.getSpriteBatch().draw(game.getAllTiles().getKey(), x + 15, y + 15, 30, 30);
+                    //game.getSpriteBatch().draw(game.getAllTiles().getKeyTile(), x, y+5, 60, 60);
+                    game.getKey().setKeyRect(new Rectangle(x+10,y+10,40,40));
                     break;
             }
             game.getSpriteBatch().end();
