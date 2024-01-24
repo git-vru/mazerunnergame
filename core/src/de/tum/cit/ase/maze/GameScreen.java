@@ -79,10 +79,10 @@ public class GameScreen implements Screen {
         coinCollected.setLooping(false);
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
-        this.freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Fontsfile.ttf"));
+        //this.freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Fontsfile.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 120;
-        font2=freeTypeFontGenerator.generateFont(parameter);
+        //font2=freeTypeFontGenerator.generateFont(parameter);
         boundingBoxSize = 50f;
         cameraSpeed = 2f;
         batch = new SpriteBatch();
@@ -95,6 +95,9 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         // Check for escape key press to go back to the menu
+        if (hero.getLives() ==0){
+            hero.setDead(true);
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             setResumed(true);
             /*game.setScreen(new PauseScreen(game,hero.getX(),       // Current hero X position
@@ -164,7 +167,7 @@ public class GameScreen implements Screen {
         game.getSpriteBatch().end(); // Important to call this after drawing everything
         if (isResumed()){
             pauseScreen();
-            return;
+
         }
     }
     private void pauseScreen(){
@@ -250,6 +253,7 @@ public class GameScreen implements Screen {
                         }
                         else {
                             exit.setOpen(true);
+                            //hero.setWinner(true);
                         }
                     }
                 }
@@ -263,10 +267,14 @@ public class GameScreen implements Screen {
         }
         if (game.getEntry().getEntryRect().overlaps(hero.getHeroRect())){
             game.getEntry().setOpen(true);
+
         }
         if (game.getEntry().getMazeLeaver().overlaps(hero.getHeroRect())){
             hero.setX(hero.getPrevX());
             hero.setY(hero.getPrevY());
+        }
+        if (hero.getHeroRect().overlaps(mazeLoader.getBottom())||hero.getHeroRect().overlaps(mazeLoader.getLeft())||hero.getHeroRect().overlaps(mazeLoader.getTop())||hero.getHeroRect().overlaps(mazeLoader.getRight())){
+            hero.setWinner(true);
         }
     }
     private void enemyCollision(){

@@ -47,6 +47,7 @@ public class SelectMapScreen implements Screen {
                     //"C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties"
                     game.getMazeLoader().loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
                     game.createMaze();
+                    game.renderMaze();
                     game.goToGame(); // Transition to the game screen
                 }
             });

@@ -133,10 +133,10 @@ public class Enemy {
 
         // Add all frames to the animation
         for (int col = 0; col < animationFrames; col++) {
-            walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 16, frameWidth, frameHeight));
-            walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
-            walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight));
-            walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 48, frameWidth, frameHeight));
+            walkLeftFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 80, frameWidth, frameHeight));
+            walkDownFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 64, frameWidth, frameHeight));
+            walkRightFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 96, frameWidth, frameHeight));
+            walkUpFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 112, frameWidth, frameHeight));
         }
 
         standAnimation = new Animation<>(0.1f, walkStandFrame);

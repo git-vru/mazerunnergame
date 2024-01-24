@@ -13,6 +13,10 @@ import java.util.Map;
 
 public class MazeLoader {
     private final MazeRunnerGame game;
+    private Rectangle top;
+    private Rectangle right;
+    private Rectangle bottom;
+    private Rectangle left;
 
     public MazeLoader(MazeRunnerGame game) {
         this.game = game;
@@ -60,6 +64,10 @@ public class MazeLoader {
         game.setMaxY(maxY);
         game.setMinX(minX);
         game.setMinY(minY);
+        this.top = new Rectangle((float) minX*60, (float) (maxY-4)*60, (float) ((maxX+5)*60),4*60);
+        this.bottom = new Rectangle((float) minX*60, (float) minY*60, (float) ((maxX+5)*60),4*60);
+        this.right = new Rectangle((float) (maxX-4)*60, (float) (minY-5)*60, 4*60,(float)(maxY-5)*60);
+        this.left = new Rectangle((float) (minX)*60, (float) (minY+5)*60, 4*60,(float)(maxY-5)*60);
     }
 
     public void addGround() {
@@ -123,5 +131,21 @@ public class MazeLoader {
             }
             game.getSpriteBatch().end();
         }
+    }
+
+    public Rectangle getBottom() {
+        return bottom;
+    }
+
+    public Rectangle getTop() {
+        return top;
+    }
+
+    public Rectangle getRight() {
+        return right;
+    }
+
+    public Rectangle getLeft() {
+        return left;
     }
 }
