@@ -39,13 +39,14 @@ public class MazeRunnerGame extends Game{
     private Skin skin;
     private Hero hero;
     private final NativeFileChooser fileChooser;
-    private final Map<Point, Integer> mazeData = new HashMap<>();
+    public static final Map<Point, Integer> mazeData = new HashMap<>();
     private Tiles allTiles;
     private Key key;
     private Entry entry;
     private MazeLoader mazeLoader;
     private boolean clicked;
     private Languages languages;
+
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -162,24 +163,22 @@ public class MazeRunnerGame extends Game{
         mazeLoader.calculateMaxCoordinates();
         mazeLoader.addGround();
     }
+
     public void renderMaze() {
         mazeLoader.renderMaze();
     }
-    /*public void saveGameState(float heroX, float heroY, boolean keyCollected, int lives) {
-        savedHeroX = heroX;
-        savedHeroY = heroY;
-        savedKeyCollected = keyCollected;
-        savedLives = lives;
-    }*/
     /**
      * Cleans up resources when the game is disposed.
      */
     @Override
     public void dispose() {
-        getScreen().hide(); // Hide the current screen
-        getScreen().dispose(); // Dispose the current screen
-        spriteBatch.dispose(); // Dispose the spriteBatch
-        skin.dispose(); // Dispose the skin
+        if (getScreen() != null) {
+            getScreen().hide();
+            getScreen().dispose();
+        }
+        // Dispose SpriteBatch and Skin
+        spriteBatch.dispose();
+        skin.dispose();
     }
 
     // Getter methods
@@ -267,5 +266,9 @@ public class MazeRunnerGame extends Game{
 
     public void setMinX(double minX) {
         this.minX = minX;
+    }
+
+    public void setKey(Key key) {
+        this.key = key;
     }
 }

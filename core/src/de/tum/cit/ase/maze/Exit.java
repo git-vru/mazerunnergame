@@ -47,7 +47,6 @@ public class Exit {
 
     public void draw(SpriteBatch spriteBatch) {
         if (isOpen()){
-            //System.out.println("hi");
             spriteBatch.draw(
                     exitAnimation.getKeyFrame(exitAnimationTime, true),
                     exitRect.x,

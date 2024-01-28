@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 public class Enemy {
 
     private String direction;
-    private int prevIndex =-1;
+    private int prevIndex ;
     private int enemyWidth;
     private int enemyHeight;
     private Rectangle enemyRect;
@@ -47,8 +48,8 @@ public class Enemy {
         this.directionList = new ArrayList<>(Arrays.asList("up","right","down","left"));
         this.enemyHeight = 16;
         this.enemyWidth = 16;
-        this.enemyRect = new Rectangle(x, y, 40, 40);
-        this.enemyRect.setCenter(x+10,y+10);
+        this.enemyRect = new Rectangle(x, y, 60, 60);
+        //this.enemyRect.setCenter(x+10,y+10);
         this.prevIndex = -1;
         this.speed = 100f;
         this.stepsRemaining = STEP_DISTANCE;
@@ -80,20 +81,28 @@ public class Enemy {
             // Implement movement logic based on the current direction
             switch (direction) {
                 case "left":
+                if (checkEnemyMovement(x-distance,y+10)&&checkEnemyMovement(x-distance,y+50)) {
                     moveLeft(distance);
                     leftTimer += delta;
+                }
                     break;
                 case "right":
+                if (checkEnemyMovement(x+60+distance,y+10)&&checkEnemyMovement(x+60+distance,y+50)){
                     moveRight(distance);
                     rightTimer += delta;
+                }
                     break;
                 case "up":
+                if (checkEnemyMovement(x+10,y+60+distance)&&checkEnemyMovement(x+50,y+60+distance)){
                     moveUp(distance);
                     upTimer += delta;
+                }
                     break;
                 case "down":
+                if (checkEnemyMovement(x+10,y-distance)&&checkEnemyMovement(x+50,y-distance)){
                     moveDown(distance);
                     downTimer += delta;
+                }
                     break;
             }
         }
@@ -144,6 +153,23 @@ public class Enemy {
         rightAnimation = new Animation<>(0.1f, walkRightFrames);
         upAnimation = new Animation<>(0.1f, walkUpFrames);
         downAnimation = new Animation<>(0.1f, walkDownFrames);
+    }
+    public boolean checkEnemyMovement(float x, float y){
+        int nx = (int) (x/60);
+        int ny = (int) (y/60);
+        if (MazeRunnerGame.mazeData.get(new Point(nx,ny))==null){
+            return true;
+        }else {
+            return switch (MazeRunnerGame.mazeData.get(new Point(nx, ny))) {
+                case 0, 1, 2,3 -> {
+                    //changeDirection();
+                    setDirection(getDirection());
+                    yield false;
+                }
+                case 4,5 -> true;
+                default -> true;
+            };
+        }
     }
 
     public void draw(SpriteBatch spriteBatch) {

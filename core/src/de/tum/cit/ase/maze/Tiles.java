@@ -14,7 +14,7 @@ public class Tiles {
     private TextureRegion enemy;
     private TextureRegion keyTile;
     private TextureRegion grass;
-    private Array<Rectangle> wallRectangles = new Array<>();
+    private static Array<Rectangle> wallRectangles = new Array<>();
 
     public Tiles() {
         loadWall();
@@ -81,7 +81,7 @@ public class Tiles {
     public TextureRegion getGrass() {
         return grass;
     }
-    public Array<Rectangle> getWallRectangles() {
+    public static Array<Rectangle> getWallRectangles() {
         return wallRectangles;
     }
 }

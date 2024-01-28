@@ -72,6 +72,9 @@ public class MenuScreen implements Screen {
 //                    game.setCurrentMazeIndex(0);
 //                }
                 //game.goToGame(); // Change to the game screen when button is pressed
+                Exit.getExitList().clear();
+                Enemy.enemyList.clear();
+                Trap.getTrapList().clear();
                 game.setScreen(new SelectMapScreen(game));
             }
         });
@@ -126,6 +129,8 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         // Dispose of the stage when screen is disposed
+        backgroundTexture.dispose();
+        batch.dispose();
         stage.dispose();
     }
 

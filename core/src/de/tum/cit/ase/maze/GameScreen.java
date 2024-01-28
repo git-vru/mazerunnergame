@@ -1,13 +1,14 @@
 package de.tum.cit.ase.maze;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,8 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
-import de.tum.cit.ase.maze.Hero;
-import de.tum.cit.ase.maze.MazeRunnerGame;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -30,8 +32,6 @@ public class GameScreen implements Screen {
     private MazeLoader mazeLoader;
     private final OrthographicCamera camera;
     private final BitmapFont font;
-    private BitmapFont font2;
-    private FreeTypeFontGenerator freeTypeFontGenerator;
     private final Hero hero;
     private final float boundingBoxSize;
     private final SpriteBatch batch;
@@ -43,6 +43,7 @@ public class GameScreen implements Screen {
     private TextButton resumeButton;
     private TextButton menuButton;
     private static boolean resumed = false;
+    public static List<Rectangle> addAll = new ArrayList<>();
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
         this.mazeLoader = game.getMazeLoader();
@@ -100,15 +101,7 @@ public class GameScreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             setResumed(true);
-            /*game.setScreen(new PauseScreen(game,hero.getX(),       // Current hero X position
-                    hero.getY(),       // Current hero Y position
-                    hero.isKeyCollected(),  // Whether the key is collected
-                    hero.getLives()));*/
         }
-//        if (isResumed()){
-//            pauseScreen();
-//            return;
-//        }
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
         updateCamera();
         if (!isResumed()){
@@ -126,7 +119,13 @@ public class GameScreen implements Screen {
         game.getKey().update(delta);
         game.getEntry().update(delta);
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
+        game.getMazeLoader().addGround();
         game.renderMaze();
+        game.getSpriteBatch().begin();
+        hero.draw(game.getSpriteBatch());
+        game.getSpriteBatch().end();
+
+
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         for (Enemy enemy : Enemy.enemyList) {
@@ -135,8 +134,8 @@ public class GameScreen implements Screen {
             //enemy.move(delta); // Implement move method based on the direction
             enemy.draw(game.getSpriteBatch());
         }
+
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
-        hero.draw(game.getSpriteBatch());
         game.getKey().draw(game.getSpriteBatch(),hero.isKeyCollected());
         game.getEntry().draw(game.getSpriteBatch());
         for (Exit exit: Exit.getExitList()
@@ -164,11 +163,12 @@ public class GameScreen implements Screen {
         if (hero.isDead()) {
             game.setScreen((new BadEndScreen(game)));
         }
-        game.getSpriteBatch().end(); // Important to call this after drawing everything
+        game.getSpriteBatch().end();// Important to call this after drawing everything
         if (isResumed()){
             pauseScreen();
 
         }
+
     }
     private void pauseScreen(){
         Gdx.input.setInputProcessor(stage);
@@ -179,29 +179,33 @@ public class GameScreen implements Screen {
         String direction = "";
 
         float speed = 200;
-        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
-            if (rectangle.overlaps(hero.getHeroRect())){
-                hero.setX(hero.getPrevX());
-                hero.setY(hero.getPrevY());
-            }
-        }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             speed = 400;
             setCameraSpeed(4f);
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            hero.moveLeft(speed * Gdx.graphics.getDeltaTime());
+        if ((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))) {
             direction = "left";
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            hero.moveRight(speed * Gdx.graphics.getDeltaTime());
+            if(checkHeroMovement(hero.getX()-speed * Gdx.graphics.getDeltaTime(), hero.getY()+5)&&
+                    checkHeroMovement(hero.getX()-speed * Gdx.graphics.getDeltaTime(), hero.getY()+35)){
+                hero.moveLeft(speed * Gdx.graphics.getDeltaTime());
+            }
+        } else if ((Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))) {
             direction = "right";
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-            hero.moveDown(speed * Gdx.graphics.getDeltaTime());
+            if(checkHeroMovement(hero.getX()+speed * Gdx.graphics.getDeltaTime()+40, hero.getY()+10)&&checkHeroMovement(hero.getX()+speed * Gdx.graphics.getDeltaTime()+40, hero.getY()+30)){
+                hero.moveRight(speed * Gdx.graphics.getDeltaTime());
+            }
+        } else if ((Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S))) {
             direction = "down";
+            if(checkHeroMovement(hero.getX(), hero.getY()-speed * Gdx.graphics.getDeltaTime())&&checkHeroMovement(hero.getX()+40, hero.getY()-speed * Gdx.graphics.getDeltaTime())){
+                hero.moveDown(speed * Gdx.graphics.getDeltaTime());
+            }
+
         } else if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            hero.moveUp(speed * Gdx.graphics.getDeltaTime());
             direction = "up";
+            if(checkHeroMovement(hero.getX()+5, hero.getY()+speed * Gdx.graphics.getDeltaTime()+40)&&checkHeroMovement(hero.getX()+35, hero.getY()+speed * Gdx.graphics.getDeltaTime()+40)){
+                hero.moveUp(speed * Gdx.graphics.getDeltaTime());
+            }
         }
         hero.setHeroRect(new Rectangle(hero.getX(),hero.getY()+5, hero.getHeroWidth(), hero.getHeroHeight()/2));
 
@@ -228,46 +232,34 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
     }
     private void checkCollisions(){
-        if (hero.getX()>= game.getMaxX()*60||hero.getX()<=game.getMinX()*60||hero.getY()>= game.getMaxY()*60||hero.getY()<=game.getMinY()*60){
-            hero.setX(hero.getPrevX());
-            hero.setY(hero.getPrevY());
-        }
-        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
-            if (rectangle.overlaps(hero.getHeroRect())){
-                hero.setX(hero.getPrevX());
-                hero.setY(hero.getPrevY());
-            }
-            for (Enemy enemy: Enemy.enemyList) {
-                if (rectangle.overlaps(enemy.getEnemyRect())||game.getEntry().getEntryRect().overlaps(enemy.getEnemyRect())){
-                    enemy.changeDirection();
+        /*
+        1 big list -> switch(objectType) -> do whatever
+         */
+//        if (hero.getX()>= game.getMaxX()*60||hero.getX()<=game.getMinX()*60||hero.getY()>= game.getMaxY()*60||hero.getY()<=game.getMinY()*60){
+//            hero.setX(hero.getPrevX());
+//            hero.setY(hero.getPrevY());
+//        }
+        for (Exit exit: Exit.getExitList()) {
+            if (exit.getExitRect().overlaps(hero.getHeroRect())){
+                if (!hero.isKeyCollected()){
+                    hero.setX(hero.getPrevX());
+                    hero.setY(hero.getPrevY());
                 }
-                for (Exit exit: Exit.getExitList()) {
-                    //game.getSpriteBatch().draw(game.getAllTiles().getExit(), exit.getExitRect().x, exit.getExitRect().y, 60, 60);
-                    if (enemy.getEnemyRect().overlaps(exit.getExitRect())){
-                        enemy.changeDirection();
-                    }
-                    if (exit.getExitRect().overlaps(hero.getHeroRect())){
-                        if (!hero.isKeyCollected()){
-                            hero.setX(hero.getPrevX());
-                            hero.setY(hero.getPrevY());
-                        }
-                        else {
-                            exit.setOpen(true);
-                            //hero.setWinner(true);
-                        }
-                    }
+                else {
+                    exit.setOpen(true);
                 }
             }
         }
-
-        if (game.getKey().getKeyRect().overlaps(hero.getHeroRect())){
+        if (game.getKey().getKeyRect() != null && game.getKey().getKeyRect().overlaps(hero.getHeroRect())){
             coinCollected.play();
+            //System.out.println("played");
             hero.setKeyCollected(true);
-            game.getKey().dispose();
+            //coinCollected.dispose();
+            game.getKey().setKeyRect(null);
+            //game.getKey().dispose();
         }
         if (game.getEntry().getEntryRect().overlaps(hero.getHeroRect())){
             game.getEntry().setOpen(true);
-
         }
         if (game.getEntry().getMazeLeaver().overlaps(hero.getHeroRect())){
             hero.setX(hero.getPrevX());
@@ -275,6 +267,15 @@ public class GameScreen implements Screen {
         }
         if (hero.getHeroRect().overlaps(mazeLoader.getBottom())||hero.getHeroRect().overlaps(mazeLoader.getLeft())||hero.getHeroRect().overlaps(mazeLoader.getTop())||hero.getHeroRect().overlaps(mazeLoader.getRight())){
             hero.setWinner(true);
+        }
+    }
+    public boolean checkHeroMovement(float x, float y){
+        int nx = (int) (x/60);
+        int ny = (int) (y/60);
+        if (game.getMazeData().get(new Point(nx,ny))==null){
+            return true;
+        }else {
+            return game.getMazeData().get(new Point(nx, ny)) != 0;
         }
     }
     private void enemyCollision(){
@@ -322,6 +323,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        //TODO dispose everything
+        lifeLostMusic.dispose();
+        coinCollected.dispose();
+        stage.dispose(); // Dispose the stage
+        batch.dispose();
+
     }
 
     public void setCameraSpeed(float cameraSpeed) {

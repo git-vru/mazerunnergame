@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import java.awt.*;
+
 public class Hero {
    private float x;
    private float y;
@@ -27,7 +29,7 @@ public class Hero {
    private int heroHeight;
    private int heroWidth;
    float prevX,prevY;
-   private int lives = 5;
+   private int lives = 15;
    private boolean keyCollected;
    private int enemiesKilled;
     private boolean winner;
@@ -46,7 +48,7 @@ public class Hero {
       this.winner = false;
       this.heroWidth = 40;
       this.heroHeight=80;
-      this.heroRect = new Rectangle(x,y+5,heroWidth,heroHeight/2);
+      this.heroRect = new Rectangle(x,y,heroWidth,heroHeight/2);
       loadCharacterAnimation();
    }
 
@@ -128,6 +130,7 @@ public class Hero {
       danceAnimationFrame.add(new TextureRegion(danceSheet, frameWidth + 80, 0, frameWidth, frameHeight));
       cryAnimation = new Animation<>(0.25f, danceAnimationFrame);
    }
+
 
    private Animation<TextureRegion> getCurrentFrame() {
       return switch (getDirection()) {
