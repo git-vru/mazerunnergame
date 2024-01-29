@@ -47,7 +47,7 @@ public class HUD extends Stage{
         int x = 0;
 
         for (int i = 0; i < hero.getLives(); i++, x+=60) {
-            game.getSpriteBatch().draw(livesTextures, livesLabel.getWidth() +10+x, livesLabel.getY() - 10, 64, 64);
+            game.getSpriteBatch().draw(livesTextures, livesLabel.getWidth() +15+x, livesLabel.getY() - 10, 64, 64);
         }
         //game.getSpriteBatch().draw(tiles.getKeyTile(),livesLabel.getX()+300+120,livesLabel.getY()-10,32,32);
     }

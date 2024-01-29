@@ -43,7 +43,7 @@ public class MusicLoader {
         gameSoundsForbidden = false;
         prevIndex = -1;
         musicList = new ArrayList<>();
-        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("newBackground.ogg"));
         menuMusic.setLooping(true);
         gameMusic1 = Gdx.audio.newMusic(Gdx.files.internal("music/bg_sound-1.wav"));
         gameMusic1.setLooping(true);

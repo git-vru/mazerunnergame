@@ -48,9 +48,9 @@ public class GameScreen implements Screen {
         stage.addActor(table);
         table.setFillParent(true);
         table.center();
-        resumeButton = new TextButton(game.getLanguages().get("resume"), game.getSkin());
+        TextButton resumeButton = new TextButton(game.getLanguages().get("resume"), game.getSkin());
         table.add(resumeButton).width(400).padBottom(15).row();
-        menuButton = new TextButton(game.getLanguages().get("mainmenu"), game.getSkin());
+        TextButton menuButton = new TextButton(game.getLanguages().get("mainmenu"), game.getSkin());
         table.add(menuButton).width(400).padBottom(15).row();
         resumeButton.addListener(new ChangeListener() {
             @Override
@@ -143,8 +143,8 @@ public class GameScreen implements Screen {
         }
         font.draw(game.getSpriteBatch(), game.getLanguages().get("esc"), 0, 0);
         hero.draw(game.getSpriteBatch());
-        game.getKey().draw(game.getSpriteBatch(),hero.isKeyCollected());
-        game.getEntry().draw(game.getSpriteBatch());
+        game.getKey().draw(game.getSpriteBatch(),!hero.isKeyCollected());
+        game.getEntry().draw(game.getSpriteBatch(),game.getEntry().isOpen());
         for (Exit exit: Exit.getExitList()
              ) {
             exit.update(delta);
@@ -222,7 +222,6 @@ public class GameScreen implements Screen {
             }
 
         } else if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            hero.moveUp(speed * Gdx.graphics.getDeltaTime());
             if (!game.getMusicLoader().isGameSoundsForbidden()) {
                 game.getMusicLoader().walkingSoundPlay();
             }

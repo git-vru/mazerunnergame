@@ -23,10 +23,11 @@ public class LanguageScreen implements Screen {
     private final Stage stage;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
+    Texture backgroundTexture;
     public LanguageScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
-        Texture backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
+        this.backgroundTexture= new Texture(Gdx.files.internal("foto.jpg"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera);
@@ -59,7 +60,7 @@ public class LanguageScreen implements Screen {
         });
         table.add(english).width(400).padBottom(5).row();
 
-        TextButton hindi = new TextButton("indian", game.getSkin());
+        TextButton hindi = new TextButton("Hindi", game.getSkin());
         hindi.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -106,7 +107,7 @@ public class LanguageScreen implements Screen {
         table.add(french).width(400).padBottom(5).row();
 
 
-        TextButton arabic = new TextButton("arabian", game.getSkin());;
+        TextButton arabic = new TextButton("Al3arabeya", game.getSkin());;
         arabic.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -117,7 +118,7 @@ public class LanguageScreen implements Screen {
         });
         table.add(arabic).width(400).padBottom(5).row();
 
-        TextButton russian = new TextButton("russian", game.getSkin());
+        TextButton russian = new TextButton("Russkiy", game.getSkin());
         russian.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -128,7 +129,7 @@ public class LanguageScreen implements Screen {
         });
         table.add(russian).width(400).padBottom(5).row();
 
-        TextButton chinese = new TextButton("chinese", game.getSkin());
+        TextButton chinese = new TextButton("Zhongwen", game.getSkin());
         chinese.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

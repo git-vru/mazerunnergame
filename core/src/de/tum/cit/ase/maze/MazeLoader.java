@@ -119,8 +119,6 @@ public class MazeLoader {
             game.getSpriteBatch().begin();
             if (entry.getValue()==0) {
                 game.getSpriteBatch().draw(game.getAllTiles().getWall(), x, y, 60, 60);
-                Tiles.getWallRectangles().add(new Rectangle(x, y, 60, 60));
-                GameScreen.addAll.add(Tiles.getWallRectangles().get(Tiles.getWallRectangles().size - 1));
             }
             game.getSpriteBatch().end();
         }
