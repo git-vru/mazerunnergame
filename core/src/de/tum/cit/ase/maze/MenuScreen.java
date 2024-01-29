@@ -40,20 +40,18 @@ public class MenuScreen implements Screen {
         Table table = new Table(); // Create a table for layout
         table.setFillParent(true); // Make the table fill the stage
         stage.addActor(table); // Add the table to the stage
+        //game.getMusicLoader().playMenuMusic();
 
 
         // Add a label as a title
-        table.add(new Label(game.getLanguages().get("greeting"), game.getSkin(), "title")).padBottom(300).row();
+        table.add(new Label(game.getLanguages().get("greeting"), game.getSkin(), "title")).padBottom(400).row();
         //table.add(new Label(language.get("greeting"), game.getSkin(), "title")).padBottom(300).row();
         // Create and add a button to go to the game screen
         TextButton startGameButton = new TextButton(game.getLanguages().get("newgame"), game.getSkin());
-        table.add(startGameButton).width(300).padBottom(15).row();
-
-        TextButton continueGameButton = new TextButton(game.getLanguages().get("continuegame"), game.getSkin());
-        table.add(continueGameButton).width(300).padBottom(15).row();
+        table.add(startGameButton).width(400).padBottom(15).row();
 
         TextButton settingsButton = new TextButton(game.getLanguages().get("settings"), game.getSkin());
-        table.add(settingsButton).width(300).padBottom(15).row();
+        table.add(settingsButton).width(400).padBottom(15).row();
 
 //        TextButton selectMapButton = new TextButton("Select Map", game.getSkin());
 //        table.add(selectMapButton).width(300).padBottom(15).row();
@@ -62,7 +60,7 @@ public class MenuScreen implements Screen {
 //        table.add(uploadMapButton).width(300).padBottom(15).row();
 
         TextButton exitGameButton = new TextButton(game.getLanguages().get("exitgame"), game.getSkin());
-        table.add(exitGameButton).width(300).row();
+        table.add(exitGameButton).width(400).padBottom(15).row();
 
 
         startGameButton.addListener(new ChangeListener() {
@@ -72,6 +70,7 @@ public class MenuScreen implements Screen {
 //                    game.setCurrentMazeIndex(0);
 //                }
                 //game.goToGame(); // Change to the game screen when button is pressed
+                //game.getMusicLoader().setClicked(false);
                 game.setScreen(new SelectMapScreen(game));
             }
         });

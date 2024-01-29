@@ -33,16 +33,20 @@ public class BadEndScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
         hero = game.getHero();
-        table.add(new Label("YOU Lost!", game.getSkin(), "title")).padBottom(300).row();
+        table.add(new Label(game.getLanguages().get("youlost"), game.getSkin(), "title")).padBottom(400).row();
         hero.loadDanceAnimation();
         hero.loadCryAnimation();
 
-        TextButton goToMenu = new TextButton("Go To Menu", game.getSkin());
-        table.add(goToMenu).width(300).padBottom(15).row();
+        TextButton goToMenu = new TextButton(game.getLanguages().get("gomenu"), game.getSkin());
+        table.add(goToMenu).width(400).padBottom(15).row();
         goToMenu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new MenuScreen(game));
+                game.getMusicLoader().stopLosingMusic();
+                if (!game.getMusicLoader().isForbiddenMenu()) {
+                    game.getMusicLoader().playMenuMusic();
+                }
             }
         });
     }

@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-public class Hero {
+public class Hero extends Character {
    private float x;
    private float y;
    private float leftTimer;
@@ -23,85 +23,120 @@ public class Hero {
    private Animation<TextureRegion> rightAnimation;
    private Animation<TextureRegion> upAnimation;
    private Animation<TextureRegion> standAnimation;
-   private Rectangle heroRect;
-   private int heroHeight;
-   private int heroWidth;
+   private Rectangle rectangle;
+   private int height;
+   private int width;
    float prevX,prevY;
    private int lives = 5;
    private boolean keyCollected;
    private int enemiesKilled;
-    private boolean winner;
-    private boolean dead;
-    private Animation<TextureRegion> danceAnimation;
-    private Animation<TextureRegion> cryAnimation;
+   private boolean winner;
+   private boolean dead;
+   private Animation<TextureRegion> danceAnimation;
+   private Animation<TextureRegion> cryAnimation;
 
 
-    public Hero(float x, float y) {
-      this.keyCollected = false;
-      this.x = x;
-      this.y = y;
-      this.prevX = x;
-      this.prevY = y;
-      this.dead = false;
-      this.winner = false;
-      this.heroWidth = 40;
-      this.heroHeight=80;
-      this.heroRect = new Rectangle(x,y+5,heroWidth,heroHeight/2);
-      loadCharacterAnimation();
+    public Hero(float x, float y, float leftTimer,
+                float rightTimer, float upTimer, float downTimer,
+                float standTimer, String direction, Animation<TextureRegion> leftAnimation,
+                Animation<TextureRegion> rightAnimation, Animation<TextureRegion> upAnimation,
+                Animation<TextureRegion> downAnimation, Animation<TextureRegion> standAnimation,
+                int width, int height, Rectangle rectangle, float prevX, float prevY) {
+        super(x,y,leftTimer, rightTimer, upTimer, downTimer, standTimer, direction, leftAnimation, rightAnimation, upAnimation, downAnimation, standAnimation, width, height, rectangle, prevX, prevY);
+        this.keyCollected = false;
+        this.x = x;
+        this.y = y;
+        this.prevX = x;
+        this.prevY = y;
+        this.dead = false;
+        this.winner = false;
+        this.width = 40;
+        this.height=80;
+        this.rectangle = new Rectangle(x,y+5,width,height/2);
+        loadAnimation();
+
    }
 
-   private void loadCharacterAnimation() {
-      Texture walkSheet = new Texture(Gdx.files.internal("character.png"));
-      int frameWidth = 16;
-      int frameHeight = 32;
-      int animationFrames = 4;
-      TextureRegion walkStandFrame = new TextureRegion(walkSheet, 0, 0, frameWidth, frameHeight);
-      Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
-      Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
-      Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
-      Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
-      // Add all frames to the animation
-      for (int col = 0; col < animationFrames; col++) {
-         walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
-         walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
-         walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight));
-         walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight));
-      }
+    @Override
+    public void loadAnimation() {
+        Texture walkSheet = new Texture(Gdx.files.internal("character.png"));
+        int frameWidth = 16;
+        int frameHeight = 32;
+        int animationFrames = 4;
+        TextureRegion walkStandFrame = new TextureRegion(walkSheet, 0, 0, frameWidth, frameHeight);
+        Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
+        // Add all frames to the animation
+        for (int col = 0; col < animationFrames; col++) {
+            walkLeftFrames.add(new TextureRegion(walkSheet, col * frameWidth, 96, frameWidth, frameHeight));
+            walkDownFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
+            walkRightFrames.add(new TextureRegion(walkSheet, col * frameWidth, 32, frameWidth, frameHeight));
+            walkUpFrames.add(new TextureRegion(walkSheet, col * frameWidth, 64, frameWidth, frameHeight));
+        }
 
-      leftAnimation = new Animation<>(0.1f, walkLeftFrames);
-      rightAnimation = new Animation<>(0.1f, walkRightFrames);
-      upAnimation = new Animation<>(0.1f, walkUpFrames);
-      downAnimation = new Animation<>(0.1f, walkDownFrames);
-      standAnimation = new Animation<>(0.1f, walkStandFrame);
-   }
-   public void update(float delta, String direction) {
-      setDirection(direction);
-      switch (getDirection()) {
-         case "left":
-            leftTimer += delta;
-            break;
-         case "right":
-            rightTimer += delta;
-            break;
-         case "up":
-            upTimer += delta;
-            break;
-         case "down":
-            downTimer += delta;
-            break;
-         default:
-            standTimer += delta;
-            break;
-      }
-   }
+        leftAnimation = new Animation<>(0.1f, walkLeftFrames);
+        rightAnimation = new Animation<>(0.1f, walkRightFrames);
+        upAnimation = new Animation<>(0.1f, walkUpFrames);
+        downAnimation = new Animation<>(0.1f, walkDownFrames);
+        standAnimation = new Animation<>(0.1f, walkStandFrame);
+    }
 
-   public void draw(SpriteBatch spriteBatch) {
-      spriteBatch.draw(
-              getCurrentFrame().getKeyFrame(getAnimationTimer(), true),
-              x,
-              y,getHeroWidth(),getHeroHeight()
-      );
-   }
+    @Override
+    public void update(float delta, String direction) {
+        setDirection(direction);
+        switch (getDirection()) {
+            case "left":
+                leftTimer += delta;
+                break;
+            case "right":
+                rightTimer += delta;
+                break;
+            case "up":
+                upTimer += delta;
+                break;
+            case "down":
+                downTimer += delta;
+                break;
+            default:
+                standTimer += delta;
+                break;
+        }
+    }
+
+    @Override
+    public void draw(SpriteBatch spriteBatch) {
+        spriteBatch.draw(
+                getCurrentFrame().getKeyFrame(getAnimationTimer(), true),
+                x,
+                y,getWidth(),getHeight()
+        );
+    }
+
+    @Override
+    public void moveLeft(float delta) {
+        setPrevX(x);
+        x -= delta;
+    }
+
+    @Override
+    public void moveRight(float delta) {
+        setPrevX(x);
+        x += delta;
+    }
+
+    @Override
+    public void moveUp(float delta) {
+        setPrevY(y);
+        y += delta;
+    }
+
+    @Override
+    public void moveDown(float delta) {
+        setPrevY(y);
+        y -= delta;
+    }
 
    public void loadDanceAnimation() {
       Texture danceSheet = new Texture(Gdx.files.internal("character.png"));
@@ -129,46 +164,29 @@ public class Hero {
       cryAnimation = new Animation<>(0.25f, danceAnimationFrame);
    }
 
-   private Animation<TextureRegion> getCurrentFrame() {
-      return switch (getDirection()) {
-         case "left" -> leftAnimation;
-         case "right" -> rightAnimation;
-         case "up" -> upAnimation;
-         case "down" -> downAnimation;
-         default -> standAnimation;
-      };
-   }
+    @Override
+    public Animation<TextureRegion> getCurrentFrame() {
+        return switch (getDirection()) {
+            case "left" -> leftAnimation;
+            case "right" -> rightAnimation;
+            case "up" -> upAnimation;
+            case "down" -> downAnimation;
+            default -> standAnimation;
+        };
+    }
 
-   private float getAnimationTimer() {
-      return switch (getDirection()) {
-         case "left" -> leftTimer;
-         case "right" -> rightTimer;
-         case "up" -> upTimer;
-         case "down" -> downTimer;
-         default -> standTimer;
-      };
-   }
-   public void moveLeft(float delta) {
-      setPrevX(x);
-      x -= delta;
-   }
+    @Override
+    public float getAnimationTimer() {
+        return switch (getDirection()) {
+            case "left" -> leftTimer;
+            case "right" -> rightTimer;
+            case "up" -> upTimer;
+            case "down" -> downTimer;
+            default -> standTimer;
+        };
+    }
 
-   public void moveRight(float delta) {
-      setPrevX(x);
-      x += delta;
-   }
-
-   public void moveUp(float delta) {
-      setPrevY(y);
-      y += delta;
-   }
-
-   public void moveDown(float delta) {
-      setPrevY(y);
-      y -= delta;
-   }
-
-   public void updateLives() {
+    public void updateLives() {
          if (lives > 0) {
             lives -= 1;
          }
@@ -229,20 +247,20 @@ public class Hero {
       return prevY;
    }
 
-   public Rectangle getHeroRect() {
-      return heroRect;
-   }
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
 
-   public void setHeroRect(Rectangle heroRect) {
-      this.heroRect = heroRect;
+    public void setHeroRect(Rectangle rectangle) {
+      this.rectangle = rectangle;
    }
 
    public int getHeroHeight() {
-      return heroHeight;
+      return height;
    }
 
    public int getHeroWidth() {
-      return heroWidth;
+      return width;
    }
 
    public String getDirection() {

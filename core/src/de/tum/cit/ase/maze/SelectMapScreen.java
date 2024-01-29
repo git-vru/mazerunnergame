@@ -32,11 +32,11 @@ public class SelectMapScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        table.add(new Label("Select a Map", game.getSkin(), "title")).padBottom(50).row();
+        table.add(new Label(game.getLanguages().get("selectmap"), game.getSkin(), "title")).padBottom(50).row();
 
         for (int i = 1; i <= 5; i++) {
-            TextButton levelButton = new TextButton("Level " + i, game.getSkin());
-            table.add(levelButton).width(300).padBottom(15).row();
+            TextButton levelButton = new TextButton(game.getLanguages().get("level") + i, game.getSkin());
+            table.add(levelButton).width(400).padBottom(15).row();
 
             // Add a listener to handle the button click for each level
             int finalI = i; // Need a final variable for the lambda expression
@@ -45,7 +45,12 @@ public class SelectMapScreen implements Screen {
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
                     //"C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties"
-                    game.getMazeLoader().loadMazeData("/Users/vrushabhjain/IdeaProjects/fophn2324infun2324projectworkx-g38/maps/level-" + finalI + ".properties");
+                    game.getMazeLoader().loadMazeData("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties");
+                    game.getMusicLoader().pauseMenuMusic();
+                    if (!game.getMusicLoader().isForbiddenGame()) {
+                        game.getMusicLoader().getcurrentMusic();
+                        game.getMusicLoader().playGameMusic();
+                    }
                     game.createMaze();
                     game.renderMaze();
                     game.goToGame(); // Transition to the game screen
@@ -53,7 +58,7 @@ public class SelectMapScreen implements Screen {
             });
         }
 
-        TextButton uploadMapButton = new TextButton("Upload Map", game.getSkin());
+        TextButton uploadMapButton = new TextButton(game.getLanguages().get("uploadmap"), game.getSkin());
         uploadMapButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -61,16 +66,16 @@ public class SelectMapScreen implements Screen {
 
             }
         });
-        table.add(uploadMapButton).width(300).padBottom(15).row();
+        table.add(uploadMapButton).width(400).padBottom(15).row();
 
-        TextButton backButton = new TextButton("Back", game.getSkin());
+        TextButton backButton = new TextButton(game.getLanguages().get("back"), game.getSkin());
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.goToMenu();
             }
         });
-        table.add(backButton).width(300).padBottom(15).row();
+        table.add(backButton).width(400).padBottom(15).row();
     }
 
     @Override

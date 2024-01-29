@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Enemy {
+public class Enemy extends Character {
 
     private String direction;
-    private int prevIndex =-1;
+    private int prevIndex ;
     private int enemyWidth;
     private int enemyHeight;
     private Rectangle enemyRect;
@@ -35,11 +35,17 @@ public class Enemy {
     private Animation<TextureRegion> standAnimation;
     float prevX,prevY;
     public static List<Enemy> enemyList= new ArrayList<>();
-    private final List<String> directionList;
+    private List<String> directionList;
     private float speed;
     private static final int STEP_DISTANCE = 300;
     private int stepsRemaining;
-    public Enemy(float x, float y) {
+    public Enemy(float x, float y, float leftTimer,
+                 float rightTimer, float upTimer, float downTimer,
+                 float standTimer, String direction, Animation<TextureRegion> leftAnimation,
+                 Animation<TextureRegion> rightAnimation, Animation<TextureRegion> upAnimation,
+                 Animation<TextureRegion> downAnimation, Animation<TextureRegion> standAnimation,
+                 int width, int height, Rectangle rectangle, float prevX, float prevY) {
+        super(x, y,leftTimer, rightTimer, upTimer, downTimer, standTimer, direction, leftAnimation, rightAnimation, upAnimation, downAnimation, standAnimation, width, height, rectangle, prevX, prevY);
         this.x=x;
         this.y=y;
         this.prevX=x;
@@ -52,11 +58,40 @@ public class Enemy {
         this.prevIndex = -1;
         this.speed = 100f;
         this.stepsRemaining = STEP_DISTANCE;
-        loadEnemyAnimation();
+        loadAnimation();
         this.direction = getDirection();
     }
 
-    public void update(float delta) {
+    @Override
+    public void loadAnimation() {
+        Texture walkSheet = new Texture(Gdx.files.internal("mobs.png"));
+
+        int frameWidth = 16;
+        int frameHeight = 16;
+        int animationFrames = 3;
+        TextureRegion walkStandFrame = new TextureRegion(walkSheet, 64, 64, enemyWidth, enemyHeight);
+        Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
+        Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
+
+        // Add all frames to the animation
+        for (int col = 0; col < animationFrames; col++) {
+            walkLeftFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 80, frameWidth, frameHeight));
+            walkDownFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 64, frameWidth, frameHeight));
+            walkRightFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 96, frameWidth, frameHeight));
+            walkUpFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 112, frameWidth, frameHeight));
+        }
+
+        standAnimation = new Animation<>(0.1f, walkStandFrame);
+        leftAnimation = new Animation<>(0.1f, walkLeftFrames);
+        rightAnimation = new Animation<>(0.1f, walkRightFrames);
+        upAnimation = new Animation<>(0.1f, walkUpFrames);
+        downAnimation = new Animation<>(0.1f, walkDownFrames);
+    }
+
+    @Override
+    public void update(float delta, String direction) {
         float movement = speed * delta;
         // Check if there are steps remaining
         if (stepsRemaining > 0) {
@@ -64,10 +99,78 @@ public class Enemy {
             stepsRemaining -= movement;
             if (stepsRemaining <= 0) {
                 stepsRemaining = STEP_DISTANCE;
-                direction = getDirection();
+                this.direction = getDirection();
             }
         }
         enemyRect.setPosition(x,y);
+    }
+
+    @Override
+    public void draw(SpriteBatch spriteBatch) {
+        spriteBatch.draw(
+                getCurrentFrame().getKeyFrame(getAnimationTimer(), true),
+                x,
+                y, 60, 60
+        );
+    }
+
+    @Override
+    public void moveLeft(float delta) {
+        setPrevX(x);
+        x -= delta;
+        enemyRect.setX(x);
+    }
+
+    @Override
+    public void moveRight(float delta) {
+        setPrevX(x);
+        x +=delta;
+        enemyRect.setX(x);
+    }
+
+    @Override
+    public void moveUp(float delta) {
+        setPrevY(y);
+        y += delta;
+        enemyRect.setY(y);
+    }
+
+    @Override
+    public void moveDown(float delta) {
+        setPrevY(y);
+        y -= delta;
+        enemyRect.setY(y);
+    }
+
+    @Override
+    public Animation<TextureRegion> getCurrentFrame() {
+        if (!GameScreen.isResumed()){
+            return switch (direction) {
+                case "left" -> leftAnimation;
+                case "right" -> rightAnimation;
+                case "up" -> upAnimation;
+                case "down" -> downAnimation;
+                default -> standAnimation;
+            };
+        }
+        else {
+            return standAnimation;
+        }
+    }
+
+    @Override
+    public float getAnimationTimer() {
+        if (!GameScreen.isResumed()){
+            return switch (direction) {
+                case "left" -> leftTimer;
+                case "right" -> rightTimer;
+                case "up" -> upTimer;
+                case "down" -> downTimer;
+                default -> standTimer;
+            };
+        }else {
+            return standTimer;
+        }
     }
     public void changeDirection(){
         setX(prevX);
@@ -119,93 +222,6 @@ public class Enemy {
         this.direction = direction;
     }
 
-    private void loadEnemyAnimation() {
-        Texture walkSheet = new Texture(Gdx.files.internal("mobs.png"));
-
-        int frameWidth = 16;
-        int frameHeight = 16;
-        int animationFrames = 3;
-        TextureRegion walkStandFrame = new TextureRegion(walkSheet, 64, 64, enemyWidth, enemyHeight);
-        Array<TextureRegion> walkLeftFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkRightFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkUpFrames = new Array<>(TextureRegion.class);
-        Array<TextureRegion> walkDownFrames = new Array<>(TextureRegion.class);
-
-        // Add all frames to the animation
-        for (int col = 0; col < animationFrames; col++) {
-            walkLeftFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 80, frameWidth, frameHeight));
-            walkDownFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 64, frameWidth, frameHeight));
-            walkRightFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 96, frameWidth, frameHeight));
-            walkUpFrames.add(new TextureRegion(walkSheet, (col * frameWidth)+48, 112, frameWidth, frameHeight));
-        }
-
-        standAnimation = new Animation<>(0.1f, walkStandFrame);
-        leftAnimation = new Animation<>(0.1f, walkLeftFrames);
-        rightAnimation = new Animation<>(0.1f, walkRightFrames);
-        upAnimation = new Animation<>(0.1f, walkUpFrames);
-        downAnimation = new Animation<>(0.1f, walkDownFrames);
-    }
-
-    public void draw(SpriteBatch spriteBatch) {
-            spriteBatch.draw(
-                    getCurrentFrame().getKeyFrame(getAnimationTimer(), true),
-                    x,
-                    y, 60, 60
-            );
-    }
-
-    private Animation<TextureRegion> getCurrentFrame() {
-        if (!GameScreen.isResumed()){
-            return switch (direction) {
-                case "left" -> leftAnimation;
-                case "right" -> rightAnimation;
-                case "up" -> upAnimation;
-                case "down" -> downAnimation;
-                default -> standAnimation;
-            };
-        }
-        else {
-            return standAnimation;
-        }
-    }
-
-    private float getAnimationTimer() {
-        if (!GameScreen.isResumed()){
-            return switch (direction) {
-                case "left" -> leftTimer;
-                case "right" -> rightTimer;
-                case "up" -> upTimer;
-                case "down" -> downTimer;
-                default -> standTimer;
-            };
-        }else {
-            return standTimer;
-        }
-
-    }
-    public void moveLeft(float distance) {
-        setPrevX(x);
-        x -= distance;
-        enemyRect.setX(x);
-    }
-
-    public void moveRight(float distance) {
-        setPrevX(x);
-        x +=distance;
-        enemyRect.setX(x);
-    }
-
-    public void moveUp(float distance) {
-        setPrevY(y);
-        y += distance;
-        enemyRect.setY(y);
-    }
-
-    public void moveDown(float distance) {
-        setPrevY(y);
-        y -= distance;
-        enemyRect.setY(y);
-    }
 
     public Rectangle getEnemyRect() {
         return enemyRect;

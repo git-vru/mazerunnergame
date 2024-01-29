@@ -36,7 +36,7 @@ public class LanguageScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        table.add(new Label("Select Language", game.getSkin(), "title")).padBottom(50).row();
+        table.add(new Label(game.getLanguages().get("selectlanguage"), game.getSkin(), "title")).padBottom(50).row();
 
         TextButton turkish = new TextButton("Turkce", game.getSkin());
         turkish.addListener(new ClickListener() {
@@ -47,7 +47,7 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(turkish).width(300).padBottom(5).row();
+        table.add(turkish).width(400).padBottom(5).row();
 
         TextButton english = new TextButton("English", game.getSkin());
         english.addListener(new ClickListener() {
@@ -58,7 +58,7 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(english).width(300).padBottom(5).row();
+        table.add(english).width(400).padBottom(5).row();
 
         TextButton hindi = new TextButton("indian", game.getSkin());
         hindi.addListener(new ClickListener() {
@@ -69,7 +69,9 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(hindi).width(300).padBottom(5).row();
+        table.add(hindi).width(400).padBottom(5).row();
+
+
 
         TextButton Spanish = new TextButton("Espanol", game.getSkin());
         Spanish.addListener(new ClickListener() {
@@ -80,7 +82,7 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(Spanish).width(300).padBottom(5).row();
+        table.add(Spanish).width(400).padBottom(5).row();
 
         TextButton german = new TextButton("Deutsch", game.getSkin());
         german.addListener(new ClickListener() {
@@ -91,7 +93,7 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(german).width(300).padBottom(5).row();
+        table.add(german).width(400).padBottom(5).row();
 
         TextButton french = new TextButton("Francais", game.getSkin());
         french.addListener(new ClickListener() {
@@ -102,7 +104,8 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(french).width(300).padBottom(5).row();
+        table.add(french).width(400).padBottom(5).row();
+
 
         TextButton arabic = new TextButton("arabian", game.getSkin());;
         arabic.addListener(new ClickListener() {
@@ -113,7 +116,7 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(arabic).width(300).padBottom(5).row();
+        table.add(arabic).width(400).padBottom(5).row();
 
         TextButton russian = new TextButton("russian", game.getSkin());
         russian.addListener(new ClickListener() {
@@ -124,7 +127,7 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(russian).width(300).padBottom(5).row();
+        table.add(russian).width(400).padBottom(5).row();
 
         TextButton chinese = new TextButton("chinese", game.getSkin());
         chinese.addListener(new ClickListener() {
@@ -135,7 +138,8 @@ public class LanguageScreen implements Screen {
                 super.clicked(event, x, y);
             }
         });
-        table.add(chinese).width(300).padBottom(5).row();
+        table.add(chinese).width(400).padBottom(5).row();
+
     }
 
 
@@ -145,7 +149,7 @@ public class LanguageScreen implements Screen {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         batch.setProjectionMatrix(stage.getCamera().combined);
         batch.begin();
-        //batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
         stage.draw();
     }

@@ -2,16 +2,9 @@ package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserCallback;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserConfiguration;
@@ -38,14 +31,16 @@ public class MazeRunnerGame extends Game{
     // UI Skin
     private Skin skin;
     private Hero hero;
+    private Enemy enemy;
     private final NativeFileChooser fileChooser;
     private final Map<Point, Integer> mazeData = new HashMap<>();
     private Tiles allTiles;
     private Key key;
     private Entry entry;
     private MazeLoader mazeLoader;
-    private boolean clicked;
     private Languages languages;
+    private MusicLoader musicLoader;
+
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -56,20 +51,10 @@ public class MazeRunnerGame extends Game{
         this.fileChooser = fileChooser;
         this.maxX=0;
         this.maxY=0;
-        //this.optionScreen = new OptionScreen(this);
         this.mazeLoader = new MazeLoader(this);
-        this.clicked = true;
+        musicLoader = new MusicLoader();
     }
-    public void playMusic() {
-        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-        backgroundMusic.setLooping(true);
-        if (clicked) {
-            backgroundMusic.play();
-        }
-        else {
-            backgroundMusic.stop();
-        }
-    }
+
     public void showFileChooser() {
         NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
         conf.directory = Gdx.files.internal("maps");
@@ -104,22 +89,14 @@ public class MazeRunnerGame extends Game{
         this.allTiles = new Tiles();
         this.key = new Key();
         this.entry = new Entry();
+        musicLoader.loadMusic(this);
+        musicLoader.setVolumes();
+        musicLoader.getcurrentMusic();
+        if (!musicLoader.isForbiddenMenu()) {
+            musicLoader.playMenuMusic();
+        }
         createMaze();
         mazeLoader.createEnemies();
-//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-//        backgroundMusic.setLooping(true);
-//        backgroundMusic.play();
-
-//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-//        backgroundMusic.setLooping(true);
-        /*
-        if (optionScreen.getClickedTimes() % 2 == 0) {
-            backgroundMusic.play();
-        }
-        else {
-            backgroundMusic.dispose();
-        }
-         */
         //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
         //playMusic();
@@ -200,6 +177,9 @@ public class MazeRunnerGame extends Game{
         return hero;
     }
 
+    public Enemy getEnemy() {
+        return enemy;
+    }
 
     public double getMaxX() {
         return maxX;
@@ -221,6 +201,10 @@ public class MazeRunnerGame extends Game{
         this.hero = hero;
     }
 
+    public void setEnemy(Enemy enemy) {
+        this.enemy = enemy;
+    }
+
     public Tiles getAllTiles() {
         return allTiles;
     }
@@ -235,14 +219,6 @@ public class MazeRunnerGame extends Game{
 
     public Entry getEntry() {
         return entry;
-    }
-
-    public boolean isClicked() {
-        return clicked;
-    }
-
-    public void setClicked(boolean clicked) {
-        this.clicked = clicked;
     }
 
     public Languages getLanguages() {
@@ -267,5 +243,13 @@ public class MazeRunnerGame extends Game{
 
     public void setMinX(double minX) {
         this.minX = minX;
+    }
+
+    public MusicLoader getMusicLoader() {
+        return musicLoader;
+    }
+
+    public void setMusicLoader(MusicLoader musicLoader) {
+        this.musicLoader = musicLoader;
     }
 }

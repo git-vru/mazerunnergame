@@ -22,9 +22,9 @@ public class HUD extends Stage{
         BitmapFont font = new BitmapFont();
         font.getData().setScale(3f); // Adjust the scale factor as needed
 
-        livesLabel = new Label("Lives: ", new Label.LabelStyle(font, Color.WHITE));
-        keyStatusLabel = new Label("Key Collected: No", new Label.LabelStyle(font, Color.WHITE));
-        vulnerability = new Label("Shield: No", new Label.LabelStyle(font, Color.WHITE));
+        livesLabel = new Label(game.getLanguages().get("lives"), new Label.LabelStyle(font, Color.WHITE));
+        keyStatusLabel = new Label(game.getLanguages().get("keystatusnotok"), new Label.LabelStyle(font, Color.WHITE));
+        vulnerability = new Label(game.getLanguages().get("shieldno"), new Label.LabelStyle(font, Color.WHITE));
 
         // Set the position of the labels
         livesLabel.setPosition(10, viewport.getWorldHeight() - 50);
@@ -50,15 +50,15 @@ public class HUD extends Stage{
     }
     public void setKeyStatus() {
         if (hero.isKeyCollected()) {
-            keyStatusLabel.setText("Key Collected: Yes");
+            keyStatusLabel.setText(game.getLanguages().get("keystatusok"));
         }
     }
 
     public void setShield(boolean shield) {
         if (shield){
-            vulnerability.setText("Shield: Yes");
+            vulnerability.setText(game.getLanguages().get("shieldyes"));
         }else{
-            vulnerability.setText("Shield: No");
+            vulnerability.setText(game.getLanguages().get("shieldno"));
         }
     }
 

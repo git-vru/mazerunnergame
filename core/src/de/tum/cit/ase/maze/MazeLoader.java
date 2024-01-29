@@ -82,7 +82,10 @@ public class MazeLoader {
     public void createEnemies(){
         for (Map.Entry<Point, Integer> entry : game.getMazeData().entrySet()) {
             if (entry.getValue() == 4){
-                Enemy.enemyList.add(new Enemy(((float) entry.getKey().x*60), ((float) entry.getKey().y*60)));
+                Enemy.enemyList.add(new Enemy(((float) entry.getKey().x*60), ((float) entry.getKey().y*60), game.getEnemy().getLeftTimer(), game.getEnemy().getRightTimer(),
+                        game.getEnemy().getUpTimer(), game.getEnemy().getDownTimer(), game.getEnemy().getStandTimer(), game.getEnemy().getDirection(),
+                        game.getEnemy().getLeftAnimation(), game.getEnemy().getRightAnimation(), game.getEnemy().getUpAnimation(), game.getEnemy().getDownAnimation(),
+                        game.getEnemy().getStandAnimation(), game.getEnemy().getWidth(), game.getEnemy().getHeight(), game.getEnemy().getRectangle(), game.getEnemy().getPrevX(), game.getEnemy().getPrevY()));
             }
             if (entry.getValue() == 2){
                 Exit.getExitList().add(new Exit(((float) entry.getKey().x*60),((float) entry.getKey().y*60)));
@@ -114,7 +117,10 @@ public class MazeLoader {
                 case 1:
                     game.getEntry().setEntryRect(new Rectangle(x,y,60,60));
                     game.getEntry().setMazeLeaver(new Rectangle(x,y,5,60));
-                    game.setHero(new Hero(x+10, y ));
+                    game.setHero(new Hero(x+10, y, game.getHero().getLeftTimer(), game.getHero().getRightTimer(),
+                            game.getHero().getUpTimer(), game.getHero().getDownTimer(), game.getHero().getStandTimer(), game.getHero().getDirection(),
+                            game.getHero().getLeftAnimation(), game.getHero().getRightAnimation(), game.getHero().getUpAnimation(), game.getHero().getDownAnimation(),
+                            game.getHero().getStandAnimation(), game.getHero().getWidth(), game.getHero().getHeight(), game.getHero().getRectangle(), game.getHero().getPrevX(), game.getHero().getPrevY()));
 //                    if (!game.getEntry().isOpen()){
 //                        game.getSpriteBatch().draw(game.getAllTiles().getEntryPoint(), x, y, 60, 60);
 //                    }
