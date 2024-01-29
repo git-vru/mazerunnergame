@@ -22,6 +22,12 @@ public class Entry extends GameObject {
         this.animation = loadVerticalAnimation("things.png",0,0,16,16,4,0.25f);
         this.open=true;
     }
+
+    /**
+     * It draws the entry
+     * @param spriteBatch The SpriteBatch used for rendering graphics.
+     * @param open It is a boolean method used in the if statement.
+     */
     @Override
     public void draw(SpriteBatch spriteBatch,boolean open) {
        if (open){

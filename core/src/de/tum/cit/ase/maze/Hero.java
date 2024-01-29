@@ -49,6 +49,10 @@ public class Hero extends Character{
         sinusInput += delta;
     }
 
+    /**
+     * Draws the hero.
+     * @param spriteBatch The SpriteBatch used for rendering graphics.
+     */
     public void draw(SpriteBatch spriteBatch) {
       spriteBatch.draw(
               super.getCurrentAnimation().getKeyFrame(sinusInput, true),
@@ -56,21 +60,38 @@ public class Hero extends Character{
               y,rect.width,rect.height*2
       );
    }
+
+   /**
+     * It enables hero to move left.
+     * @param delta The distance to move the object.
+     */
    public void moveLeft(float delta) {
       setPrevX(x);
       x -= delta;
    }
 
+    /**
+     * It enables hero to move right.
+     * @param delta The distance to move the object.
+     */
    public void moveRight(float delta) {
       setPrevX(x);
       x += delta;
    }
 
+    /**
+     * It enables hero to move up.
+     * @param delta The distance to move the object.
+     */
    public void moveUp(float delta) {
       setPrevY(y);
       y += delta;
    }
 
+    /**
+     * It enables hero to move down.
+     * @param delta The distance to move the object.
+     */
    public void moveDown(float delta) {
       setPrevY(y);
       y -= delta;

@@ -25,7 +25,7 @@ public class HUD extends Stage{
      * Constructs a HUD with the specified viewport, hero, and MazeRunnerGame.
      *
      * @param viewport The viewport to use for the HUD stage.
-     * @param hero     The hero character associated with the HUD.
+     * @param hero     The hero instance of the game.
      * @param game     The MazeRunnerGame instance.
      */
     public HUD(Viewport viewport, Hero hero, MazeRunnerGame game) {
@@ -65,12 +65,20 @@ public class HUD extends Stage{
         }
         //game.getSpriteBatch().draw(tiles.getKeyTile(),livesLabel.getX()+300+120,livesLabel.getY()-10,32,32);
     }
+
+    /**
+     *  If hero collected the key, it changes the keystatus label to "keystatusok" key in the language bundles.
+     */
     public void setKeyStatus() {
         if (hero.isKeyCollected()) {
             keyStatusLabel.setText(game.getLanguages().get("keystatusok"));
         }
     }
 
+    /**
+     * According to the state of the shield it changes vulnerability text to "shieldyes" or "shieldno" key in the language bundles.
+     * @param shield It is a boolean which states that shield is enabled or not.
+     */
     public void setShield(boolean shield) {
         if (shield){
             vulnerability.setText(game.getLanguages().get("shieldyes"));

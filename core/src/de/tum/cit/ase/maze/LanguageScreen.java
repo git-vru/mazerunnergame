@@ -151,7 +151,11 @@ public class LanguageScreen implements Screen {
 
     }
 
-
+    /**
+     * Renders the visual elements on the screen.
+     *
+     * @param delta The time in seconds since the last render call. It is used for frame-rate independent animation.
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -163,17 +167,31 @@ public class LanguageScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Called when the screen is resized, such as when the window is resized or the orientation changes.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
         stage.getCamera().position.set(stage.getCamera().viewportWidth / 2f, stage.getCamera().viewportHeight / 2f, 0);
     }
 
+    /**
+     * Disposes of resources and performs cleanup when the screen is no longer in use.
+     * It is called when the game switches to another screen or exits.
+     */
     @Override
     public void dispose() {
         stage.dispose();
     }
 
+    /**
+     * Called when the screen is set as the current screen in the game.
+     * This method is typically used to initialize resources or set up the initial state of the screen.
+     */
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
@@ -189,7 +207,5 @@ public class LanguageScreen implements Screen {
 
     @Override
     public void hide() {
-        //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-        //Gdx.input.setInputProcessor(null);
     }
 }

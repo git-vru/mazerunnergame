@@ -4,7 +4,6 @@ package de.tum.cit.ase.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +28,6 @@ public class MusicLoader {
     private boolean forbiddenGame;
     private int prevIndex;
     private List<Music> musicList;
-    private Slider menuSlider;
-    private Slider gameSlider;
     private MazeRunnerGame game;
     private boolean gameSoundsForbidden;
 
@@ -82,49 +79,79 @@ public class MusicLoader {
         musicList.add(gameMusic5);
     }
 
+    /**
+     * Plays the menu music.
+     */
     public void playMenuMusic() {
         menuMusic.play();
     }
 
+    /**
+     * Plays the game music.
+     */
     public void playGameMusic() {
         currentGameMusic.play();
     }
 
+    /**
+     * Pauses the menu music.
+     */
     public void pauseMenuMusic() {
         menuMusic.pause();
     }
 
+    /**
+     * Stops the menu music.
+     */
     public void stopMenuMusic() {
         menuMusic.stop();
     }
 
+    /**
+     * Stops the game music.
+     */
     public void stopGameMusic() {
         currentGameMusic.stop();
     }
 
+    /**
+     * Pauses the game music.
+     */
     public void pauseGameMusic() {
         currentGameMusic.pause();
     }
 
+    /**
+     * Plays the winning music.
+     */
     public void playWinningMusic() {
         winningMusic.play();
     }
 
+    /**
+     * Stops the winning music.
+     */
     public void stopWinningMusic() {
         winningMusic.stop();
     }
+    /**
+     * Plays the losing music.
+     */
     public void playLosingMusic() {
         losingMusic.play();
     }
 
+    /**
+     * Stops the losing music.
+     */
     public void stopLosingMusic() {
         losingMusic.stop();
     }
 
     /**
-     * Gets the currentMusic randomly instance in the musicList which contains five different game musics.
+     * Gets the currentMusic instance randomly in the musicList which contains five different game musics.
      */
-    public void getcurrentMusic() {
+    public void getCurrentMusic() {
         int index = MathUtils.random(0,3);
         while(index == prevIndex){
             index = MathUtils.random(0,3);
@@ -133,18 +160,30 @@ public class MusicLoader {
         currentGameMusic = musicList.get(index);
     }
 
+    /**
+     * Plays the life lost sound.
+     */
     public void lifeLostSoundPlay() {
         lifeLostMusic.play();
     }
 
+    /**
+     * Plays the walking sound.
+     */
     public void walkingSoundPlay() {
         walkingSound.play();
     }
 
+    /**
+     * Plays the coin collected sound.
+     */
     public void  coinCollectedSoundPlay() {
         coinCollected.play();
     }
 
+    /**
+     * Increases the volume of every music and sound.
+     */
     public void volumeUp() {
         if (menuMusic.getVolume() <1) {
             menuMusic.setVolume(menuMusic.getVolume() + 0.1f);
@@ -155,6 +194,9 @@ public class MusicLoader {
         }
     }
 
+    /**
+     * Decreases the volume of every music and sound.
+     */
     public void volumeDown() {
         if (menuMusic.getVolume() > 0.1) {
             menuMusic.setVolume(menuMusic.getVolume() - 0.1f);
@@ -165,6 +207,9 @@ public class MusicLoader {
         }
     }
 
+    /**
+     * Sets the volume of every music and sound to 0.5.
+     */
     public void setVolumes() {
         menuMusic.setVolume(0.5f);
         gameMusic1.setVolume(0.5f);
@@ -175,10 +220,6 @@ public class MusicLoader {
         coinCollected.setVolume(0.5f);
         walkingSound.setVolume(0.5f);
         lifeLostMusic.setVolume(0.5f);
-    }
-    public void dispose() {
-        menuMusic.dispose();
-        currentGameMusic.dispose();
     }
 
     public boolean isForbiddenMenu() {
@@ -195,22 +236,6 @@ public class MusicLoader {
 
     public void setForbiddenGame(boolean forbiddenGame) {
         this.forbiddenGame = forbiddenGame;
-    }
-
-    public Slider getMenuSlider() {
-        return menuSlider;
-    }
-
-    public void setMenuSlider(Slider menuSlider) {
-        this.menuSlider = menuSlider;
-    }
-
-    public Slider getGameSlider() {
-        return gameSlider;
-    }
-
-    public void setGameSlider(Slider gameSlider) {
-        this.gameSlider = gameSlider;
     }
 
     public boolean isGameSoundsForbidden() {
