@@ -15,11 +15,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/**
+ * The SelectMapScreen class represents the screen for selecting game maps in the MazeRunnerGame.
+ * It provides options to choose from pre-defined levels or upload custom maps.
+ */
 public class SelectMapScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
 
+    /**
+     * Constructs a new SelectMapScreen instance.
+     *
+     * @param game The MazeRunnerGame instance.
+     */
     public SelectMapScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
         backgroundTexture = new Texture(Gdx.files.internal("mazeinlook.jpeg"));

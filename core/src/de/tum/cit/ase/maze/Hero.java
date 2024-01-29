@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.g2d.*;
 
 import java.awt.*;
 
+/**
+ * The Hero class represents the player character in the MazeRunnerGame.
+ */
 public class Hero extends Character{
    private String direction;
    private int lives = 5;
@@ -15,6 +18,12 @@ public class Hero extends Character{
    private final Animation<TextureRegion> cryAnimation;
 
 
+    /**
+     * Constructs a Hero with the specified initial position (x, y).
+     *
+     * @param x The initial x-coordinate of the hero's position.
+     * @param y The initial y-coordinate of the hero's position.
+     */
     public Hero(float x, float y) {
         super(x,y,40,40);
       this.keyCollected = false;
@@ -28,6 +37,12 @@ public class Hero extends Character{
       this.cryAnimation = loadHorizontalAnimation("character.png",80,0,16,32,1,0.25f);
       this.danceAnimation = loadHorizontalAnimation("character.png",96,0,16,32,2,0.25f);
    }
+
+    /**
+     * Updates the hero's state based on the elapsed time.
+     *
+     * @param delta The time in seconds since the last update.
+     */
     @Override
     public void update(float delta) {
         setDirection(direction);

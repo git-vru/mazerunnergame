@@ -36,6 +36,12 @@ public class GameScreen implements Screen {
     private final HUD hud;
     private final Stage stage;
     private static boolean resumed = false;
+
+    /**
+     * Creates a new GameScreen.
+     *
+     * @param game The MazeRunnerGame instance.
+     */
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
         this.mazeLoader = game.getMazeLoader();
@@ -180,11 +186,22 @@ public class GameScreen implements Screen {
             pauseScreen();
         }
     }
+
+    /**
+     * Displays the pause screen using the stage for UI elements.
+     */
     private void pauseScreen(){
         Gdx.input.setInputProcessor(stage);
         stage.act(Math.min(Gdx.graphics.getDeltaTime(),1/30f));
         stage.draw();
     }
+
+    /**
+     * Determines the direction based on user input and updates the hero's position.
+     *
+     * @return The direction in which the hero is moving.
+     */
+
     private String determineDirection() {
         String direction = "";
 

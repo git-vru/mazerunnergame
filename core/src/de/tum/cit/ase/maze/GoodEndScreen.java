@@ -15,12 +15,21 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/**
+ * The GoodEndScreen class represents the screen displayed when the player wins the game.
+ */
 public class GoodEndScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
     private final Hero hero;
+
+    /**
+     * Constructs a GoodEndScreen with the specified MazeRunnerGame instance.
+     *
+     * @param game The MazeRunnerGame instance.
+     */
     public GoodEndScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
@@ -73,14 +82,14 @@ public class GoodEndScreen implements Screen {
 
     @Override
     public void dispose() {
-        if (game.getScreen() != null) {
-            game.getScreen().hide();
-            game.getScreen().dispose();
-        }
         // Dispose SpriteBatch and Skin
         game.getSpriteBatch().dispose();
         game.getSkin().dispose();
         stage.dispose();
+        if (game.getScreen() != null) {
+            game.getScreen().hide();
+            game.getScreen().dispose();
+        }
     }
 
     @Override

@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The Enemy class represents an enemy character in the game. It extends the Character class
+ * and includes functionalities for managing enemy movement and animations.
+ */
 public class Enemy extends Character {
     private String direction;
     private int prevIndex ;
@@ -18,6 +22,13 @@ public class Enemy extends Character {
     private final float speed;
     private static final float STEP_DISTANCE = 300;
     private float stepsRemaining;
+
+    /**
+     * Constructs an Enemy object with the specified position.
+     *
+     * @param x The x-coordinate of the enemy.
+     * @param y The y-coordinate of the enemy.
+     */
     public Enemy(float x, float y) {
         super(x,y,60,60);
         this.directionList = new ArrayList<>(Arrays.asList("up","right","down","left"));
@@ -31,6 +42,12 @@ public class Enemy extends Character {
         this.upAnimation = loadHorizontalAnimation("mobs.png",48,112,16,16,3,0.1f);
         this.direction = getDirection();
     }
+
+    /**
+     * Updates the enemy's state based on the elapsed time.
+     *
+     * @param delta The time in seconds since the last update.
+     */
     @Override
     public void update(float delta) {
         float movement = speed * delta;

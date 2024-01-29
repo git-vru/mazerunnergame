@@ -9,8 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The MusicLoader class is responsible for loading and managing music and sound resources in the MazeRunnerGame.
+ */
 public class MusicLoader {
-    private boolean clicked;
     private Music menuMusic;
     private Music gameMusic1;
     private Music gameMusic2;
@@ -33,9 +35,17 @@ public class MusicLoader {
     private boolean gameSoundsForbidden;
 
 
+    /**
+     * Constructs a new MusicLoader instance with the default state.
+     */
     public MusicLoader() {
-        this.clicked = true;
+
     }
+    /**
+     * Loads music and sound resources for the MazeRunnerGame.
+     *
+     * @param game The MazeRunnerGame instance.
+     */
     public void loadMusic(MazeRunnerGame game) {
         this.game = game;
         forbiddenMenu = false;
@@ -71,6 +81,7 @@ public class MusicLoader {
         musicList.add(gameMusic4);
         musicList.add(gameMusic5);
     }
+
     public void playMenuMusic() {
         menuMusic.play();
     }
@@ -102,7 +113,6 @@ public class MusicLoader {
     public void stopWinningMusic() {
         winningMusic.stop();
     }
-
     public void playLosingMusic() {
         losingMusic.play();
     }
@@ -111,7 +121,9 @@ public class MusicLoader {
         losingMusic.stop();
     }
 
-
+    /**
+     * Gets the currentMusic randomly instance in the musicList which contains five different game musics.
+     */
     public void getcurrentMusic() {
         int index = MathUtils.random(0,3);
         while(index == prevIndex){
@@ -165,8 +177,8 @@ public class MusicLoader {
         lifeLostMusic.setVolume(0.5f);
     }
     public void dispose() {
-        gameMusic1.dispose();
         menuMusic.dispose();
+        currentGameMusic.dispose();
     }
 
     public boolean isForbiddenMenu() {

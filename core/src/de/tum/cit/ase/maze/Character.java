@@ -4,6 +4,11 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+/**
+ * The Character class is an abstract class representing a game character.
+ * It extends the GameObject class and includes common functionalities for character entities.
+ */
+
 public abstract class Character extends GameObject {
     protected String direction;
     protected Animation<TextureRegion> leftAnimation;
@@ -14,6 +19,14 @@ public abstract class Character extends GameObject {
     private float prevY;
     protected float sinusInput;
 
+    /**
+     * Constructs a Character object with the specified position and dimensions.
+     *
+     * @param x          The x-coordinate of the character.
+     * @param y          The y-coordinate of the character.
+     * @param rectWidth  The width of the character's bounding rectangle.
+     * @param rectHeight The height of the character's bounding rectangle.
+     */
     public Character(float x, float y, int rectWidth, int rectHeight) {
         super(x, y, rectWidth, rectHeight);
         this.prevX = x;
@@ -21,7 +34,11 @@ public abstract class Character extends GameObject {
         this.direction = "down"; // Default direction
     }
 
-
+    /**
+     * Updates the character's state based on the delta time.
+     *
+     * @param delta The time in seconds since the last update.
+     */
     public abstract void update(float delta);
     public abstract void draw(SpriteBatch spriteBatch);
 

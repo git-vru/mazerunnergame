@@ -10,6 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/**
+ * The HUD class represents the Heads-Up Display in the MazeRunnerGame.
+ */
 public class HUD extends Stage{
     private final Label livesLabel;
     private final Label keyStatusLabel;
@@ -18,6 +21,13 @@ public class HUD extends Stage{
     private final TextureRegion livesTextures;
     private final Label vulnerability;
 
+    /**
+     * Constructs a HUD with the specified viewport, hero, and MazeRunnerGame.
+     *
+     * @param viewport The viewport to use for the HUD stage.
+     * @param hero     The hero character associated with the HUD.
+     * @param game     The MazeRunnerGame instance.
+     */
     public HUD(Viewport viewport, Hero hero, MazeRunnerGame game) {
         super(viewport);
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-BoldItalic.ttf"));
@@ -43,6 +53,10 @@ public class HUD extends Stage{
         Texture heartTexture = new Texture("objects.png");
         this.livesTextures = new TextureRegion(heartTexture,64,0,16,16);
     }
+
+    /**
+     * Draws the heart icons representing the number of lives the hero has.
+     */
     public void drawLives(){
         int x = 0;
 

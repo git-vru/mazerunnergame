@@ -6,12 +6,19 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * The Tiles class manages and provides textures for different types of tiles in the MazeRunnerGame.
+ * It includes texture which provides textures for walls and grass tiles, as well as functionality to retrieve wall rectangles.
+ */
 public class Tiles {
-    private TextureRegion wall;
-    private TextureRegion grass;
-    Texture basictiles;
-    private static final Array<Rectangle> wallRectangles = new Array<>();
+    private TextureRegion wall;// Texture region for wall tiles
+    private TextureRegion grass; // Texture region for grass tiles
+    private Texture basictiles; // Texture containing basic tiles
+    private static final Array<Rectangle> wallRectangles = new Array<>(); // Array to store wall rectangles
 
+    /**
+     * Constructs a new Tiles instance and loads textures for walls and grass tiles.
+     */
     public Tiles() {
         this.basictiles = new Texture(Gdx.files.internal("basictiles.png"));
         loadWall();
