@@ -20,7 +20,7 @@ public class GoodEndScreen implements Screen {
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
-    private Hero hero;
+    private final Hero hero;
     public GoodEndScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
@@ -34,8 +34,6 @@ public class GoodEndScreen implements Screen {
         stage.addActor(table);
         hero = game.getHero();
         table.add(new Label(game.getLanguages().get("youwon"), game.getSkin(), "title")).padBottom(400).row();
-        hero.loadDanceAnimation();
-        hero.loadCryAnimation();
 
         TextButton goToMenu = new TextButton(game.getLanguages().get("gomenu"), game.getSkin());
         table.add(goToMenu).width(400).padBottom(15).row();
@@ -75,6 +73,13 @@ public class GoodEndScreen implements Screen {
 
     @Override
     public void dispose() {
+        if (game.getScreen() != null) {
+            game.getScreen().hide();
+            game.getScreen().dispose();
+        }
+        // Dispose SpriteBatch and Skin
+        game.getSpriteBatch().dispose();
+        game.getSkin().dispose();
         stage.dispose();
     }
 

@@ -31,9 +31,8 @@ public class MazeRunnerGame extends Game{
     // UI Skin
     private Skin skin;
     private Hero hero;
-    private Enemy enemy;
     private final NativeFileChooser fileChooser;
-    private final Map<Point, Integer> mazeData = new HashMap<>();
+    public static final Map<Point, Integer> mazeData = new HashMap<>();
     private Tiles allTiles;
     private Key key;
     private Entry entry;
@@ -87,8 +86,6 @@ public class MazeRunnerGame extends Game{
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
         //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
-        this.key = new Key();
-        this.entry = new Entry();
         musicLoader.loadMusic(this);
         musicLoader.setVolumes();
         musicLoader.getcurrentMusic();
@@ -96,7 +93,22 @@ public class MazeRunnerGame extends Game{
             musicLoader.playMenuMusic();
         }
         createMaze();
-        mazeLoader.createEnemies();
+        this.hero = new Hero(0,0);
+        mazeLoader.createObjects();
+//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+//        backgroundMusic.setLooping(true);
+//        backgroundMusic.play();
+
+//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+//        backgroundMusic.setLooping(true);
+        /*
+        if (optionScreen.getClickedTimes() % 2 == 0) {
+            backgroundMusic.play();
+        }
+        else {
+            backgroundMusic.dispose();
+        }
+         */
         //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
         //playMusic();
@@ -139,24 +151,22 @@ public class MazeRunnerGame extends Game{
         mazeLoader.calculateMaxCoordinates();
         mazeLoader.addGround();
     }
+
     public void renderMaze() {
         mazeLoader.renderMaze();
     }
-    /*public void saveGameState(float heroX, float heroY, boolean keyCollected, int lives) {
-        savedHeroX = heroX;
-        savedHeroY = heroY;
-        savedKeyCollected = keyCollected;
-        savedLives = lives;
-    }*/
     /**
      * Cleans up resources when the game is disposed.
      */
     @Override
     public void dispose() {
-        getScreen().hide(); // Hide the current screen
-        getScreen().dispose(); // Dispose the current screen
-        spriteBatch.dispose(); // Dispose the spriteBatch
-        skin.dispose(); // Dispose the skin
+        if (getScreen() != null) {
+            getScreen().hide();
+            getScreen().dispose();
+        }
+        // Dispose SpriteBatch and Skin
+        spriteBatch.dispose();
+        skin.dispose();
     }
 
     // Getter methods
@@ -177,9 +187,6 @@ public class MazeRunnerGame extends Game{
         return hero;
     }
 
-    public Enemy getEnemy() {
-        return enemy;
-    }
 
     public double getMaxX() {
         return maxX;
@@ -199,10 +206,6 @@ public class MazeRunnerGame extends Game{
 
     public void setHero(Hero hero) {
         this.hero = hero;
-    }
-
-    public void setEnemy(Enemy enemy) {
-        this.enemy = enemy;
     }
 
     public Tiles getAllTiles() {
@@ -243,6 +246,14 @@ public class MazeRunnerGame extends Game{
 
     public void setMinX(double minX) {
         this.minX = minX;
+    }
+
+    public void setKey(Key key) {
+        this.key = key;
+    }
+
+    public void setEntry(Entry entry) {
+        this.entry = entry;
     }
 
     public MusicLoader getMusicLoader() {

@@ -20,7 +20,7 @@ public class BadEndScreen implements Screen {
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
-    private Hero hero;
+    private final Hero hero;
     public BadEndScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
@@ -34,8 +34,6 @@ public class BadEndScreen implements Screen {
         stage.addActor(table);
         hero = game.getHero();
         table.add(new Label(game.getLanguages().get("youlost"), game.getSkin(), "title")).padBottom(400).row();
-        hero.loadDanceAnimation();
-        hero.loadCryAnimation();
 
         TextButton goToMenu = new TextButton(game.getLanguages().get("gomenu"), game.getSkin());
         table.add(goToMenu).width(400).padBottom(15).row();
@@ -61,8 +59,7 @@ public class BadEndScreen implements Screen {
         batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
         game.getSpriteBatch().begin();
-        hero.setDanceTimer(hero.getDanceTimer() + delta);
-        game.getSpriteBatch().draw(hero.getCryAnimation().getKeyFrame(hero.getDanceTimer(), true), (stage.getWidth()/2) - 70, (stage.getHeight()/2) - 130, 150,300);
+        game.getSpriteBatch().draw(hero.getCryAnimation().getKeyFrame(delta, true), (stage.getWidth()/2) - 70, (stage.getHeight()/2) - 130, 150,300);
         game.getSpriteBatch().end();
         stage.draw();
     }

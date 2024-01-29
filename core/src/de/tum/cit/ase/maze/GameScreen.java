@@ -1,5 +1,4 @@
 package de.tum.cit.ase.maze;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -14,6 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -31,10 +33,8 @@ public class GameScreen implements Screen {
     private final float boundingBoxSize;
     private final SpriteBatch batch;
     private float cameraSpeed;
-    private HUD hud;
-    private Stage stage;
-    private TextButton resumeButton;
-    private TextButton menuButton;
+    private final HUD hud;
+    private final Stage stage;
     private static boolean resumed = false;
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
@@ -65,6 +65,9 @@ public class GameScreen implements Screen {
         menuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                setResumed(false);
+                //game.setScreen(new MenuScreen(game));
+                //game.goToMenu();
                 if (!game.getMusicLoader().isForbiddenMenu()) {
                     game.getMusicLoader().playMenuMusic();
                 }
@@ -108,26 +111,33 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
         updateCamera();
         if (!isResumed()){
-            hero.update(delta, determineDirection());
-        }
-        enemyCollision();
-        if (!isVulnerable){
-            vulnerabilityTimer-=delta;
-            if (vulnerabilityTimer<0f){
-                setVulnerable(true);
-                vulnerabilityTimer=2f;
+            hero.setDirection(determineDirection());
+            hero.update(delta);
+            if (!isVulnerable){
+                vulnerabilityTimer-=delta;
+                if (vulnerabilityTimer<0f){
+                    setVulnerable(true);
+                    vulnerabilityTimer=2f;
+                }
             }
         }
+        enemyCollision();
         checkCollisions();
         game.getKey().update(delta);
         game.getEntry().update(delta);
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
+        game.getMazeLoader().addGround();
         game.renderMaze();
+        game.getSpriteBatch().begin();
+        hero.draw(game.getSpriteBatch());
+        game.getSpriteBatch().end();
+
+
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         for (Enemy enemy : Enemy.enemyList) {
             //enemy.draw(game.getSpriteBatch());
-            enemy.update(delta, enemy.getDirection());
+            enemy.update(delta);
             //enemy.move(delta); // Implement move method based on the direction
             enemy.draw(game.getSpriteBatch());
         }
@@ -138,21 +148,16 @@ public class GameScreen implements Screen {
         for (Exit exit: Exit.getExitList()
              ) {
             exit.update(delta);
-            exit.draw(game.getSpriteBatch());
+            exit.draw(game.getSpriteBatch(), exit.isOpen());
         }
         for (Trap trap: Trap.getTrapList()
         ) {
             trap.update(delta);
-            trap.draw(game.getSpriteBatch());
+            trap.draw(game.getSpriteBatch(),true);
         }
-        //hero.updateKeyCollected();
         hud.drawLives();
         hud.setKeyStatus();
-        //hero.updateLives();
         hud.setShield(!isVulnerable);
-        hero.updateEnemiesKilled();
-        hero.updateWinning();
-        hero.updateDead();
         hud.draw();
         if (hero.isWinner()) {
             game.setScreen(new GoodEndScreen(game));
@@ -170,13 +175,10 @@ public class GameScreen implements Screen {
                 game.getMusicLoader().playLosingMusic();
             }
         }
-        game.getSpriteBatch().end(); // Important to call this after drawing everything
+        game.getSpriteBatch().end();// Important to call this after drawing everything
         if (isResumed()){
             pauseScreen();
-
         }
-
-
     }
     private void pauseScreen(){
         Gdx.input.setInputProcessor(stage);
@@ -187,43 +189,50 @@ public class GameScreen implements Screen {
         String direction = "";
 
         float speed = 200;
-        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
-            if (rectangle.overlaps(hero.getRectangle())){
-                hero.setX(hero.getPrevX());
-                hero.setY(hero.getPrevY());
-            }
-        }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             speed = 400;
             setCameraSpeed(4f);
         }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            hero.moveLeft(speed * Gdx.graphics.getDeltaTime());
+        if ((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))) {
             if (!game.getMusicLoader().isGameSoundsForbidden()) {
                 game.getMusicLoader().walkingSoundPlay();
             }
             direction = "left";
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            hero.moveRight(speed * Gdx.graphics.getDeltaTime());
+            if(checkHeroMovement(hero.getX()-speed * Gdx.graphics.getDeltaTime(), hero.getY()+5)&&
+                    checkHeroMovement(hero.getX()-speed * Gdx.graphics.getDeltaTime(), hero.getY()+35)){
+                hero.moveLeft(speed * Gdx.graphics.getDeltaTime());
+            }
+        } else if ((Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))) {
             if (!game.getMusicLoader().isGameSoundsForbidden()) {
                 game.getMusicLoader().walkingSoundPlay();
             }
             direction = "right";
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-            hero.moveDown(speed * Gdx.graphics.getDeltaTime());
+            if(checkHeroMovement(hero.getX()+speed * Gdx.graphics.getDeltaTime()+40, hero.getY()+10)&&
+                    checkHeroMovement(hero.getX()+speed * Gdx.graphics.getDeltaTime()+40, hero.getY()+30)){
+                hero.moveRight(speed * Gdx.graphics.getDeltaTime());
+            }
+        } else if ((Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S))) {
             if (!game.getMusicLoader().isGameSoundsForbidden()) {
                 game.getMusicLoader().walkingSoundPlay();
             }
             direction = "down";
+            if(checkHeroMovement(hero.getX(), hero.getY()-speed * Gdx.graphics.getDeltaTime())&&
+                    checkHeroMovement(hero.getX()+40, hero.getY()-speed * Gdx.graphics.getDeltaTime())){
+                hero.moveDown(speed * Gdx.graphics.getDeltaTime());
+            }
+
         } else if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             hero.moveUp(speed * Gdx.graphics.getDeltaTime());
             if (!game.getMusicLoader().isGameSoundsForbidden()) {
                 game.getMusicLoader().walkingSoundPlay();
             }
             direction = "up";
+            if(checkHeroMovement(hero.getX()+5, hero.getY()+speed * Gdx.graphics.getDeltaTime()+40)&&
+                    checkHeroMovement(hero.getX()+35, hero.getY()+speed * Gdx.graphics.getDeltaTime()+40)){
+                hero.moveUp(speed * Gdx.graphics.getDeltaTime());
+            }
         }
-        hero.setHeroRect(new Rectangle(hero.getX(),hero.getY()+5, hero.getHeroWidth(), hero.getHeroHeight()/2));
+        hero.setRect(new Rectangle(hero.getX(),hero.getY(), hero.rect.width, hero.rect.height));
 
         return direction;
     }
@@ -248,60 +257,48 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
     }
     private void checkCollisions(){
-        if (hero.getX()>= game.getMaxX()*60||hero.getX()<=game.getMinX()*60||hero.getY()>= game.getMaxY()*60||hero.getY()<=game.getMinY()*60){
-            hero.setX(hero.getPrevX());
-            hero.setY(hero.getPrevY());
-        }
-        for (Rectangle rectangle: game.getAllTiles().getWallRectangles()) {
-            if (rectangle.overlaps(hero.getRectangle())){
-                hero.setX(hero.getPrevX());
-                hero.setY(hero.getPrevY());
-            }
-            for (Enemy enemy: Enemy.enemyList) {
-                if (rectangle.overlaps(enemy.getEnemyRect())||game.getEntry().getEntryRect().overlaps(enemy.getEnemyRect())){
-                    enemy.changeDirection();
+        for (Exit exit: Exit.getExitList()) {
+            if (exit.getRect().overlaps(hero.getRect())){
+                if (!hero.isKeyCollected()){
+                    hero.setX(hero.getPrevX());
+                    hero.setY(hero.getPrevY());
                 }
-                for (Exit exit: Exit.getExitList()) {
-                    //game.getSpriteBatch().draw(game.getAllTiles().getExit(), exit.getExitRect().x, exit.getExitRect().y, 60, 60);
-                    if (enemy.getEnemyRect().overlaps(exit.getExitRect())){
-                        enemy.changeDirection();
-                    }
-                    if (exit.getExitRect().overlaps(hero.getRectangle())){
-                        if (!hero.isKeyCollected()){
-                            hero.setX(hero.getPrevX());
-                            hero.setY(hero.getPrevY());
-                        }
-                        else {
-                            exit.setOpen(true);
-                            //hero.setWinner(true);
-                        }
-                    }
+                else {
+                    exit.setOpen(true);
                 }
             }
         }
-
-        if (game.getKey().getKeyRect().overlaps(hero.getRectangle())){
+        if (game.getKey().getRect() != null && game.getKey().getRect().overlaps(hero.getRect())){
             if (!game.getMusicLoader().isGameSoundsForbidden()) {
                 game.getMusicLoader().coinCollectedSoundPlay();
             }
             hero.setKeyCollected(true);
+            game.getKey().setRect(null);
         }
-        if (game.getEntry().getEntryRect().overlaps(hero.getRectangle())){
+        if (game.getEntry().getRect().overlaps(hero.getRect())){
             game.getEntry().setOpen(true);
-
         }
-        if (game.getEntry().getMazeLeaver().overlaps(hero.getRectangle())){
+        if (game.getEntry().getMazeLeaver().overlaps(hero.getRect())){
             hero.setX(hero.getPrevX());
             hero.setY(hero.getPrevY());
         }
-        if (hero.getRectangle().overlaps(mazeLoader.getBottom())||hero.getRectangle().overlaps(mazeLoader.getLeft())||hero.getRectangle().overlaps(mazeLoader.getTop())||hero.getRectangle().overlaps(mazeLoader.getRight())){
+        if (hero.getRect().overlaps(mazeLoader.getBottom())||hero.getRect().overlaps(mazeLoader.getLeft())||hero.getRect().overlaps(mazeLoader.getTop())||hero.getRect().overlaps(mazeLoader.getRight())){
             hero.setWinner(true);
+        }
+    }
+    public boolean checkHeroMovement(float x, float y){
+        int nx = (int) (x/60);
+        int ny = (int) (y/60);
+        if (game.getMazeData().get(new Point(nx,ny))==null){
+            return true;
+        }else {
+            return game.getMazeData().get(new Point(nx, ny)) != 0;
         }
     }
     private void enemyCollision(){
         for (Enemy enemy:
              Enemy.enemyList) {
-            if (enemy.getEnemyRect().overlaps(hero.getRectangle())&&isVulnerable){
+            if (enemy.getRect().overlaps(hero.getRect())&&isVulnerable){
                 if (!game.getMusicLoader().isGameSoundsForbidden()) {
                     game.getMusicLoader().lifeLostSoundPlay();
                 }
@@ -310,7 +307,7 @@ public class GameScreen implements Screen {
             }
         }
         for (Trap trap: Trap.getTrapList()) {
-            if (trap.getRect().overlaps(hero.getRectangle())&&isVulnerable){
+            if (trap.getRect().overlaps(hero.getRect())&&isVulnerable){
                 if (!game.getMusicLoader().isGameSoundsForbidden()) {
                     game.getMusicLoader().lifeLostSoundPlay();
                 }
@@ -336,7 +333,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        mazeLoader.createEnemies();
+        mazeLoader.createObjects();
     }
 
     @Override
@@ -345,15 +342,16 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        //TODO dispose everything
+        stage.dispose(); // Dispose the stage
+        batch.dispose();
+
     }
 
     public void setCameraSpeed(float cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
     }
 
-    public OrthographicCamera getCamera() {
-        return camera;
-    }
 
     public void setMazeLoader(MazeLoader mazeLoader) {
         this.mazeLoader = mazeLoader;
@@ -371,4 +369,5 @@ public class GameScreen implements Screen {
     public static void setResumed(boolean resumed) {
         GameScreen.resumed = resumed;
     }
+
 }

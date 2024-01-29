@@ -1,9 +1,11 @@
 package de.tum.cit.ase.maze;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -13,18 +15,19 @@ public class HUD extends Stage{
     private final Label keyStatusLabel;
     private final MazeRunnerGame game;
     private final Hero hero;
-    private Texture heartTexture;
-    private TextureRegion livesTextures;
+    private final TextureRegion livesTextures;
     private final Label vulnerability;
 
     public HUD(Viewport viewport, Hero hero, MazeRunnerGame game) {
         super(viewport);
-        BitmapFont font = new BitmapFont();
-        font.getData().setScale(3f); // Adjust the scale factor as needed
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-BoldItalic.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 30;  // Set the desired font size
+        BitmapFont customFont = generator.generateFont(parameter);// Adjust the scale factor as needed
 
-        livesLabel = new Label(game.getLanguages().get("lives"), new Label.LabelStyle(font, Color.WHITE));
-        keyStatusLabel = new Label(game.getLanguages().get("keystatusnotok"), new Label.LabelStyle(font, Color.WHITE));
-        vulnerability = new Label(game.getLanguages().get("shieldno"), new Label.LabelStyle(font, Color.WHITE));
+        livesLabel = new Label(game.getLanguages().get("lives"), new Label.LabelStyle(customFont, Color.WHITE));
+        keyStatusLabel = new Label(game.getLanguages().get("keystatusnotok"), new Label.LabelStyle(customFont, Color.WHITE));
+        vulnerability = new Label(game.getLanguages().get("shieldno"), new Label.LabelStyle(customFont, Color.WHITE));
 
         // Set the position of the labels
         livesLabel.setPosition(10, viewport.getWorldHeight() - 50);
@@ -37,14 +40,14 @@ public class HUD extends Stage{
         addActor(vulnerability);
         this.hero = hero;
         this.game = game;
-        this.heartTexture = new Texture("objects.png");
+        Texture heartTexture = new Texture("objects.png");
         this.livesTextures = new TextureRegion(heartTexture,64,0,16,16);
     }
     public void drawLives(){
         int x = 0;
 
         for (int i = 0; i < hero.getLives(); i++, x+=60) {
-            game.getSpriteBatch().draw(livesTextures, livesLabel.getX() + 120+x, livesLabel.getY() - 10, 64, 64);
+            game.getSpriteBatch().draw(livesTextures, livesLabel.getWidth() +10+x, livesLabel.getY() - 10, 64, 64);
         }
         //game.getSpriteBatch().draw(tiles.getKeyTile(),livesLabel.getX()+300+120,livesLabel.getY()-10,32,32);
     }

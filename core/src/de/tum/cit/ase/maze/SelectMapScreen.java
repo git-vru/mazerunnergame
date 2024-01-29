@@ -22,8 +22,7 @@ public class SelectMapScreen implements Screen {
 
     public SelectMapScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
-        //backgroundTexture = new Texture("/Users/vrushabhjain/Downloads/_f074ce88-b80c-4c25-b3d2-7f380e36de68.jpeg");
-        backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
+        backgroundTexture = new Texture(Gdx.files.internal("mazeinlook.jpeg"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera);
