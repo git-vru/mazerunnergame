@@ -10,6 +10,11 @@ import de.tum.cit.ase.maze.GameObject;
  * It extends the GameObject class and includes common functionalities for character entities.
  */
 
+/**
+ * The Character class is an abstract class representing a game character.
+ * It extends the GameObject class and includes common functionalities for character entities.
+ */
+
 public abstract class Character extends GameObject {
     protected String direction;
     protected Animation<TextureRegion> leftAnimation;
