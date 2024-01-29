@@ -14,12 +14,22 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/**
+ * The SettingsScreen class represents the screen for adjusting game settings in the MazeRunnerGame.
+ * It allows the player to control menu music, game music, game sounds, volume, and language selection.
+ */
 public class SettingsScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
     private TextButton volumeShowButton;
+
+    /**
+     * Constructs a new SettingsScreen instance.
+     *
+     * @param game The MazeRunnerGame instance.
+     */
     public SettingsScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
@@ -151,6 +161,10 @@ public class SettingsScreen implements Screen {
         });
         table.add(backButton).width(400).padBottom(15).row();
     }
+
+    /**
+     * Updates the label displaying the current volume.
+     */
     private void updateVolumeLabel() {
         volumeShowButton.setText(game.getLanguages().get("volume") + Math.round(game.getMusicLoader().getMenuMusic().getVolume()*10));
     }

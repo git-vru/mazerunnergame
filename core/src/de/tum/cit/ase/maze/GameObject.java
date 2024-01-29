@@ -22,7 +22,7 @@ public class GameObject {
         this.rect = new Rectangle(x, y, rectWidth,rectHeight);
     }
     /**
-     * Loads animation from the given file at the given coordinates.
+     * Loads animation if the textures for a significant object is lined up in horizontal way like enemy, hero, etc.
      */
     public Animation<TextureRegion> loadHorizontalAnimation(String path, int imageX, int imageY, int frameWidth, int frameHeight, int frames, float duration) {
         this.texture = new Texture(Gdx.files.internal(path));
@@ -36,6 +36,10 @@ public class GameObject {
 
         return new Animation<>(duration, Frames);
     }
+
+    /**
+     * Loads animation if the textures for a significant object is lined up in vertical like exit, entry, etc..
+     */
     public Animation<TextureRegion> loadVerticalAnimation(String path, int imageX, int imageY, int frameWidth, int frameHeight, int frames, float duration) {
         this.texture = new Texture(Gdx.files.internal(path));
         // libGDX internal Array instead of ArrayList because of performance

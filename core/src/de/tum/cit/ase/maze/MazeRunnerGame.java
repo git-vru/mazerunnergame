@@ -54,6 +54,9 @@ public class MazeRunnerGame extends Game{
         musicLoader = new MusicLoader();
     }
 
+    /**
+     * Shows the file chooser dialog to select a maze file.
+     */
     public void showFileChooser() {
         NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
         conf.directory = Gdx.files.internal("maps");
@@ -78,7 +81,7 @@ public class MazeRunnerGame extends Game{
         });
     }
     /**
-     * Called when the game is created. Initializes the SpriteBatch and Skin.
+     * Called when the game is created. Initializes the SpriteBatch, Skin and menu music. It also loads all the musics and sound effects..
      */
     @Override
     public void create() {

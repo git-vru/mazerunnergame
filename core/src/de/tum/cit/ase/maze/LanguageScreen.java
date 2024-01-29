@@ -19,11 +19,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/**
+ * The LanguageScreen class is responsible for handling the language selection functionality in the game.
+ */
 public class LanguageScreen implements Screen {
     private final Stage stage;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
     Texture backgroundTexture;
+
+    /**
+     * Constructs a LanguageScreen with the provided MazeRunnerGame instance. Also, it creates the buttons for all languages, and includes their properties.
+     *
+     * @param game The MazeRunnerGame instance to associate with this screen.
+     */
     public LanguageScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();

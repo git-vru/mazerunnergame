@@ -18,12 +18,21 @@ import de.tum.cit.ase.maze.Hero;
 import de.tum.cit.ase.maze.MazeRunnerGame;
 import de.tum.cit.ase.maze.MenuScreen;
 
+/**
+ * The BadEndScreen class represents the screen displayed when the player loses the game.
+ */
 public class BadEndScreen implements Screen {
     private final Stage stage;
     private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
     private final Hero hero;
+
+    /**
+     * Constructs a BadEndScreen with the specified MazeRunnerGame instance.
+     *
+     * @param game The MazeRunnerGame instance.
+     */
     public BadEndScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();

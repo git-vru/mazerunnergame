@@ -8,6 +8,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * The MazeLoader class is responsible for loading and rendering the maze data.
+ */
 public class MazeLoader {
     private final MazeRunnerGame game;
     private Rectangle top;
@@ -15,10 +18,21 @@ public class MazeLoader {
     private Rectangle bottom;
     private Rectangle left;
 
+    /**
+     * Constructor for MazeLoader.
+     *
+     * @param game The MazeRunnerGame instance.
+     */
     public MazeLoader(MazeRunnerGame game) {
         this.game = game;
     }
 
+
+    /**
+     * Loads maze data from a file and populates the game's mazeData map.
+     *
+     * @param fileName The name of the file containing maze data.
+     */
     public void loadMazeData(String fileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -76,6 +90,10 @@ public class MazeLoader {
             }
         }
     }
+
+    /**
+     * Creates game objects based on the loaded maze data.
+     */
     public void createObjects(){
         for (Map.Entry<Point, Integer> entry : game.getMazeData().entrySet()) {
             Point point = entry.getKey();

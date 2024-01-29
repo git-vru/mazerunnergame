@@ -1,14 +1,23 @@
 package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class Exit extends GameObject {
+/**
+ * The Exit class represents an exit object in the game, which can be opened or closed.
+ * It extends the GameObject class and includes functionalities for managing exit states.
+ */
+public class Exit extends GameObject{
     private boolean open;
     private static final List<Exit> exitList=new ArrayList<>();
 
+    /**
+     * Constructs an Exit object with the specified position.
+     *
+     * @param x The x-coordinate of the exit.
+     * @param y The y-coordinate of the exit.
+     */
     public Exit(float x,float y) {
         super(x,y,60,60);
         this.animation = loadVerticalAnimation("things.png",48,0,16,16,4,0.25f);

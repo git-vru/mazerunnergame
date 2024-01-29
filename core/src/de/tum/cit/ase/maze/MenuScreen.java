@@ -23,7 +23,11 @@ public class MenuScreen implements Screen {
     private final SpriteBatch batch;
 
 
-
+    /**
+     * Creates a new MenuScreen.
+     *
+     * @param game The MazeRunnerGame instance.
+     */
     public MenuScreen(MazeRunnerGame game) {
         var camera = new OrthographicCamera();
         backgroundTexture = new Texture(Gdx.files.internal("mazeinlook.jpeg"));
