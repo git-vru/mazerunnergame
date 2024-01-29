@@ -103,10 +103,10 @@ public class MazeRunnerGame extends Game{
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
         //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
-        this.key = new Key();
-        this.entry = new Entry();
+        //this.entry = new Entry();
         createMaze();
-        mazeLoader.createEnemies();
+        this.hero = new Hero(0,0);
+        mazeLoader.createObjects();
 //        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
 //        backgroundMusic.setLooping(true);
 //        backgroundMusic.play();
@@ -270,5 +270,9 @@ public class MazeRunnerGame extends Game{
 
     public void setKey(Key key) {
         this.key = key;
+    }
+
+    public void setEntry(Entry entry) {
+        this.entry = entry;
     }
 }

@@ -55,19 +55,19 @@ public class MazeLoader {
             minY = Math.min(minY,point.y);
         }
 
-        maxX += 5;
-        maxY += 5;
-        minX-=5;
-        minY-=5;
+        maxX += 10;
+        maxY += 10;
+        minX-=10;
+        minY-=10;
 
         game.setMaxX(maxX);
         game.setMaxY(maxY);
         game.setMinX(minX);
         game.setMinY(minY);
-        this.top = new Rectangle((float) minX*60, (float) (maxY-4)*60, (float) ((maxX+5)*60),4*60);
-        this.bottom = new Rectangle((float) minX*60, (float) minY*60, (float) ((maxX+5)*60),4*60);
-        this.right = new Rectangle((float) (maxX-4)*60, (float) (minY-5)*60, 4*60,(float)(maxY-5)*60);
-        this.left = new Rectangle((float) (minX)*60, (float) (minY+5)*60, 4*60,(float)(maxY-5)*60);
+        this.top = new Rectangle((float) minX*60, (float) (maxY-9)*60, (float) ((maxX+10)*60),9*60);
+        this.bottom = new Rectangle((float) minX*60, (float) minY*60, (float) ((maxX+10)*60),9*60);
+        this.right = new Rectangle((float) (maxX-9)*60, (float) (minY-10)*60, 9*60,(float)(maxY-10)*60);
+        this.left = new Rectangle((float) (minX)*60, (float) (minY+10)*60, 9*60,(float)(maxY-10)*60);
     }
 
     public void addGround() {
@@ -79,26 +79,34 @@ public class MazeLoader {
             }
         }
     }
-    public void createEnemies(){
+    public void createObjects(){
         for (Map.Entry<Point, Integer> entry : game.getMazeData().entrySet()) {
             Point point = entry.getKey();
             int x = point.x * 60;
             int y = point.y * 60;
             int objectType = entry.getValue();
-            if (entry.getValue() == 4){
-                Enemy.enemyList.add(new Enemy(x , y));
-            }
-            if (entry.getValue() == 2){
-                Exit.getExitList().add(new Exit(x,y));
-                GameScreen.addAll.add(Exit.getExitList().get(Exit.getExitList().size()-1).getExitRect());
-                //Exit.getExitList().get(Exit.getExitList().size()-1).setExitRect(new Rectangle(((float) entry.getKey().x*60), ((float) entry.getKey().y*60),60,60));
-            }
-            if (entry.getValue() == 5){
-                game.getKey().setKeyRect(new Rectangle(x+10,y+10,40,40));
-                GameScreen.addAll.add(game.getKey().getKeyRect());
-            }
-            if (entry.getValue()==3){
-                Trap.getTrapList().add(new Trap(x,y));
+            switch (objectType){
+                case 1:
+                    game.setEntry(new Entry(x,y));
+                    game.getEntry().setMazeLeaver(new Rectangle(x,y,5,60));
+                    game.getHero().setX(x+10);
+                    game.getHero().setY(y);
+                    game.getHero().setPrevX(game.getHero().getX());
+                    game.getHero().setPrevY(game.getHero().getY());
+
+                    break;
+                case 2:
+                    Exit.getExitList().add(new Exit(x,y));
+                    break;
+                case 3:
+                    Trap.getTrapList().add(new Trap(x,y));
+                    break;
+                case 4:
+                    Enemy.enemyList.add(new Enemy(x , y));
+                    break;
+                case 5:
+                    game.setKey(new Key(x+10,y+10));
+                    break;
             }
         }
     }
@@ -108,33 +116,11 @@ public class MazeLoader {
             Point point = entry.getKey();
             int x = point.x * 60;
             int y = point.y * 60;
-            int objectType = entry.getValue();
-
             game.getSpriteBatch().begin();
-            switch(objectType) {
-                case 0:
-                    game.getSpriteBatch().draw(game.getAllTiles().getWall(), x, y, 60, 60);
-                    Tiles.getWallRectangles().add(new Rectangle(x, y, 60, 60));
-                    GameScreen.addAll.add(Tiles.getWallRectangles().get(Tiles.getWallRectangles().size-1));
-                    break;
-                case 1:
-                    game.getEntry().setEntryRect(new Rectangle(x,y,60,60));
-                    game.getEntry().setMazeLeaver(new Rectangle(x,y,5,60));
-                    game.setHero(new Hero(x+10, y ));
-//                    if (!game.getEntry().isOpen()){
-//                        game.getSpriteBatch().draw(game.getAllTiles().getEntryPoint(), x, y, 60, 60);
-//                    }
-                    break;
-                case 2, 4:
-                    break;
-                case 3:
-                    //game.getSpriteBatch().draw(game.getAllTiles().getTrap(), x, y, 60, 60);
-                    break;
-                case 5:
-                    //game.getSpriteBatch().draw(game.getAllTiles().getKeyTile(), x, y+5, 60, 60);
-
-
-                    break;
+            if (entry.getValue()==0) {
+                game.getSpriteBatch().draw(game.getAllTiles().getWall(), x, y, 60, 60);
+                Tiles.getWallRectangles().add(new Rectangle(x, y, 60, 60));
+                GameScreen.addAll.add(Tiles.getWallRectangles().get(Tiles.getWallRectangles().size - 1));
             }
             game.getSpriteBatch().end();
         }

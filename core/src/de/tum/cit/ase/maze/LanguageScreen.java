@@ -21,13 +21,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class LanguageScreen implements Screen {
     private final Stage stage;
-    private final Texture backgroundTexture;
     private final SpriteBatch batch;
     private final MazeRunnerGame game;
     public LanguageScreen(MazeRunnerGame game) {
         this.game = game;
         var camera = new OrthographicCamera();
-        backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
+        Texture backgroundTexture = new Texture(Gdx.files.internal("foto.jpg"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         batch = new SpriteBatch();
         Viewport viewport = new ScreenViewport(camera);

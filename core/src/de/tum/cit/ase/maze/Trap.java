@@ -7,7 +7,8 @@ public class Trap extends GameObject{
     private static List<Trap> trapList = new ArrayList<>();
 
     public Trap(float x,float y) {
-        super(x,y,"objects.png",16,16,60,60,7);
+        super(x,y,60,60);
+        this.animation = loadHorizontalAnimation("objects.png",64,48,16,16,7,0.1f);
     }
 
     public static List<Trap> getTrapList() {

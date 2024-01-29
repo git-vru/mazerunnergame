@@ -3,12 +3,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -35,13 +33,11 @@ public class GameScreen implements Screen {
     private final Hero hero;
     private final float boundingBoxSize;
     private final SpriteBatch batch;
-    private Music lifeLostMusic;
-    private Music coinCollected;
+    private final Music lifeLostMusic;
+    private final Music coinCollected;
     private float cameraSpeed;
-    private HUD hud;
-    private Stage stage;
-    private TextButton resumeButton;
-    private TextButton menuButton;
+    private final HUD hud;
+    private final Stage stage;
     private static boolean resumed = false;
     public static List<Rectangle> addAll = new ArrayList<>();
     public GameScreen(MazeRunnerGame game) {
@@ -56,9 +52,9 @@ public class GameScreen implements Screen {
         stage.addActor(table);
         table.setFillParent(true);
         table.center();
-        resumeButton = new TextButton("Resume", game.getSkin());
+        TextButton resumeButton = new TextButton("Resume", game.getSkin());
         table.add(resumeButton).width(300).padBottom(15).row();
-        menuButton = new TextButton("Main Menu", game.getSkin());
+        TextButton menuButton = new TextButton("Main Menu", game.getSkin());
         table.add(menuButton).width(300).padBottom(15).row();
         resumeButton.addListener(new ChangeListener() {
             @Override
@@ -69,7 +65,9 @@ public class GameScreen implements Screen {
         menuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.goToMenu();
+                setResumed(false);
+                game.setScreen(new MenuScreen(game));
+                //game.goToMenu();
             }
         });
         this.isVulnerable = true;
@@ -78,12 +76,9 @@ public class GameScreen implements Screen {
         lifeLostMusic.setLooping(false);
         coinCollected = Gdx.audio.newMusic(Gdx.files.internal("coin.ogg"));
         coinCollected.setLooping(false);
-        // Get the font from the game's skin
         font = game.getSkin().getFont("font");
-        //this.freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Fontsfile.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 120;
-        //font2=freeTypeFontGenerator.generateFont(parameter);
         boundingBoxSize = 50f;
         cameraSpeed = 2f;
         batch = new SpriteBatch();
@@ -105,16 +100,17 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
         updateCamera();
         if (!isResumed()){
-            hero.update(delta, determineDirection());
-        }
-        enemyCollision();
-        if (!isVulnerable){
-            vulnerabilityTimer-=delta;
-            if (vulnerabilityTimer<0f){
-                setVulnerable(true);
-                vulnerabilityTimer=2f;
+            hero.setDirection(determineDirection());
+            hero.update(delta);
+            if (!isVulnerable){
+                vulnerabilityTimer-=delta;
+                if (vulnerabilityTimer<0f){
+                    setVulnerable(true);
+                    vulnerabilityTimer=2f;
+                }
             }
         }
+        enemyCollision();
         checkCollisions();
         game.getKey().update(delta);
         game.getEntry().update(delta);
@@ -136,26 +132,21 @@ public class GameScreen implements Screen {
         }
 
         font.draw(game.getSpriteBatch(), "Press ESC to go to menu", 0, 0);
-        game.getKey().draw(game.getSpriteBatch(),hero.isKeyCollected());
-        game.getEntry().draw(game.getSpriteBatch());
+        game.getKey().draw(game.getSpriteBatch(),!hero.isKeyCollected());
+        game.getEntry().draw(game.getSpriteBatch(),game.getEntry().isOpen());
         for (Exit exit: Exit.getExitList()
              ) {
             exit.update(delta);
-            exit.draw(game.getSpriteBatch());
+            exit.draw(game.getSpriteBatch(), exit.isOpen());
         }
         for (Trap trap: Trap.getTrapList()
         ) {
             trap.update(delta);
-            trap.draw(game.getSpriteBatch());
+            trap.draw(game.getSpriteBatch(),true);
         }
-        //hero.updateKeyCollected();
         hud.drawLives();
         hud.setKeyStatus();
-        //hero.updateLives();
         hud.setShield(!isVulnerable);
-        hero.updateEnemiesKilled();
-        hero.updateWinning();
-        hero.updateDead();
         hud.draw();
         if (hero.isWinner()) {
             game.setScreen(new GoodEndScreen(game));
@@ -166,9 +157,7 @@ public class GameScreen implements Screen {
         game.getSpriteBatch().end();// Important to call this after drawing everything
         if (isResumed()){
             pauseScreen();
-
         }
-
     }
     private void pauseScreen(){
         Gdx.input.setInputProcessor(stage);
@@ -183,7 +172,6 @@ public class GameScreen implements Screen {
             speed = 400;
             setCameraSpeed(4f);
         }
-
         if ((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))) {
             direction = "left";
             if(checkHeroMovement(hero.getX()-speed * Gdx.graphics.getDeltaTime(), hero.getY()+5)&&
@@ -192,22 +180,25 @@ public class GameScreen implements Screen {
             }
         } else if ((Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))) {
             direction = "right";
-            if(checkHeroMovement(hero.getX()+speed * Gdx.graphics.getDeltaTime()+40, hero.getY()+10)&&checkHeroMovement(hero.getX()+speed * Gdx.graphics.getDeltaTime()+40, hero.getY()+30)){
+            if(checkHeroMovement(hero.getX()+speed * Gdx.graphics.getDeltaTime()+40, hero.getY()+10)&&
+                    checkHeroMovement(hero.getX()+speed * Gdx.graphics.getDeltaTime()+40, hero.getY()+30)){
                 hero.moveRight(speed * Gdx.graphics.getDeltaTime());
             }
         } else if ((Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S))) {
             direction = "down";
-            if(checkHeroMovement(hero.getX(), hero.getY()-speed * Gdx.graphics.getDeltaTime())&&checkHeroMovement(hero.getX()+40, hero.getY()-speed * Gdx.graphics.getDeltaTime())){
+            if(checkHeroMovement(hero.getX(), hero.getY()-speed * Gdx.graphics.getDeltaTime())&&
+                    checkHeroMovement(hero.getX()+40, hero.getY()-speed * Gdx.graphics.getDeltaTime())){
                 hero.moveDown(speed * Gdx.graphics.getDeltaTime());
             }
 
         } else if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             direction = "up";
-            if(checkHeroMovement(hero.getX()+5, hero.getY()+speed * Gdx.graphics.getDeltaTime()+40)&&checkHeroMovement(hero.getX()+35, hero.getY()+speed * Gdx.graphics.getDeltaTime()+40)){
+            if(checkHeroMovement(hero.getX()+5, hero.getY()+speed * Gdx.graphics.getDeltaTime()+40)&&
+                    checkHeroMovement(hero.getX()+35, hero.getY()+speed * Gdx.graphics.getDeltaTime()+40)){
                 hero.moveUp(speed * Gdx.graphics.getDeltaTime());
             }
         }
-        hero.setHeroRect(new Rectangle(hero.getX(),hero.getY()+5, hero.getHeroWidth(), hero.getHeroHeight()/2));
+        hero.setRect(new Rectangle(hero.getX(),hero.getY(), hero.rect.width, hero.rect.height));
 
         return direction;
     }
@@ -232,15 +223,8 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
     }
     private void checkCollisions(){
-        /*
-        1 big list -> switch(objectType) -> do whatever
-         */
-//        if (hero.getX()>= game.getMaxX()*60||hero.getX()<=game.getMinX()*60||hero.getY()>= game.getMaxY()*60||hero.getY()<=game.getMinY()*60){
-//            hero.setX(hero.getPrevX());
-//            hero.setY(hero.getPrevY());
-//        }
         for (Exit exit: Exit.getExitList()) {
-            if (exit.getExitRect().overlaps(hero.getHeroRect())){
+            if (exit.getRect().overlaps(hero.getRect())){
                 if (!hero.isKeyCollected()){
                     hero.setX(hero.getPrevX());
                     hero.setY(hero.getPrevY());
@@ -250,22 +234,19 @@ public class GameScreen implements Screen {
                 }
             }
         }
-        if (game.getKey().getKeyRect() != null && game.getKey().getKeyRect().overlaps(hero.getHeroRect())){
+        if (game.getKey().getRect() != null && game.getKey().getRect().overlaps(hero.getRect())){
             coinCollected.play();
-            //System.out.println("played");
             hero.setKeyCollected(true);
-            //coinCollected.dispose();
-            game.getKey().setKeyRect(null);
-            //game.getKey().dispose();
+            game.getKey().setRect(null);
         }
-        if (game.getEntry().getEntryRect().overlaps(hero.getHeroRect())){
+        if (game.getEntry().getRect().overlaps(hero.getRect())){
             game.getEntry().setOpen(true);
         }
-        if (game.getEntry().getMazeLeaver().overlaps(hero.getHeroRect())){
+        if (game.getEntry().getMazeLeaver().overlaps(hero.getRect())){
             hero.setX(hero.getPrevX());
             hero.setY(hero.getPrevY());
         }
-        if (hero.getHeroRect().overlaps(mazeLoader.getBottom())||hero.getHeroRect().overlaps(mazeLoader.getLeft())||hero.getHeroRect().overlaps(mazeLoader.getTop())||hero.getHeroRect().overlaps(mazeLoader.getRight())){
+        if (hero.getRect().overlaps(mazeLoader.getBottom())||hero.getRect().overlaps(mazeLoader.getLeft())||hero.getRect().overlaps(mazeLoader.getTop())||hero.getRect().overlaps(mazeLoader.getRight())){
             hero.setWinner(true);
         }
     }
@@ -281,7 +262,7 @@ public class GameScreen implements Screen {
     private void enemyCollision(){
         for (Enemy enemy:
              Enemy.enemyList) {
-            if (enemy.getEnemyRect().overlaps(hero.getHeroRect())&&isVulnerable){
+            if (enemy.getRect().overlaps(hero.getRect())&&isVulnerable){
                 lifeLostMusic.play();
                 hero.setLives(hero.getLives()-1);
                 System.out.println(hero.getLives());
@@ -289,7 +270,7 @@ public class GameScreen implements Screen {
             }
         }
         for (Trap trap: Trap.getTrapList()) {
-            if (trap.getTrapRect().overlaps(hero.getHeroRect())&&isVulnerable){
+            if (trap.getRect().overlaps(hero.getRect())&&isVulnerable){
                 lifeLostMusic.play();
                 hero.setLives(hero.getLives()-1);
                 System.out.println(hero.getLives());
@@ -314,7 +295,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        mazeLoader.createEnemies();
+        mazeLoader.createObjects();
     }
 
     @Override
@@ -335,9 +316,6 @@ public class GameScreen implements Screen {
         this.cameraSpeed = cameraSpeed;
     }
 
-    public OrthographicCamera getCamera() {
-        return camera;
-    }
 
     public void setMazeLoader(MazeLoader mazeLoader) {
         this.mazeLoader = mazeLoader;
