@@ -28,8 +28,14 @@ com.badlogic.gdx.graphics.Color: {
 		g: 1
 		b: 1
 		a: 1
+	},
+	"red": {
+		r: 1,
+		g: 0,
+		b: 0,
+		a: 1
 	}
-}
+},
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	gray: {
 		name: white
