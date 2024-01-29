@@ -1,10 +1,11 @@
 package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Exit extends GameObject{
+public class Exit extends GameObject {
     private boolean open;
     private static final List<Exit> exitList=new ArrayList<>();
 

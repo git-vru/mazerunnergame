@@ -14,6 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.tum.cit.ase.maze.Hero;
+import de.tum.cit.ase.maze.MazeRunnerGame;
+import de.tum.cit.ase.maze.MenuScreen;
 
 public class BadEndScreen implements Screen {
     private final Stage stage;

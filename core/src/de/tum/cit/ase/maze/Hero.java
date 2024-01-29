@@ -2,9 +2,7 @@ package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.graphics.g2d.*;
 
-import java.awt.*;
-
-public class Hero extends Character{
+public class Hero extends Character {
    private String direction;
    private int lives = 5;
    private boolean keyCollected;

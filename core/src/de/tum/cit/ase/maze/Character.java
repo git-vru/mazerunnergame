@@ -3,6 +3,7 @@ package de.tum.cit.ase.maze;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import de.tum.cit.ase.maze.GameObject;
 
 public abstract class Character extends GameObject {
     protected String direction;

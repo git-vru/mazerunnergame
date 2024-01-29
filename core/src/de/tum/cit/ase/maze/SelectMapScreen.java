@@ -44,7 +44,7 @@ public class SelectMapScreen implements Screen {
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
                     //"C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties"
-                    game.getMazeLoader().loadMazeData("C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties");
+                    game.getMazeLoader().loadMazeData("/Users/vrushabhjain/Desktop/temp/maps/level-" + finalI + ".properties");
                     game.getMusicLoader().pauseMenuMusic();
                     if (!game.getMusicLoader().isForbiddenGame()) {
                         game.getMusicLoader().getcurrentMusic();

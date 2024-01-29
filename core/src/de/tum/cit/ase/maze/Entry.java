@@ -2,6 +2,7 @@ package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import de.tum.cit.ase.maze.GameObject;
 
 public class Entry extends GameObject {
     private Rectangle mazeLeaver;
