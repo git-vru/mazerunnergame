@@ -14,6 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.tum.cit.ase.maze.Hero;
+import de.tum.cit.ase.maze.MazeRunnerGame;
+import de.tum.cit.ase.maze.MenuScreen;
 
 /**
  * The BadEndScreen class represents the screen displayed when the player loses the game.
@@ -118,7 +121,5 @@ public class BadEndScreen implements Screen {
 
     @Override
     public void hide() {
-        //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-        //Gdx.input.setInputProcessor(null);
     }
 }

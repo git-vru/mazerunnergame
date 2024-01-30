@@ -87,7 +87,6 @@ public class MazeRunnerGame extends Game{
     public void create() {
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
-        //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
         musicLoader.loadMusic(this);
         musicLoader.setVolumes();
@@ -98,15 +97,9 @@ public class MazeRunnerGame extends Game{
         createMaze();
         this.hero = new Hero(0,0);
         mazeLoader.createObjects();
-        //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
-        //playMusic();
         this.languages = new Languages();
-        //languages.setDefaultLanguage();
-        // Play some background music
-        // Background sound
-        //playMusic();
-        goToMenu();// Navigate to the menu screen
+        goToMenu();
     }
 
 

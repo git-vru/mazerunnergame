@@ -2,7 +2,6 @@ package de.tum.cit.ase.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,16 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
  * It handles the game logic and rendering of the game elements.
  */
 public class GameScreen implements Screen {
-
     private final MazeRunnerGame game;
     private boolean isVulnerable;
     private float vulnerabilityTimer;
@@ -94,32 +91,28 @@ public class GameScreen implements Screen {
 
     /**
      * Renders the visual elements on the screen with the specific properties defined throughout the game.
-     *
+     * Also checks if the game is paused or not
      * @param delta The time in seconds since the last render call. It is used for frame-rate independent animation.
      */
     @Override
     public void render(float delta) {
-        // Check for escape key press to go back to the menu
         if (hero.getLives() ==0){
             hero.setDead(true);
         }
+        // Check for escape key press to go back to the menu
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             setResumed(true);
             game.getMusicLoader().pauseGameMusic();
             if (!game.getMusicLoader().isForbiddenMenu()) {
                 game.getMusicLoader().playMenuMusic();
             }
-            /*game.setScreen(new PauseScreen(game,hero.getX(),       // Current hero X position
-                    hero.getY(),       // Current hero Y position
-                    hero.isKeyCollected(),  // Whether the key is collected
-                    hero.getLives()));*/
         }
-//        if (isResumed()){
-//            pauseScreen();
-//            return;
-//        }
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
         updateCamera();
+        /*Hero can only change direction if the game is not paused
+        also the enemies and the trap and the losing of lives everything stops when the game is paused
+         */
+
         if (!isResumed()){
             hero.setDirection(determineDirection());
             hero.update(delta);
@@ -146,9 +139,7 @@ public class GameScreen implements Screen {
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
         // Render the text
         for (Enemy enemy : Enemy.enemyList) {
-            //enemy.draw(game.getSpriteBatch());
             enemy.update(delta);
-            //enemy.move(delta); // Implement move method based on the direction
             enemy.draw(game.getSpriteBatch());
         }
         font.draw(game.getSpriteBatch(), game.getLanguages().get("esc"), 0, 0);
@@ -202,7 +193,8 @@ public class GameScreen implements Screen {
 
     /**
      * Determines the direction based on user input and updates the hero's position.
-     *
+     *Also checks if the Hero can move in a particular direction if it cannot move there then the move method is not called
+     * Updates the rectangle for the collision With other kind of objects except wall
      * @return The direction in which the hero is moving.
      */
 
@@ -283,7 +275,8 @@ public class GameScreen implements Screen {
     }
 
     /**
-     *It detects the collision of the hero to the entry and exit.
+     *It detects the collision of the hero to the key, entry and exit.
+     * Also plays music where it's needed
      */
     private void checkCollisions(){
         for (Exit exit: Exit.getExitList()) {
@@ -333,7 +326,7 @@ public class GameScreen implements Screen {
     }
 
     /**
-     *It detects the collision of the enemy to the entry and exit.
+     *It detects the collision of the Hero with the enemies and the traps and if they collide then it loses a life
      */
     private void enemyCollision(){
         for (Enemy enemy:

@@ -2,6 +2,7 @@ package de.tum.cit.ase.maze;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import de.tum.cit.ase.maze.GameObject;
 
 /**
  * The Entry class represents an entry object in the game, which makes an animation, and states a starting point for hero.
