@@ -89,7 +89,11 @@ public class GameScreen implements Screen {
     }
 
 
-    // Screen interface methods with necessary functionality
+    /**
+     * Renders the visual elements on the screen with the specific properties defined throughout the game.
+     *
+     * @param delta The time in seconds since the last render call. It is used for frame-rate independent animation.
+     */
     @Override
     public void render(float delta) {
         // Check for escape key press to go back to the menu
@@ -249,6 +253,11 @@ public class GameScreen implements Screen {
 
         return direction;
     }
+
+    /**
+     * Updates the camera according to the hero's coordinates.
+     * It also uses invisible rectangle around the hero, after that the hero overlaps with this rectangle the camera starts to updating.
+     */
     private void updateCamera() {
         // Calculate the bounding box around the player
         float minX = hero.getX() - boundingBoxSize;
@@ -269,6 +278,10 @@ public class GameScreen implements Screen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
     }
+
+    /**
+     *It detects the collision of the hero to the entry and exit.
+     */
     private void checkCollisions(){
         for (Exit exit: Exit.getExitList()) {
             if (exit.getRect().overlaps(hero.getRect())){
@@ -299,6 +312,13 @@ public class GameScreen implements Screen {
             hero.setWinner(true);
         }
     }
+
+    /**
+     * Checks whether the hero can move to the specified coordinates within the game maze.
+     * @param x The x-coordinate to check for movement.
+     * @param y The y-coordinate to check for movement.
+     * @return {@code true} if the hero can move to the specified coordinates, {@code false} otherwise.
+     */
     public boolean checkHeroMovement(float x, float y){
         int nx = (int) (x/60);
         int ny = (int) (y/60);
@@ -308,6 +328,10 @@ public class GameScreen implements Screen {
             return game.getMazeData().get(new Point(nx, ny)) != 0;
         }
     }
+
+    /**
+     *It detects the collision of the enemy to the entry and exit.
+     */
     private void enemyCollision(){
         for (Enemy enemy:
              Enemy.enemyList) {
@@ -330,6 +354,12 @@ public class GameScreen implements Screen {
         }
     }
 
+    /**
+     * Called when the screen is resized, such as when the window is resized or the orientation changes.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false);
@@ -344,6 +374,10 @@ public class GameScreen implements Screen {
     public void resume() {
     }
 
+    /**
+     * Called when the screen is set as the current screen in the game.
+     * This method is typically used to initialize resources or set up the initial state of the screen.
+     */
     @Override
     public void show() {
         mazeLoader.createObjects();
@@ -353,6 +387,10 @@ public class GameScreen implements Screen {
     public void hide() {
     }
 
+    /**
+     * Disposes of resources and performs cleanup when the screen is no longer in use.
+     * It is called when the game switches to another screen or exits.
+     */
     @Override
     public void dispose() {
         //TODO dispose everything

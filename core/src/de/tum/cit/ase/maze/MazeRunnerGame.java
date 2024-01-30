@@ -91,27 +91,13 @@ public class MazeRunnerGame extends Game{
         this.allTiles = new Tiles();
         musicLoader.loadMusic(this);
         musicLoader.setVolumes();
-        musicLoader.getcurrentMusic();
+        musicLoader.getCurrentMusic();
         if (!musicLoader.isForbiddenMenu()) {
             musicLoader.playMenuMusic();
         }
         createMaze();
         this.hero = new Hero(0,0);
         mazeLoader.createObjects();
-//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-//        backgroundMusic.setLooping(true);
-//        backgroundMusic.play();
-
-//        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
-//        backgroundMusic.setLooping(true);
-        /*
-        if (optionScreen.getClickedTimes() % 2 == 0) {
-            backgroundMusic.play();
-        }
-        else {
-            backgroundMusic.dispose();
-        }
-         */
         //this.loadCharacterAnimation();// Load character animation
         this.allTiles = new Tiles();
         //playMusic();
@@ -231,10 +217,6 @@ public class MazeRunnerGame extends Game{
         return languages;
     }
 
-    public void setLanguages(Languages languages) {
-        this.languages = languages;
-    }
-
     public void setMinY(double minY) {
         this.minY = minY;
     }
@@ -263,7 +245,4 @@ public class MazeRunnerGame extends Game{
         return musicLoader;
     }
 
-    public void setMusicLoader(MusicLoader musicLoader) {
-        this.musicLoader = musicLoader;
-    }
 }

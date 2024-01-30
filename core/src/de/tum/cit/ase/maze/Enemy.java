@@ -62,6 +62,12 @@ public class Enemy extends Character {
         }
         rect.setPosition(x, y);
     }
+
+    /**
+     * It detects the enemies direction.
+     * @param distance The distance to move the object.
+     * @param delta The time in seconds since the last update. It is used for frame-rate independent movement.
+     */
     public void move(float distance, float delta) {
         if (!GameScreen.isResumed()) {
             // Implement movement logic based on the current direction
@@ -94,6 +100,10 @@ public class Enemy extends Character {
         }
     }
 
+    /**
+     * Generates a random movement direction from a predefined list, ensuring it is different from the previously generated direction.
+     * @return A randomly chosen movement direction from the available direction list.
+     */
     public String getDirection() {
         int index = MathUtils.random(0,3);
         while(index == prevIndex){
@@ -103,6 +113,9 @@ public class Enemy extends Character {
         return directionList.get(index);
     }
 
+    /**
+     * @param direction It gets the direction from getDirection() method, and then sets it accordingly.
+     */
     public void setDirection(String direction) {
         this.direction = direction;
     }
@@ -122,6 +135,10 @@ public class Enemy extends Character {
         }
     }
 
+    /**
+     * It draws the enemy.
+     * @param spriteBatch The SpriteBatch used for rendering graphics.
+     */
     public void draw(SpriteBatch spriteBatch) {
             spriteBatch.draw(
                     getCurrentFrame().getKeyFrame(sinusInput, true),
@@ -130,6 +147,10 @@ public class Enemy extends Character {
             );
     }
 
+    /**
+     * Retrieves the current frame animation based on the current movement direction. If the game is resumed, it returns a default animation.
+     * @return The Animation<TextureRegion> corresponding to the current movement direction, or a default animation if the game is currently resumed.
+     */
     private Animation<TextureRegion> getCurrentFrame() {
         if (!GameScreen.isResumed()){
             return switch (direction) {
@@ -144,24 +165,41 @@ public class Enemy extends Character {
             return animation;
         }
     }
+
+    /**
+     * It makes enemies to move left.
+     * @param distance The distance to move the object.
+     */
     public void moveLeft(float distance) {
         setPrevX(x);
         x -= distance;
         rect.setX(x);
     }
 
+    /**
+     * It makes enemies to move right.
+     * @param distance The distance to move the object.
+     */
     public void moveRight(float distance) {
         setPrevX(x);
         x +=distance;
         rect.setX(x);
     }
 
+    /**
+     * It makes enemies to move up.
+     * @param distance The distance to move the object.
+     */
     public void moveUp(float distance) {
         setPrevY(y);
         y += distance;
         rect.setY(y);
     }
 
+    /**
+     * It makes enemies to move down.
+     * @param distance The distance to move the object.
+     */
     public void moveDown(float distance) {
         setPrevY(y);
         y -= distance;

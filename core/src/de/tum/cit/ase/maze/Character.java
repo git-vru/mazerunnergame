@@ -48,6 +48,11 @@ public abstract class Character extends GameObject {
     public abstract void update(float delta);
     public abstract void draw(SpriteBatch spriteBatch);
 
+/**
+ * Retrieves the current animation based on the current movement direction.
+ *
+ * @return The Animation<TextureRegion> corresponding to the current movement direction.
+ */
     public Animation<TextureRegion> getCurrentAnimation() {
         return switch (getDirection()) {
             case "left" -> leftAnimation;

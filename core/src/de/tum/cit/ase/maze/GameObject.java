@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * This class is responsible for drawing the game objects like wall, key, etc. according to their animations.
+ */
 public class GameObject {
     protected float x;
     protected float y;
@@ -23,6 +26,14 @@ public class GameObject {
     }
     /**
      * Loads animation if the textures for a significant object is lined up in horizontal way like enemy, hero, etc.
+     * @param path        The file path to the sprite sheet image.
+     * @param imageX      The starting x-coordinate of the first frame in the sprite sheet.
+     * @param imageY      The y-coordinate of the frames in the sprite sheet.
+     * @param frameWidth  The width of each frame in the sprite sheet.
+     * @param frameHeight The height of each frame in the sprite sheet.
+     * @param frames      The number of frames in the animation.
+     * @param duration    The duration of each frame in seconds.
+     * @return A horizontal animation created from the specified sprite sheet parameters.
      */
     public Animation<TextureRegion> loadHorizontalAnimation(String path, int imageX, int imageY, int frameWidth, int frameHeight, int frames, float duration) {
         this.texture = new Texture(Gdx.files.internal(path));
@@ -38,7 +49,15 @@ public class GameObject {
     }
 
     /**
-     * Loads animation if the textures for a significant object is lined up in vertical like exit, entry, etc..
+     * Loads animation if the textures for a significant object is lined up in vertical way like enemy, hero, etc.
+     * @param path        The file path to the sprite sheet image.
+     * @param imageX      The starting x-coordinate of the first frame in the sprite sheet.
+     * @param imageY      The y-coordinate of the frames in the sprite sheet.
+     * @param frameWidth  The width of each frame in the sprite sheet.
+     * @param frameHeight The height of each frame in the sprite sheet.
+     * @param frames      The number of frames in the animation.
+     * @param duration    The duration of each frame in seconds.
+     * @return A vertical animation created from the specified sprite sheet parameters.
      */
     public Animation<TextureRegion> loadVerticalAnimation(String path, int imageX, int imageY, int frameWidth, int frameHeight, int frames, float duration) {
         this.texture = new Texture(Gdx.files.internal(path));
@@ -53,12 +72,22 @@ public class GameObject {
         return new Animation<>(duration, Frames);
     }
 
+    /**
+     * Updates the Game objects state based on the elapsed time.
+     *
+     * @param delta The time in seconds since the last update.
+     */
     public void update(float delta) {
         if (!GameScreen.isResumed()) {
             animationTime += delta;
         }
     }
 
+    /**
+     * Draws the game objects
+     * @param spriteBatch The SpriteBatch used for rendering graphics.
+     * @param toDraw It is a boolean method used in the if statement.
+     */
     public void draw(SpriteBatch spriteBatch,boolean toDraw) {
         if (toDraw){
             spriteBatch.draw(
@@ -68,13 +97,6 @@ public class GameObject {
                     rect.width,
                     rect.height
             );
-        }
-    }
-
-    public void dispose() {
-        if (texture != null) {
-            texture.dispose();
-            texture = null;
         }
     }
 

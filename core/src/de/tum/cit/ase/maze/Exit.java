@@ -28,6 +28,12 @@ public class Exit extends GameObject{
     public static List<Exit> getExitList() {
         return exitList;
     }
+
+    /**
+     * Draws the exit.
+     * @param spriteBatch The SpriteBatch used for rendering graphics.
+     * @param open It is a boolean method used in the if statement.
+     */
     @Override
     public void draw(SpriteBatch spriteBatch,boolean open) {
         if (open){

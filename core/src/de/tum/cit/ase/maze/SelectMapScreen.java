@@ -25,7 +25,7 @@ public class SelectMapScreen implements Screen {
     private final SpriteBatch batch;
 
     /**
-     * Constructs a new SelectMapScreen instance.
+     * Constructs a new SelectMapScreen instance, which contains the buttons for level selection and uploading an exterior level.
      *
      * @param game The MazeRunnerGame instance.
      */
@@ -56,7 +56,7 @@ public class SelectMapScreen implements Screen {
                     game.getMazeLoader().loadMazeData("/Users/vrushabhjain/Desktop/temp/maps/level-" + finalI + ".properties");
                     game.getMusicLoader().pauseMenuMusic();
                     if (!game.getMusicLoader().isForbiddenGame()) {
-                        game.getMusicLoader().getcurrentMusic();
+                        game.getMusicLoader().getCurrentMusic();
                         game.getMusicLoader().playGameMusic();
                     }
                     game.createMaze();
@@ -86,6 +86,11 @@ public class SelectMapScreen implements Screen {
         table.add(backButton).width(400).padBottom(15).row();
     }
 
+    /**
+     * Renders the visual elements on the screen.
+     *
+     * @param delta The time in seconds since the last render call. It is used for frame-rate independent animation.
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -97,6 +102,12 @@ public class SelectMapScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Called when the screen is resized, such as when the window is resized or the orientation changes.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);

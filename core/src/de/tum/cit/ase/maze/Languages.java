@@ -43,20 +43,4 @@ public class Languages {
     public String get(String key) {
         return languages.getString(key);
     }
-
-    public ResourceBundle getLanguages() {
-        return languages;
-    }
-
-    public void setLanguages(ResourceBundle languages) {
-        this.languages = languages;
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
 }

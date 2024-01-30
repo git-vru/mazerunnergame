@@ -21,15 +21,8 @@ public class Tiles {
      */
     public Tiles() {
         this.basictiles = new Texture(Gdx.files.internal("basictiles.png"));
-        loadWall();
-        loadGrass();
-    }
-    public void loadWall(){
-        this.wall = new TextureRegion(basictiles,0,0,16,16);
-    }
-    public void loadGrass(){
-        //Texture basictiles = new Texture(Gdx.files.internal("basictiles.png"));
-        this.grass = new TextureRegion(basictiles,0,16*8,16,16);
+        this.wall = new TextureRegion(basictiles, 0, 0, 16, 16);
+        this.grass = new TextureRegion(basictiles, 0, 16 * 8, 16, 16);
     }
 
     public TextureRegion getWall() {
@@ -37,8 +30,5 @@ public class Tiles {
     }
     public TextureRegion getGrass() {
         return grass;
-    }
-    public static Array<Rectangle> getWallRectangles() {
-        return wallRectangles;
     }
 }

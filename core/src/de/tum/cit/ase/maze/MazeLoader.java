@@ -53,6 +53,9 @@ public class MazeLoader {
         }
     }
 
+    /**
+     * Calculates the Max and Min coordinates of the maze.
+     */
     public void calculateMaxCoordinates() {
         double maxX = 0;
         double maxY = 0;
@@ -81,6 +84,9 @@ public class MazeLoader {
         this.left = new Rectangle((float) (minX)*60, (float) (minY+10)*60, 9*60,(float)(maxY-10)*60);
     }
 
+    /**
+     * Adds the ground, which is grass.
+     */
     public void addGround() {
         for (int x = (int)game.getMinX(); x <= game.getMaxX(); x++) {
             for (int y = (int)game.getMinY(); y <= game.getMaxY(); y++) {
@@ -126,6 +132,9 @@ public class MazeLoader {
         }
     }
 
+    /**
+     * Renders the maze on the screen.
+     */
     public void renderMaze() {
         for (Map.Entry<Point, Integer> entry : game.getMazeData().entrySet()) {
             Point point = entry.getKey();

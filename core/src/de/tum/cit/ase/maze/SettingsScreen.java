@@ -26,7 +26,7 @@ public class SettingsScreen implements Screen {
     private TextButton volumeShowButton;
 
     /**
-     * Constructs a new SettingsScreen instance.
+     * Constructs a new SettingsScreen instance, and buttons for controlling menu music, game music, game sounds, volume, and language selection.
      *
      * @param game The MazeRunnerGame instance.
      */
@@ -170,6 +170,11 @@ public class SettingsScreen implements Screen {
     }
 
 
+    /**
+     * Renders the visual elements on the screen.
+     *
+     * @param delta The time in seconds since the last render call. It is used for frame-rate independent animation.
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -181,6 +186,12 @@ public class SettingsScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Called when the screen is resized, such as when the window is resized or the orientation changes.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
