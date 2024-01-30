@@ -69,19 +69,19 @@ public class MazeLoader {
             minY = Math.min(minY,point.y);
         }
 
-        maxX += 10;
-        maxY += 10;
-        minX-=10;
-        minY-=10;
+        maxX += 20;
+        maxY += 20;
+        minX-=20;
+        minY-=20;
 
         game.setMaxX(maxX);
         game.setMaxY(maxY);
         game.setMinX(minX);
         game.setMinY(minY);
-        this.top = new Rectangle((float) minX*60, (float) (maxY-9)*60, (float) ((maxX+10)*60),9*60);
-        this.bottom = new Rectangle((float) minX*60, (float) minY*60, (float) ((maxX+10)*60),9*60);
-        this.right = new Rectangle((float) (maxX-9)*60, (float) (minY-10)*60, 9*60,(float)(maxY-10)*60);
-        this.left = new Rectangle((float) (minX)*60, (float) (minY+10)*60, 9*60,(float)(maxY-10)*60);
+        this.top = new Rectangle((float) minX*60, (float) (maxY-19)*60, (float) ((maxX+20)*60),19*60);
+        this.bottom = new Rectangle((float) minX*60, (float) minY*60, (float) ((maxX+20)*60),19*60);
+        this.right = new Rectangle((float) (maxX-19)*60, (float) (minY-20)*60, 19*60,(float)(maxY-20)*60);
+        this.left = new Rectangle((float) (minX)*60, (float) (minY+20)*60, 19*60,(float)(maxY-20)*60);
     }
 
     /**
@@ -133,7 +133,7 @@ public class MazeLoader {
     }
 
     /**
-     * Renders the maze on the screen.
+     * Renders the walls on the screen.
      */
     public void renderMaze() {
         for (Map.Entry<Point, Integer> entry : game.getMazeData().entrySet()) {

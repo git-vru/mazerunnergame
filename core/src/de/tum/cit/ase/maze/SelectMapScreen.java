@@ -52,6 +52,9 @@ public class SelectMapScreen implements Screen {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.input.setInputProcessor(null); //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
+                    //TODO: PLEASE change the path according to your device
+                    //format is "level-1/2/3/4/5.properties
+                    //use finalI variable instead of number
                     //"C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties"
                     game.getMazeLoader().loadMazeData("/Users/vrushabhjain/Desktop/temp/maps/level-" + finalI + ".properties");
                     game.getMusicLoader().pauseMenuMusic();
@@ -134,7 +137,5 @@ public class SelectMapScreen implements Screen {
 
     @Override
     public void hide() {
-        //ADDED THIS BECAUSE THE LEVEL BUTTONS WERE STILL WORKING
-        //Gdx.input.setInputProcessor(null);
     }
 }

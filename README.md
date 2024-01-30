@@ -159,5 +159,16 @@ foto.jpg & mazeinlook.jpeg
 both were generated using bing AI aand are copyright free
 
 Rest everything is either not needed or was provided by default
+# Before starting the game
+In class SelectMapScreen finish the TODO  
+TODO: PLEASE change the path according to your device  
+format is "level-1/2/3/4/5.properties  
+use finalI variable instead of number  
+
+Fix the configuration for:  
+1. Windows and linux remove the -XstartOnFirstThread
+2. for Mac user with Mseries chips add this in the Vm option -XstartOnFirstThread
+3. select the project sdk
+4. -cp needs to end with .desktop.main
 # Note of thanks 
 We would like to thank our professor Stephan Krusche and our tutors which thought of this project because it was genuinely fun, we learned a lot on how to practically use Java with this game.
