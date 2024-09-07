@@ -55,8 +55,9 @@ public class SelectMapScreen implements Screen {
                     //TODO: PLEASE change the path according to your device
                     //format is "level-1/2/3/4/5.properties
                     //use finalI variable instead of number
-                    //"C:\\Users\\emirh\\IdeaProjects\\fophn2324infun2324projectworkx-g38\\maps\\level-" + finalI + ".properties"
-                    game.getMazeLoader().loadMazeData("/Users/vrushabhjain/Desktop/temp/maps/level-" + finalI + ".properties");
+                    //game.getMazeLoader().loadMazeData("/Users/vrushabhjain/Desktop/temp/maps/level-" + finalI + ".properties");
+                    String levelPath = "maps/level-" + finalI + ".properties";
+                    game.getMazeLoader().loadMazeData(Gdx.files.internal(levelPath).path());
                     game.getMusicLoader().pauseMenuMusic();
                     if (!game.getMusicLoader().isForbiddenGame()) {
                         game.getMusicLoader().getCurrentMusic();
