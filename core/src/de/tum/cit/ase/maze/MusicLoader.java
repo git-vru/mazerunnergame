@@ -66,12 +66,12 @@ public class MusicLoader {
         winningMusic.setLooping(true);
         losingMusic = Gdx.audio.newMusic(Gdx.files.internal("LosingMusic.mp3"));
         losingMusic.setLooping(true);
+        walkingSound = Gdx.audio.newMusic(Gdx.files.internal("grasssound.mp3"));
+        walkingSound.setLooping(false);
         lifeLostMusic = Gdx.audio.newMusic(Gdx.files.internal("hurt.ogg"));
         lifeLostMusic.setLooping(false);
         coinCollected = Gdx.audio.newMusic(Gdx.files.internal("coin.ogg"));
         coinCollected.setLooping(false);
-        walkingSound = Gdx.audio.newMusic(Gdx.files.internal("grasssound.mp3"));
-        walkingSound.setLooping(false);
         musicList.add(gameMusic1);
         musicList.add(gameMusic2);
         musicList.add(gameMusic3);
